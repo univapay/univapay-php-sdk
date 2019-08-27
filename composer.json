@@ -1,0 +1,33 @@
+{
+    "name": "univapay/php-sdk",
+    "description": "PHP SDK for Univapay Payments",
+    "type": "library",
+    "keywords": ["univapay", "payment", "credit card" , "japan"],
+    "homepage": "https://github.com/univapay/univapay-php-sdk",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.6.0",
+        "rmccue/requests": "^1.7",
+        "moneyphp/money": "^3.0"
+    },
+    "require-dev": {
+        "phpunit/PHPUnit": "^5.2.7",
+        "squizlabs/php_codesniffer": "^3.2.0",
+        "psy/psysh": "^0.9.4" 
+    },
+    "config": {
+        "platform": {
+            "php": "5.6.36"
+        }
+    },
+    "autoload": {
+        "psr-0": {
+            "Univapay": "src/"
+        }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/Univapay"
+        ]
+    }
+}

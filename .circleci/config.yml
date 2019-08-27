@@ -1,0 +1,32 @@
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/php:5.6-node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-composer-{{ checksum "composer.lock" }}
+          - v1-composer-
+      - run: composer install -n --prefer-dist
+      - save_cache:
+          paths:
+            - ./vendor
+          key: v1-composer-{{ checksum "composer.lock" }}
+      - restore_cache:
+          keys:
+            - v1-node-{{ checksum "package.json" }}
+            - v1-node-
+      - run: npm install
+      - save_cache:
+          paths:
+            - ./node_modules
+          key: v1-node-{{ checksum "package.json" }}
+      - run: node_modules/.bin/grunt phpcs
+      - run: node_modules/.bin/grunt phpunit
