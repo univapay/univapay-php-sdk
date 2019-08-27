@@ -1,0 +1,14 @@
+{
+    "name": "univapay-php-sdk",
+    "version": "1.0.0",
+    "dependencies": {},
+    "devDependencies": {
+        "grunt": "^1.0.4",
+        "grunt-contrib-watch": "^1.1.0",
+        "grunt-phpcs": "^0.4.0",
+        "grunt-phpunit": ">=0.3.0"
+    },
+    "engines": {
+        "node": ">=0.8.0"
+    }
+}
