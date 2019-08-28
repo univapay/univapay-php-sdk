@@ -12,7 +12,7 @@ trait GetCancels
 {
     use OptionsValidator;
     
-    protected abstract function getCancelContext();
+    abstract protected function getCancelContext();
 
     public function listCancels(
         $cursor = null,

@@ -12,7 +12,7 @@ trait GetScheduledPayments
 {
     use OptionsValidator;
     
-    protected abstract function getScheduledPaymentContext();
+    abstract protected function getScheduledPaymentContext();
 
     public function listScheduledPayments(
         $cursor = null,

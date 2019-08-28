@@ -19,7 +19,7 @@ trait GetTransactionTokens
 {
     use OptionsValidator;
 
-    protected abstract function getTransactionTokenContext();
+    abstract protected function getTransactionTokenContext();
 
     public function listTransactionTokens(
         $search = null,

@@ -12,6 +12,16 @@ module.exports = function (grunt) {
                 standard: 'PSR2'
             }
         },
+        phpcbf: {
+            application: {
+                src: ['src/**/*.php', 'tests/**/*.php']
+            },
+            options: {
+                bin: 'vendor/bin/phpcbf',
+                standard: 'PSR2',
+                noPatch: false
+            }
+        },
         phpunit: {
             classes: {
                 dir: 'tests'
@@ -29,6 +39,7 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-phpunit');
     grunt.loadNpmTasks('grunt-phpcs');
+    grunt.loadNpmTasks('grunt-phpcbf');
 
     grunt.registerTask('default', ['phpcs', 'phpunit']);
 };

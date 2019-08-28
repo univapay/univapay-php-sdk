@@ -14,7 +14,7 @@ trait GetSubscriptions
 {
     use OptionsValidator;
     
-    protected abstract function getSubscriptionContext();
+    abstract protected function getSubscriptionContext();
 
     public function listSubscriptions(
         $search = null,

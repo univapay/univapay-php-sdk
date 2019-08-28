@@ -16,7 +16,7 @@ trait GetTransactions
 {
     use OptionsValidator;
 
-    protected abstract function getTransactionContext();
+    abstract protected function getTransactionContext();
     
     public function listTransactions(
         DateTime $from = null,

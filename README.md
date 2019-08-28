@@ -1,5 +1,7 @@
 # Univapay PHP SDK
 
+[![CircleCI](https://circleci.com/gh/univapay/univapay-php-sdk/tree/develop.svg?style=svg)](https://circleci.com/gh/univapay/univapay-php-sdk/tree/develop)
+
 This PHP SDK provides a convenient way to integrate your services with the Univapay payments gateway.
 
 ## Requirements

@@ -16,7 +16,7 @@ trait GetCharges
 {
     use OptionsValidator;
 
-    protected abstract function getChargeContext();
+    abstract protected function getChargeContext();
 
     public function listCharges(
         $lastFour = null,

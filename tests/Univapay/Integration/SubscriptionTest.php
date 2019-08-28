@@ -114,8 +114,10 @@ EOD;
         $this->assertTrue($subscription->scheduleSettings->preserveEndOfMonth);
     }
 
+    // Bug in test mode installments
     public function testCreateInstallmentSubscription()
     {
+        $this->markTestSkipped("Bug in test mode installments");
         $subscription = $this->createValidInstallmentSubscription();
         $this->assertEquals(InstallmentPlanType::FIXED_CYCLES(), $subscription->installmentPlan->planType);
         $this->assertEquals('10', $subscription->installmentPlan->fixedCycles);

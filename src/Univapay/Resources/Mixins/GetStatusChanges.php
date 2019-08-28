@@ -12,7 +12,7 @@ trait GetStatusChanges
 {
     use OptionsValidator;
     
-    protected abstract function getStatusChangeContext();
+    abstract protected function getStatusChangeContext();
 
     public function listStatusChanges(
         $cursor = null,
