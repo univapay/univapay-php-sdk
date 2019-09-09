@@ -132,7 +132,7 @@ trait Requests
     {
         return new QRScanPayment(
             'test@test.com',
-            'test-gateway',
+            '9000000100000000000000',
             ['customer_id' => 'PHP TEST']
         );
     }
