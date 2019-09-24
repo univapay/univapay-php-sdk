@@ -5,7 +5,9 @@ use DateInterval;
 use Univapay\Enums\ActiveFilter;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\ConvenienceStore;
+use Univapay\Enums\Gateway;
 use Univapay\Enums\PaymentType;
+use Univapay\Enums\QRBrand;
 use Univapay\Enums\TokenType;
 use Univapay\Errors\UnivapayRequestError;
 use Univapay\Resources\PaymentData\PhoneNumber;
@@ -80,7 +82,8 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals(PaymentType::QR_SCAN(), $transactionToken->paymentType);
         $this->assertNull($transactionToken->confirmed);
-        $this->assertEquals('test', $transactionToken->data->gateway);
+        $this->assertEquals(Gateway::ORIGAMI(), $transactionToken->data->gateway);
+        $this->assertEquals(QRBrand::ORIGAMI(), $transactionToken->data->brand);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
     }
 
