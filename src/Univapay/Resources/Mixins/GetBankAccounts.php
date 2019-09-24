@@ -12,7 +12,7 @@ trait GetBankAccounts
 {
     use OptionsValidator;
     
-    protected abstract function getBankAccountContext();
+    abstract protected function getBankAccountContext();
 
     public function listBankAccounts(
         $cursor = null,

@@ -12,7 +12,7 @@ trait GetRefunds
 {
     use OptionsValidator;
     
-    protected abstract function getRefundContext();
+    abstract protected function getRefundContext();
 
     public function listRefunds(
         $cursor = null,

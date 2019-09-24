@@ -12,7 +12,7 @@ trait GetStores
 {
     use OptionsValidator;
     
-    protected abstract function getStoreContext();
+    abstract protected function getStoreContext();
 
     public function listStores(
         $cursor = null,

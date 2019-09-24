@@ -12,7 +12,7 @@ trait GetTransfers
 {
     use OptionsValidator;
     
-    protected abstract function getTransferContext();
+    abstract protected function getTransferContext();
 
     public function listTransfers(
         $cursor = null,

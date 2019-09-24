@@ -6,6 +6,7 @@
         "grunt": "^1.0.4",
         "grunt-contrib-watch": "^1.1.0",
         "grunt-phpcs": "^0.4.0",
+        "grunt-phpcbf": "^0.1.1",
         "grunt-phpunit": ">=0.3.0"
     },
     "engines": {

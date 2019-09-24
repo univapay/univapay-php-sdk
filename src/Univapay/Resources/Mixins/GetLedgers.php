@@ -12,7 +12,7 @@ trait GetLedgers
 {
     use OptionsValidator;
     
-    protected abstract function getLedgerContext();
+    abstract protected function getLedgerContext();
 
     public function listLedgers(
         $cursor = null,
