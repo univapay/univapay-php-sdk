@@ -13,13 +13,17 @@ final class Gateway extends TypedEnum
     public static function NCCC() { return self::create(); }
     public static function MEIKO_PAY() { return self::create(); }
     public static function FIRST_DATA() { return self::create(); }
-    public static function ALIPAY() { return self::create(); }
-    public static function ALIPAY_CONNECT() { return self::create(); }
-    public static function BARTONG() { return self::create(); }
     public static function QQ() { return self::create(); }
-    public static function ORIGAMI() { return self::create(); }
-    public static function D_BARAI() { return self::create(); }
+    public static function ALIPAY() { return self::create(); }
     public static function WE_CHAT() { return self::create(); }
+    public static function ALIPAY_CONNECT() { return self::create(); }
+    public static function D_BARAI() { return self::create(); }
+    public static function ORIGAMI() { return self::create(); }
+    public static function MERPAY() { return self::create(); }
+    public static function RAKUTEN_PAY() { return self::create(); }
+    public static function BARTONG() { return self::create(); }
+    public static function JKOPAY() { return self::create(); }
+    public static function VIA() { return self::create(); }
     public static function ALIPAY_MERCHANT_QR() { return self::create(); }
     public static function DENSAN() { return self::create(); }
     public static function PAIDY() { return self::create(); }

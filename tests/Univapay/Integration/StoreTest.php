@@ -77,8 +77,7 @@ class StoreTest extends TestCase
             "installments_configuration": {
               "enabled": true,
               "min_charge_amount": 1000,
-              "max_payout_period": "P50D",
-              "failed_cycles_to_cancel": 3
+              "max_payout_period": "P50D"
             },
             "card_brand_percent_fees": {
               "visa": 0.05,
@@ -132,7 +131,6 @@ EOD;
         $this->assertTrue($store->configuration->installmentsConfiguration->enabled);
         $this->assertEquals(1000, $store->configuration->installmentsConfiguration->minChargeAmount);
         $this->assertEquals('P50D', $store->configuration->installmentsConfiguration->maxPayoutPeriod);
-        $this->assertEquals(3, $store->configuration->installmentsConfiguration->failedCyclesToCancel);
         $this->assertEquals(0.05, $store->configuration->cardBrandPercentFees->visa);
     }
 

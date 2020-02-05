@@ -12,14 +12,12 @@ class InstallmentsConfiguration
     public $enabled;
     public $minChargeAmount;
     public $maxPayoutPeriod;
-    public $failedCyclesToCancel;
 
-    public function __construct($enabled, $minChargeAmount, $maxPayoutPeriod, $failedCyclesToCancel)
+    public function __construct($enabled, $minChargeAmount, $maxPayoutPeriod)
     {
         $this->enabled = $enabled;
         $this->minChargeAmount = $minChargeAmount;
         $this->maxPayoutPeriod = $maxPayoutPeriod;
-        $this->failedCyclesToCancel = $failedCyclesToCancel;
     }
 
     protected static function initSchema()
