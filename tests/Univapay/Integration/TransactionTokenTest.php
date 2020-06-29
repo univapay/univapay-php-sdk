@@ -164,7 +164,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
         
         $patchRequest = new CardPaymentPatch(
-            999,
+            "999",
             'test@changed.int',
             null
         );
