@@ -3,7 +3,7 @@
 namespace Univapay\Resources\Mixins;
 
 use Univapay\Enums\CursorDirection;
-use Univapay\Resources\ScheduledPayment;
+use Univapay\Resources\Subscription\ScheduledPayment;
 use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\OptionsValidator;
 use Univapay\Utility\RequesterUtils;

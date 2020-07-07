@@ -7,7 +7,8 @@
         "grunt-contrib-watch": "^1.1.0",
         "grunt-phpcs": "^0.4.0",
         "grunt-phpcbf": "^0.1.1",
-        "grunt-phpunit": ">=0.3.0"
+        "grunt-phpunit": ">=0.3.0",
+        "websocket-extensions": ">=0.1.4"
     },
     "engines": {
         "node": ">=0.8.0"

@@ -1,6 +1,6 @@
 <?php
 
-namespace Univapay\Resources;
+namespace Univapay\Resources\Subscription;
 
 use InvalidArgumentException;
 use JsonSerializable;
@@ -8,6 +8,7 @@ use Univapay\Enums\Field;
 use Univapay\Enums\InstallmentPlanType;
 use Univapay\Enums\Reason;
 use Univapay\Errors\UnivapayValidationError;
+use Univapay\Resources\Jsonable;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\Json\JsonSchema;
 use Money\Currency;
@@ -76,8 +77,6 @@ class InstallmentPlan implements JsonSerializable
     {
         return JsonSchema::fromClass(self::class)
             ->upsert('plan_type', true, FormatterUtils::getTypedEnum(InstallmentPlanType::class))
-            ->upsert('fixed_cycle_amount', false, function ($value, $json, $parent) {
-                return new Money($value, new Currency($parent['currency']));
-            });
+            ->upsert('fixed_cycle_amount', false, FormatterUtils::getMoney('currency', true));
     }
 }

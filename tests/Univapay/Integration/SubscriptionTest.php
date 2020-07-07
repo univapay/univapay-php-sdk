@@ -1,6 +1,7 @@
 <?php
 namespace UnivapayTest\Integration;
 
+use DateInterval;
 use DateTime;
 use DateTimeZone;
 use Univapay\Enums\AppTokenMode;
@@ -10,12 +11,12 @@ use Univapay\Enums\Period;
 use Univapay\Enums\SubscriptionStatus;
 use Univapay\Enums\TokenType;
 use Univapay\Errors\UnivapayValidationError;
-use Univapay\Resources\InstallmentPlan;
 use Univapay\Resources\Paginated;
 use Univapay\Resources\SimpleList;
-use Univapay\Resources\ScheduledPayment;
 use Univapay\Resources\Subscription;
-use Univapay\Resources\ScheduleSettings;
+use Univapay\Resources\Subscription\InstallmentPlan;
+use Univapay\Resources\Subscription\ScheduledPayment;
+use Univapay\Resources\Subscription\ScheduleSettings;
 use Money\Currency;
 use Money\Money;
 use PHPUnit\Framework\TestCase;
@@ -54,6 +55,8 @@ class SubscriptionTest extends TestCase
                 "created_on": "2018-07-31T10:13:08.715295Z",
                 "updated_on": "2018-07-31T10:13:08.715295Z"
             },
+            "first_charge_authorization_only": true,
+            "first_charge_capture_after": "PT5H",
             "payments_left": 9,
             "status": "canceled",
             "installment_plan": {
@@ -91,6 +94,8 @@ EOD;
         $this->assertEquals('9', $subscription->paymentsLeft);
         $this->assertEquals(Money::JPY(5000), $subscription->amountLeft);
         $this->assertEquals(5000, $subscription->amountLeftFormatted);
+        $this->assertTrue($subscription->firstChargeAuthorizationOnly);
+        $this->assertEquals(new DateInterval('PT5H'), $subscription->firstChargeCaptureAfter);
     }
 
     public function testCreateSubscription()
@@ -101,6 +106,19 @@ EOD;
         $this->assertEquals(Period::BIWEEKLY(), $subscription->period);
         $this->assertEquals(Money::JPY(1000), $subscription->initialAmount);
         $this->assertInstanceOf(DateTime::class, $subscription->createdOn);
+    }
+
+    public function testCreateAuthorizedSubscription()
+    {
+        $subscription = $this->createValidSubscription(true, new DateInterval('PT6H'));
+        $this->assertEquals(Money::JPY(10000), $subscription->amount);
+        $this->assertEquals(new Currency('JPY'), $subscription->currency);
+        $this->assertEquals(Period::BIWEEKLY(), $subscription->period);
+        $this->assertEquals(Money::JPY(1000), $subscription->initialAmount);
+        $this->assertInstanceOf(DateTime::class, $subscription->createdOn);
+        $this->assertTrue($subscription->firstChargeAuthorizationOnly);
+        $this->assertEquals(new DateInterval('PT6H'), $subscription->firstChargeCaptureAfter);
+        $this->assertEquals(SubscriptionStatus::AUTHORIZED(), $subscription->status);
     }
 
     public function testCreateScheduleSubscription()

@@ -4,6 +4,8 @@ namespace Univapay\Utility;
 
 use DateInterval;
 use DateTimeZone;
+use Money\Currency;
+use Money\Money;
 use Univapay\Enums\InstallmentPlanType;
 
 class FormatterUtils
@@ -46,5 +48,18 @@ class FormatterUtils
             return 'PT0S';
         }
         return $res;
+    }
+
+    public static function getCurrency($currency)
+    {
+        return new Currency($currency);
+    }
+    
+    public static function getMoney($currencyKey, $currencyAtRoot = false)
+    {
+        return function ($value, $json, $parent) use ($currencyKey, $currencyAtRoot) {
+            $currencyValue = $currencyAtRoot ? $parent[$currencyKey] : $json[$currencyKey];
+            return new Money($value, new Currency($currencyValue));
+        };
     }
 }

@@ -2,15 +2,17 @@
 
 namespace Univapay\Resources;
 
+use DateTime;
+use Money\Currency;
+use Money\Money;
 use Univapay\Enums\CursorDirection;
 use Univapay\Enums\TransferStatus;
 use Univapay\Resources\Mixins\GetLedgers;
 use Univapay\Resources\Mixins\GetStatusChanges;
+use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\Json\JsonSchema;
 use Univapay\Utility\RequesterUtils;
-use Money\Currency;
-use Money\Money;
 
 class Transfer extends Resource
 {
@@ -35,32 +37,32 @@ class Transfer extends Resource
     public function __construct(
         $id,
         $bankAccountId,
-        $currency,
-        $amount,
+        Currency $currency,
+        Money $amount,
         $amountFormatted,
-        $status,
+        TransferStatus $status,
         $errorCode,
         $errorText,
         $metadata,
         $note,
-        $from,
-        $to,
-        $createdOn,
+        DateTime $from,
+        DateTime $to,
+        DateTime $createdOn,
         $context
     ) {
         parent::__construct($id, $context);
         $this->bankAccountId = $bankAccountId;
-        $this->currency = new Currency($currency);
-        $this->amount = new Money($amount, $this->currency);
+        $this->currency = $currency;
+        $this->amount = $amount;
         $this->amountFormatted = $amountFormatted;
-        $this->status = TransferStatus::fromValue($status);
+        $this->status = $status;
         $this->errorCode = $errorCode;
         $this->errorText = $errorText;
         $this->metadata = $metadata;
         $this->note = $note;
-        $this->from = date_create($from);
-        $this->to = date_create($to);
-        $this->createdOn = date_create($createdOn);
+        $this->from = $from;
+        $this->to = $to;
+        $this->createdOn = $createdOn;
     }
 
     protected function getLedgerContext()
@@ -75,6 +77,12 @@ class Transfer extends Resource
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(self::class);
+        return JsonSchema::fromClass(self::class)
+            ->upsert('currency', true, FormatterUtils::of('getCurrency'))
+            ->upsert('amount', true, FormatterUtils::getMoney('currency'))
+            ->upsert('status', true, FormatterUtils::getTypedEnum(TransferStatus::class))
+            ->upsert('from', true, FormatterUtils::of('getDateTime'))
+            ->upsert('to', true, FormatterUtils::of('getDateTime'))
+            ->upsert('created_on', true, FormatterUtils::of('getDateTime'));
     }
 }

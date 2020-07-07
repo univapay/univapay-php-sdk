@@ -2,14 +2,16 @@
 
 namespace Univapay\Resources;
 
-use Univapay\Enums\LedgerOrigin;
-use Univapay\Utility\Json\JsonSchema;
+use DateTime;
 use Money\Currency;
 use Money\Money;
+use Univapay\Enums\LedgerOrigin;
+use Univapay\Utility\FormatterUtils;
+use Univapay\Utility\Json\JsonSchema;
 
-class Ledger
+class Ledger extends Resource
 {
-    private static $schema;
+    use Jsonable;
 
     public $id;
     public $storeId;
@@ -28,38 +30,41 @@ class Ledger
     public function __construct(
         $id,
         $storeId,
-        $currency,
-        $amount,
+        Currency $currency,
+        Money $amount,
         $amountFormatted,
         $percentFee,
-        $flatFeeCurrency,
-        $flatFeeAmount,
+        Currency $flatFeeCurrency,
+        Money $flatFeeAmount,
         $flatFeeFormatted,
         $exchangeRate,
-        $origin,
+        LedgerOrigin $origin,
         $note,
-        $createdOn
+        DateTime $createdOn
     ) {
         $this->id = $id;
         $this->storeId = $storeId;
-        $this->currency = new Currency($currency);
-        $this->amount = new Money($amount, $this->currency);
+        $this->currency = $currency;
+        $this->amount = $amount;
         $this->amountFormatted = $amountFormatted;
         $this->percentFee = $percentFee;
-        $this->flatFeeCurrency = new Currency($flatFeeCurrency);
-        $this->flatFeeAmount = new Money($flatFeeAmount, $this->flatFeeCurrency);
+        $this->flatFeeCurrency = $flatFeeCurrency;
+        $this->flatFeeAmount = $flatFeeAmount;
         $this->flatFeeFormatted = $flatFeeFormatted;
         $this->exchangeRate = $exchangeRate;
-        $this->origin = LedgerOrigin::fromValue($origin);
+        $this->origin = $origin;
         $this->note = $note;
-        $this->createdOn = date_create($createdOn);
+        $this->createdOn = $createdOn;
     }
 
-    public static function getSchema()
+    protected static function initSchema()
     {
-        if (!isset(self::$schema)) {
-            self::$schema = JsonSchema::fromClass(self::class);
-        }
-        return self::$schema;
+        return JsonSchema::fromClass(self::class)
+            ->upsert('currency', true, FormatterUtils::of('getCurrency'))
+            ->upsert('amount', true, FormatterUtils::getMoney('currency'))
+            ->upsert('flat_fee_currency', true, FormatterUtils::of('getCurrency'))
+            ->upsert('flat_fee_amount', true, FormatterUtils::getMoney('flat_fee_currency'))
+            ->upsert('origin', true, FormatterUtils::getTypedEnum(LedgerOrigin::class))
+            ->upsert('created_on', true, FormatterUtils::of('getDateTime'));
     }
 }

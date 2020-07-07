@@ -1,6 +1,6 @@
 <?php
 
-namespace Univapay\Resources;
+namespace Univapay\Resources\Subscription;
 
 use DateTime;
 use DateTimeZone;
@@ -9,6 +9,7 @@ use JsonSerializable;
 use Univapay\Enums\Field;
 use Univapay\Enums\Reason;
 use Univapay\Errors\UnivapayValidationError;
+use Univapay\Resources\Jsonable;
 use Univapay\Utility\Json\JsonSchema;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils;

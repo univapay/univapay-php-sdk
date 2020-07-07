@@ -1,8 +1,10 @@
 <?php
 
-namespace Univapay\Resources;
+namespace Univapay\Resources\Subscription;
 
 use DateTimeZone;
+use Univapay\Resources\Jsonable;
+use Univapay\Resources\Resource;
 use Univapay\Resources\Mixins\GetCharges;
 use Univapay\Utility\Json\JsonSchema;
 use Money\Currency;

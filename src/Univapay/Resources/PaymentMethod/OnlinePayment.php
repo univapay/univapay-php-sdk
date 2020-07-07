@@ -4,23 +4,24 @@ namespace Univapay\Resources\PaymentMethod;
 
 use JsonSerializable;
 use Univapay\Enums\Field;
+use Univapay\Enums\Gateway;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Reason;
 use Univapay\Enums\TokenType;
 use Univapay\Errors\UnivapayValidationError;
 use Univapay\Utility\FunctionalUtils;
 
-class QRScanPayment extends PaymentMethod implements JsonSerializable
+class OnlinePayment extends PaymentMethod implements JsonSerializable
 {
-    private $scannedQr;
+    private $gateway;
 
     public function __construct(
         $email,
-        $scannedQr,
+        Gateway $gateway,
         array $metadata = null
     ) {
-        parent::__construct(PaymentType::QR_SCAN(), null, $email, null, $metadata);
-        $this->scannedQr = $scannedQr;
+        parent::__construct(PaymentType::ONLINE(), null, $email, null, $metadata);
+        $this->gateway = $gateway;
     }
 
     // Does not take in a token type
@@ -31,7 +32,7 @@ class QRScanPayment extends PaymentMethod implements JsonSerializable
     public function jsonSerialize()
     {
         $parentData = parent::jsonSerialize();
-        $parentData['data'] = ['scanned_qr' => $this->scannedQr];
+        $parentData['data'] = ['gateway' => $this->gateway->getName()];
 
         return $parentData;
     }
