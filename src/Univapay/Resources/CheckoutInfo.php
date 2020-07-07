@@ -5,7 +5,7 @@ namespace Univapay\Resources;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\RecurringTokenPrivilege;
 use Univapay\Resources\Configuration\CardConfiguration;
-use Univapay\Resources\Configuration\QRConfiguration;
+use Univapay\Resources\Configuration\QrConfiguration;
 use Univapay\Resources\Configuration\ConvenienceConfiguration;
 use Univapay\Resources\Configuration\PaidyConfiguration;
 use Univapay\Resources\Configuration\ThemeConfiguration;
@@ -31,7 +31,7 @@ class CheckoutInfo
         RecurringTokenPrivilege $recurringTokenPrivilege,
         $name,
         CardConfiguration $cardConfiguration,
-        QRConfiguration $qrScanConfiguration,
+        QrConfiguration $qrScanConfiguration,
         ConvenienceConfiguration $convenienceConfiguration,
         PaidyConfiguration $paidyConfiguration,
         $paidyPublicKey,
@@ -56,7 +56,7 @@ class CheckoutInfo
             ->upsert('mode', true, FormatterUtils::getTypedEnum(AppTokenMode::class))
             ->upsert('recurring_token_privilege', true, FormatterUtils::getTypedEnum(RecurringTokenPrivilege::class))
             ->upsert('card_configuration', true, CardConfiguration::getSchema()->getParser())
-            ->upsert('qr_scan_configuration', true, QRConfiguration::getSchema()->getParser())
+            ->upsert('qr_scan_configuration', true, QrConfiguration::getSchema()->getParser())
             ->upsert('convenience_configuration', true, ConvenienceConfiguration::getSchema()->getParser())
             ->upsert('paidy_configuration', true, PaidyConfiguration::getSchema()->getParser())
             ->upsert('theme', true, ThemeConfiguration::getSchema()->getParser());

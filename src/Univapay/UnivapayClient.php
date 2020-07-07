@@ -26,11 +26,8 @@ use Univapay\Resources\BankAccount;
 use Univapay\Resources\CardConfiguration;
 use Univapay\Resources\Charge;
 use Univapay\Resources\CheckoutInfo;
-use Univapay\Resources\InstallmentPlan;
 use Univapay\Resources\Merchant;
 use Univapay\Resources\Refund;
-use Univapay\Resources\ScheduleSettings;
-use Univapay\Resources\ScheduledPayment;
 use Univapay\Resources\Store;
 use Univapay\Resources\Subscription;
 use Univapay\Resources\Transaction;
@@ -48,6 +45,9 @@ use Univapay\Resources\Mixins\GetTransactions;
 use Univapay\Resources\Mixins\GetTransactionTokens;
 use Univapay\Resources\Mixins\GetTransfers;
 use Univapay\Resources\PaymentMethod\PaymentMethod;
+use Univapay\Resources\Subscription\InstallmentPlan;
+use Univapay\Resources\Subscription\ScheduledPayment;
+use Univapay\Resources\Subscription\ScheduleSettings;
 use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\HttpUtils;
 use Univapay\Utility\RequesterUtils;
@@ -162,7 +162,6 @@ class UnivapayClient
         $capture = null,
         DateTime $captureAt = null,
         array $metadata = null,
-        $descriptor = null,
         $onlyDirectCurrency = null
     ) {
         return $this
@@ -172,7 +171,6 @@ class UnivapayClient
                 $capture,
                 $captureAt,
                 $metadata,
-                $descriptor,
                 $onlyDirectCurrency
             );
     }

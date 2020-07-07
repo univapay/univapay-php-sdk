@@ -2,15 +2,17 @@
 
 namespace Univapay\Resources;
 
+use DateTime;
 use Composer\DependencyResolver\Request;
 use Univapay\Requests\RequestContext;
 use Univapay\Resources\Configuration\Configuration;
 use Univapay\Resources\Mixins\GetCharges;
 use Univapay\Resources\Mixins\GetSubscriptions;
 use Univapay\Resources\Mixins\GetTransactions;
+use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils;
-use Univapay\Utility\Json\JsonSchema;
 use Univapay\Utility\RequesterUtils;
+use Univapay\Utility\Json\JsonSchema;
 
 class Store extends Resource
 {
@@ -26,20 +28,21 @@ class Store extends Resource
     public function __construct(
         $id,
         $name,
-        $createdOn,
+        DateTime $createdOn,
         $configuration,
         RequestContext $context = null
     ) {
         parent::__construct($id, $context);
         $this->name = $name;
-        $this->createdOn = date_create($createdOn);
+        $this->createdOn = $createdOn;
         $this->configuration = $configuration;
     }
 
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
-            ->upsert('configuration', false, Configuration::getSchema()->getParser());
+            ->upsert('configuration', false, Configuration::getSchema()->getParser())
+            ->upsert('created_on', true, FormatterUtils::of('getDateTime'));
     }
 
     public function getCharge($chargeId)

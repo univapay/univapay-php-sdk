@@ -2,7 +2,7 @@
 
 namespace Univapay\Enums;
 
-final class QRBrand extends TypedEnum
+final class QrBrand extends TypedEnum
 {
     // phpcs:disable
     public static function QQ() { return self::create(); }

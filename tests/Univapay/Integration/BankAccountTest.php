@@ -1,14 +1,14 @@
 <?php
 namespace UnivapayTest\Integration;
 
+use Money\Currency;
+use PHPUnit\Framework\TestCase;
 use Univapay\Enums\BankAccountStatus;
 use Univapay\Enums\BankAccountType;
 use Univapay\Resources\BankAccount;
 use Univapay\Resources\Paginated;
-use Money\Currency;
-use PHPUnit\Framework\TestCase;
 
-class BankAccountsTest extends TestCase
+class BankAccountTest extends TestCase
 {
     use IntegrationSuite;
     

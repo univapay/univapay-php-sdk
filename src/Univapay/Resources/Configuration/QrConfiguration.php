@@ -6,7 +6,7 @@ use Univapay\Resources\Jsonable;
 use Univapay\Utility\FunctionalUtils as fp;
 use Univapay\Utility\Json\JsonSchema;
 
-class QRConfiguration
+class QrConfiguration
 {
     use Jsonable;
     public $enabled;

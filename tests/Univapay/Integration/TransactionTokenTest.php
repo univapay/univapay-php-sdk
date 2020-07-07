@@ -2,14 +2,17 @@
 namespace UnivapayTest\Integration;
 
 use DateInterval;
+use Money\Currency;
 use Univapay\Enums\ActiveFilter;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\ConvenienceStore;
+use Univapay\Enums\CvvAuthorizationStatus;
 use Univapay\Enums\Gateway;
 use Univapay\Enums\PaymentType;
-use Univapay\Enums\QRBrand;
+use Univapay\Enums\QrBrand;
 use Univapay\Enums\TokenType;
 use Univapay\Errors\UnivapayRequestError;
+use Univapay\Resources\PaymentData\CvvAuthorize;
 use Univapay\Resources\PaymentData\PhoneNumber;
 use Univapay\Resources\PaymentMethod\CardPayment;
 use Univapay\Resources\PaymentMethod\CardPaymentPatch;
@@ -39,6 +42,66 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('101-1111', $transactionToken->data->billing->zip);
         $this->assertEquals(PhoneNumber::JP, $transactionToken->data->billing->phoneNumber->countryCode);
         $this->assertEquals('12910298309128', $transactionToken->data->billing->phoneNumber->localNumber);
+    }
+
+    public function testCreateTokenWithCvvAuth()
+    {
+        $cvvAuth = new CvvAuthorize(true);
+        $transactionToken = $this->createValidToken(PaymentType::CARD(), TokenType::RECURRING(), null, $cvvAuth);
+        $this->assertTrue($transactionToken->data->cvvAuthorize->enabled);
+        $this->assertNull($transactionToken->data->cvvAuthorize->currency);
+        $this->assertEquals(CvvAuthorizationStatus::PENDING(), $transactionToken->data->cvvAuthorize->status);
+        sleep(3);
+        
+        $transactionToken = $transactionToken->fetch();
+        $this->assertEquals('test@test.com', $transactionToken->email);
+        $this->assertEquals(TokenType::RECURRING(), $transactionToken->type);
+        $this->assertEquals(PaymentType::CARD(), $transactionToken->paymentType);
+        $this->assertNull($transactionToken->confirmed);
+        $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
+        $this->assertEquals('PHP TEST', $transactionToken->data->card->cardholder);
+        $this->assertEquals('02', $transactionToken->data->card->expMonth);
+        $this->assertEquals('2022', $transactionToken->data->card->expYear);
+        $this->assertEquals('test line 1', $transactionToken->data->billing->line1);
+        $this->assertEquals('test line 2', $transactionToken->data->billing->line2);
+        $this->assertEquals('test state', $transactionToken->data->billing->state);
+        $this->assertEquals('test city', $transactionToken->data->billing->city);
+        $this->assertEquals('JP', $transactionToken->data->billing->country);
+        $this->assertEquals('101-1111', $transactionToken->data->billing->zip);
+        $this->assertEquals(PhoneNumber::JP, $transactionToken->data->billing->phoneNumber->countryCode);
+        $this->assertEquals('12910298309128', $transactionToken->data->billing->phoneNumber->localNumber);
+        $this->assertEquals(CvvAuthorizationStatus::CURRENT(), $transactionToken->data->cvvAuthorize->status);
+        $this->assertNotNull($transactionToken->data->cvvAuthorize->chargeId);
+    }
+
+    public function testCreateTokenWithCvvAuthWithCurrency()
+    {
+        $cvvAuth = new CvvAuthorize(true, new Currency("USD"));
+        $transactionToken = $this->createValidToken(PaymentType::CARD(), TokenType::RECURRING(), null, $cvvAuth);
+        $this->assertTrue($transactionToken->data->cvvAuthorize->enabled);
+        $this->assertEquals(new Currency("USD"), $transactionToken->data->cvvAuthorize->currency);
+        $this->assertEquals(CvvAuthorizationStatus::PENDING(), $transactionToken->data->cvvAuthorize->status);
+        sleep(3);
+        
+        $transactionToken = $transactionToken->fetch();
+        $this->assertEquals('test@test.com', $transactionToken->email);
+        $this->assertEquals(TokenType::RECURRING(), $transactionToken->type);
+        $this->assertEquals(PaymentType::CARD(), $transactionToken->paymentType);
+        $this->assertNull($transactionToken->confirmed);
+        $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
+        $this->assertEquals('PHP TEST', $transactionToken->data->card->cardholder);
+        $this->assertEquals('02', $transactionToken->data->card->expMonth);
+        $this->assertEquals('2022', $transactionToken->data->card->expYear);
+        $this->assertEquals('test line 1', $transactionToken->data->billing->line1);
+        $this->assertEquals('test line 2', $transactionToken->data->billing->line2);
+        $this->assertEquals('test state', $transactionToken->data->billing->state);
+        $this->assertEquals('test city', $transactionToken->data->billing->city);
+        $this->assertEquals('JP', $transactionToken->data->billing->country);
+        $this->assertEquals('101-1111', $transactionToken->data->billing->zip);
+        $this->assertEquals(PhoneNumber::JP, $transactionToken->data->billing->phoneNumber->countryCode);
+        $this->assertEquals('12910298309128', $transactionToken->data->billing->phoneNumber->localNumber);
+        $this->assertEquals(CvvAuthorizationStatus::CURRENT(), $transactionToken->data->cvvAuthorize->status);
+        $this->assertNotNull($transactionToken->data->cvvAuthorize->chargeId);
     }
 
     public function testCreateApplePayToken()
@@ -76,14 +139,24 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals(new DateInterval('P7D'), $transactionToken->data->expirationPeriod);
     }
 
-    public function testCreateQRScanToken()
+    public function testCreateQrScanToken()
     {
         $transactionToken = $this->createValidToken(PaymentType::QR_SCAN());
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals(PaymentType::QR_SCAN(), $transactionToken->paymentType);
         $this->assertNull($transactionToken->confirmed);
         $this->assertEquals(Gateway::ORIGAMI(), $transactionToken->data->gateway);
-        $this->assertEquals(QRBrand::ORIGAMI(), $transactionToken->data->brand);
+        $this->assertEquals(QrBrand::ORIGAMI(), $transactionToken->data->brand);
+        $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
+    }
+
+    public function testCreateQrMerchantToken()
+    {
+        $transactionToken = $this->createValidToken(PaymentType::QR_MERCHANT());
+        $this->assertEquals('test@test.com', $transactionToken->email);
+        $this->assertEquals(PaymentType::QR_MERCHANT(), $transactionToken->paymentType);
+        $this->assertNull($transactionToken->confirmed);
+        $this->assertEquals(Gateway::ALIPAY_MERCHANT_QR(), $transactionToken->data->gateway);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
     }
 
@@ -101,6 +174,16 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('State', $transactionToken->data->shippingAddress->state);
         $this->assertEquals('City', $transactionToken->data->shippingAddress->city);
         $this->assertEquals('1001000', $transactionToken->data->shippingAddress->zip);
+        $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
+    }
+
+    public function testCreateOnlineToken()
+    {
+        $transactionToken = $this->createValidToken(PaymentType::ONLINE());
+        $this->assertEquals('test@test.com', $transactionToken->email);
+        $this->assertEquals(PaymentType::ONLINE(), $transactionToken->paymentType);
+        $this->assertNull($transactionToken->confirmed);
+        $this->assertEquals(Gateway::ALIPAY_ONLINE(), $transactionToken->data->gateway);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
     }
 

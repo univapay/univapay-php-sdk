@@ -2,12 +2,14 @@
 
 namespace Univapay\Resources;
 
+use DateTime;
+use Money\Currency;
+use Money\Money;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\ChargeStatus;
 use Univapay\Enums\TransactionType;
+use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\Json\JsonSchema;
-use Money\Currency;
-use Money\Money;
 
 class Transaction
 {
@@ -33,36 +35,42 @@ class Transaction
         $storeId,
         $resourceId,
         $chargeId,
-        $currency,
-        $amount,
+        Currency $currency,
+        Money $amount,
         $amountFormatted,
-        $type,
-        $status,
+        TransactionType $type,
+        ChargeStatus $status,
         $metadata,
-        $mode,
+        AppTokenMode $mode,
         $userData,
-        $createdOn,
+        DateTime $createdOn,
         $context
     ) {
         $this->id = $id;
         $this->storeId = $storeId;
         $this->resourceId = $resourceId;
         $this->chargeId = $chargeId;
-        $this->currency = new Currency($currency);
-        $this->amount = new Money($amount, $this->currency);
+        $this->currency = $currency;
+        $this->amount = $amount;
         $this->amountFormatted = $amountFormatted;
-        $this->type = TransactionType::fromValue($type);
-        $this->status = ChargeStatus::fromValue($status);
+        $this->type = $type;
+        $this->status = $status;
         $this->metadata = $metadata;
-        $this->mode = AppTokenMode::fromValue($mode);
+        $this->mode = $mode;
         $this->userData = $userData;
-        $this->createdOn = date_create($createdOn);
+        $this->createdOn = $createdOn;
         $this->context = $context;
     }
 
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(self::class);
+        return JsonSchema::fromClass(self::class)
+        ->upsert('currency', true, FormatterUtils::of('getCurrency'))
+        ->upsert('amount', true, FormatterUtils::getMoney('currency'))
+        ->upsert('type', true, FormatterUtils::getTypedEnum(TransactionType::class))
+        ->upsert('status', true, FormatterUtils::getTypedEnum(ChargeStatus::class))
+        ->upsert('mode', true, FormatterUtils::getTypedEnum(AppTokenMode::class))
+        ->upsert('created_on', true, FormatterUtils::of('getDateTime'));
     }
 }

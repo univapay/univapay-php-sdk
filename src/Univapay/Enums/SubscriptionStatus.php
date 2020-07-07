@@ -8,6 +8,7 @@ final class SubscriptionStatus extends TypedEnum
     public static function UNVERIFIED() { return self::create(); }
     public static function UNCONFIRMED() { return self::create(); }
     public static function UNPAID() { return self::create(); }
+    public static function AUTHORIZED() { return self::create(); }
     public static function CURRENT() { return self::create(); }
     public static function SUSPENDED() { return self::create(); }
     public static function CANCELED() { return self::create(); }

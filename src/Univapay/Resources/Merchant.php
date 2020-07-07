@@ -2,14 +2,16 @@
 
 namespace Univapay\Resources;
 
+use DateTime;
 use Univapay\Requests\RequestContext;
 use Univapay\Resources\Configuration\Configuration;
+use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\Json\JsonSchema;
 
 class Merchant extends Resource
 {
-
     use Jsonable;
+
     public $verificationDataId;
     public $name;
     public $email;
@@ -24,7 +26,7 @@ class Merchant extends Resource
         $email,
         $verified,
         $configuration,
-        $createdOn,
+        DateTime $createdOn,
         $context = null
     ) {
         parent::__construct($id, $context);
@@ -33,26 +35,27 @@ class Merchant extends Resource
         $this->email = $email;
         $this->verified = $verified;
         $this->configuration = $configuration;
-        $this->createdOn = date_create($createdOn);
+        $this->createdOn = $createdOn;
     }
 
-    public static function fromJson(array $json, RequestContext $requestContext)
-    {
-        return new Merchant(
-            $json['id'],
-            $json['verification_data_id'],
-            $json['name'],
-            $json['email'],
-            $json['verified'],
-            Configuration::fromJson(fp::getOrElse($json, 'configuration', [])),
-            $json['created_on'],
-            $context = $requestContext
-        );
-    }
+    // public static function fromJson(array $json, RequestContext $requestContext)
+    // {
+    //     return new Merchant(
+    //         $json['id'],
+    //         $json['verification_data_id'],
+    //         $json['name'],
+    //         $json['email'],
+    //         $json['verified'],
+    //         Configuration::fromJson(fp::getOrElse($json, 'configuration', [])),
+    //         $json['created_on'],
+    //         $context = $requestContext
+    //     );
+    // }
 
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
-            ->upsert('configuration', true, Configuration::getSchema()->getParser());
+            ->upsert('configuration', true, Configuration::getSchema()->getParser())
+            ->upsert('created_on', true, FormatterUtils::of('getDateTime'));
     }
 }

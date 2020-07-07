@@ -2,10 +2,12 @@
 
 namespace Univapay\Resources;
 
+use DateTime;
+use Money\Currency;
 use Univapay\Enums\BankAccountStatus;
 use Univapay\Enums\BankAccountType;
+use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\Json\JsonSchema;
-use Money\Currency;
 
 class BankAccount extends Resource
 {
@@ -36,16 +38,16 @@ class BankAccount extends Resource
         $branchName,
         $country,
         $bankAddress,
-        $currency,
+        Currency $currency,
         $accountNumber,
         $routingNumber,
         $swiftCode,
         $ifscCode,
         $routingCode,
         $lastFour,
-        $status,
-        $accountType,
-        $createdOn,
+        BankAccountStatus $status,
+        BankAccountType $accountType,
+        DateTime $createdOn,
         $context
     ) {
         parent::__construct($id, $context);
@@ -55,20 +57,24 @@ class BankAccount extends Resource
         $this->branchName = $branchName;
         $this->country = $country;
         $this->bankAddress = $bankAddress;
-        $this->currency = new Currency($currency);
+        $this->currency = $currency;
         $this->accountNumber = $accountNumber;
         $this->routingNumber = $routingNumber;
         $this->swiftCode = $swiftCode;
         $this->ifscCode = $ifscCode;
         $this->routingCode = $routingCode;
         $this->lastFour = $lastFour;
-        $this->status = BankAccountStatus::fromValue($status);
-        $this->accountType = BankAccountType::fromValue($accountType);
-        $this->createdOn = date_create($createdOn);
+        $this->status = $status;
+        $this->accountType = $accountType;
+        $this->createdOn = $createdOn;
     }
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(self::class);
+        return JsonSchema::fromClass(self::class)
+            ->upsert('currency', true, FormatterUtils::of('getCurrency'))
+            ->upsert('status', true, FormatterUtils::getTypedEnum(BankAccountStatus::class))
+            ->upsert('account_type', true, FormatterUtils::getTypedEnum(BankAccountType::class))
+            ->upsert('created_on', true, FormatterUtils::of('getDateTime'));
     }
 }

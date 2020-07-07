@@ -4,6 +4,7 @@ namespace Univapay\Resources;
 
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\CancelStatus;
+use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\Json\JsonSchema;
 
 class Cancel extends Resource
@@ -24,16 +25,19 @@ class Cancel extends Resource
         parent::__construct($id, $context);
         $this->chargeId = $chargeId;
         $this->storeId = $storeId;
-        $this->status = CancelStatus::fromValue($status);
+        $this->status = $status;
         $this->error = $error;
         $this->metadata = $metadata;
-        $this->mode = AppTokenMode::fromValue($mode);
-        $this->createdOn = date_create($createdOn);
+        $this->mode = $mode;
+        $this->createdOn = $createdOn;
     }
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(self::class);
+        return JsonSchema::fromClass(self::class)
+        ->upsert('status', true, FormatterUtils::getTypedEnum(CancelStatus::class))
+        ->upsert('mode', true, FormatterUtils::getTypedEnum(AppTokenMode::class))
+        ->upsert('created_on', true, FormatterUtils::of('getDateTime'));
     }
     
     protected function getIdContext()
