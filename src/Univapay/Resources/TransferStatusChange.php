@@ -2,7 +2,9 @@
 
 namespace Univapay\Resources;
 
+use DateTime;
 use Univapay\Enums\TransferStatus;
+use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\Json\JsonSchema;
 use Univapay\Utility\RequesterUtils;
@@ -22,23 +24,26 @@ class TransferStatusChange extends Resource
         $id,
         $merchantId,
         $transferId,
-        $oldStatus,
-        $newStatus,
+        TransferStatus $oldStatus,
+        TransferStatus $newStatus,
         $reason,
-        $createdOn,
+        DateTime $createdOn,
         $context
     ) {
         parent::__construct($id, $context);
         $this->merchantId = $merchantId;
         $this->transferId = $transferId;
-        $this->oldStatus = TransferStatus::fromValue($oldStatus);
-        $this->newStatus = TransferStatus::fromValue($newStatus);
+        $this->oldStatus = $oldStatus;
+        $this->newStatus = $newStatus;
         $this->reason = $reason;
-        $this->createdOn = date_create($createdOn);
+        $this->createdOn = $createdOn;
     }
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(self::class);
+        return JsonSchema::fromClass(self::class)
+            ->upsert('old_status', true, FormatterUtils::getTypedEnum(TransferStatus::class))
+            ->upsert('new_status', true, FormatterUtils::getTypedEnum(TransferStatus::class))
+            ->upsert('created_on', true, FormatterUtils::of('getDateTime'));
     }
 }

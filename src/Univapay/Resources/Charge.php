@@ -2,20 +2,25 @@
 
 namespace Univapay\Resources;
 
+use DateTime;
+use Money\Currency;
+use Money\Money;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\ChargeStatus;
+use Univapay\Enums\ChargeType;
 use Univapay\Enums\Field;
 use Univapay\Enums\Reason;
 use Univapay\Enums\RefundReason;
 use Univapay\Enums\TokenType;
 use Univapay\Errors\UnivapayValidationError;
+use Univapay\Resources\PaymentToken\QrMerchantToken;
+use Univapay\Resources\PaymentToken\OnlineToken;
 use Univapay\Resources\Mixins\GetCancels;
 use Univapay\Resources\Mixins\GetRefunds;
+use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\RequesterUtils;
 use Univapay\Utility\Json\JsonSchema;
-use Money\Currency;
-use Money\Money;
 
 class Charge extends Resource
 {
@@ -32,61 +37,74 @@ class Charge extends Resource
     public $requestedCurrency;
     public $requestedAmount;
     public $requestedAmountFormatted;
+    public $status;
+    public $mode;
+    public $type;
+    public $createdOn;
     public $chargedCurrency;
     public $chargedAmount;
     public $chargedAmountFormatted;
     public $onlyDirectCurrency;
     public $captureAt;
-    public $status;
     public $error;
     public $metadata;
-    public $mode;
-    public $createdOn;
 
     public function __construct(
         $id,
         $storeId,
         $transactionTokenId,
-        $transactionTokenType,
+        TokenType $transactionTokenType,
         $subscriptionId,
-        $requestedCurrency,
-        $requestedAmount,
+        Currency $requestedCurrency,
+        Money $requestedAmount,
         $requestedAmountFormatted,
-        $chargedCurrency,
-        $chargedAmount,
-        $chargedAmountFormatted,
-        $onlyDirectCurrency,
-        $captureAt,
-        $status,
-        $error,
-        $metadata,
-        $mode,
-        $createdOn,
-        $context
+        ChargeStatus $status,
+        AppTokenMode $mode,
+        ChargeType $type,
+        DateTime $createdOn,
+        Currency $chargedCurrency = null,
+        Money $chargedAmount = null,
+        $chargedAmountFormatted = null,
+        $onlyDirectCurrency = null,
+        DateTime $captureAt = null,
+        $error = null,
+        $metadata = null,
+        $context = null
     ) {
         parent::__construct($id, $context);
         $this->storeId = $storeId;
         $this->transactionTokenId = $transactionTokenId;
-        $this->transactionTokenType = TokenType::fromValue($transactionTokenType);
+        $this->transactionTokenType = $transactionTokenType;
         $this->subscriptionId = $subscriptionId;
-        $this->requestedCurrency = new Currency($requestedCurrency);
-        $this->requestedAmount = new Money($requestedAmount, $this->requestedCurrency);
+        $this->requestedCurrency = $requestedCurrency;
+        $this->requestedAmount = $requestedAmount;
         $this->requestedAmountFormatted = $requestedAmountFormatted;
-        $this->chargedCurrency = isset($chargedCurrency) ? new Currency($chargedCurrency) : null;
-        $this->chargedAmount = isset($chargedAmount) ? new Money($chargedAmount, $this->chargedCurrency) : null;
+        $this->chargedCurrency = $chargedCurrency;
+        $this->chargedAmount = $chargedAmount;
         $this->chargedAmountFormatted = $chargedAmountFormatted;
         $this->onlyDirectCurrency = $onlyDirectCurrency;
-        $this->captureAt = isset($captureAt) ? date_create($captureAt) : null;
-        $this->status = ChargeStatus::fromValue($status);
+        $this->captureAt = $captureAt;
+        $this->status = $status;
         $this->error = $error;
         $this->metadata = $metadata;
-        $this->mode = AppTokenMode::fromValue($mode);
-        $this->createdOn = date_create($createdOn);
+        $this->mode = $mode;
+        $this->type = $type;
+        $this->createdOn = $createdOn;
     }
 
     protected static function initSchema()
     {
-        return JsonSchema::fromClass(self::class);
+        return JsonSchema::fromClass(self::class)
+            ->upsert('transaction_token_type', true, FormatterUtils::getTypedEnum(TokenType::class))
+            ->upsert('requested_currency', true, FormatterUtils::of('getCurrency'))
+            ->upsert('requested_amount', true, FormatterUtils::getMoney('requested_currency'))
+            ->upsert('charged_currency', false, FormatterUtils::of('getCurrency'))
+            ->upsert('charged_amount', false, FormatterUtils::getMoney('charged_currency'))
+            ->upsert('capture_at', false, FormatterUtils::of('getDateTime'))
+            ->upsert('status', true, FormatterUtils::getTypedEnum(ChargeStatus::class))
+            ->upsert('mode', true, FormatterUtils::getTypedEnum(AppTokenMode::class))
+            ->upsert('type', true, FormatterUtils::getTypedEnum(ChargeType::class))
+            ->upsert('created_on', true, FormatterUtils::of('getDateTime'));
     }
 
     protected function getIdContext()
@@ -116,13 +134,13 @@ class Charge extends Resource
                 'metadata' => $metadata
             ]
         );
-        $context = $this->getIdContext()->appendPath('refunds');
+        $context = $this->getRefundContext();
         return RequesterUtils::executePost(Refund::class, $context, $payload);
     }
 
     public function capture(Money $money = null)
     {
-        $context = $this->getIdContext()->appendPath('capture');
+        $context = $this->getCaptureContext();
         return RequesterUtils::executePost(null, $context, $money);
     }
 
@@ -131,8 +149,25 @@ class Charge extends Resource
         $payload = FunctionalUtils::stripNulls([
             'metadata' => $metadata
         ]);
-        $context = $this->getIdContext()->appendPath('cancels');
+        $context = $this->getCancelContext();
         return RequesterUtils::executePost(Cancel::class, $context, $payload);
+    }
+
+    public function qrMerchantToken()
+    {
+        $context = $this->getQrMerchantTokenContext();
+        return RequesterUtils::executeGet(QrMerchantToken::class, $context);
+    }
+
+    public function onlineToken()
+    {
+        $context = $this->getOnlineTokenContext();
+        return RequesterUtils::executeGet(OnlineToken::class, $context);
+    }
+
+    protected function getCaptureContext()
+    {
+        return $this->context->withPath(['stores', $this->storeId, 'charges', $this->id, 'capture']);
     }
 
     protected function getCancelContext()
@@ -143,5 +178,15 @@ class Charge extends Resource
     protected function getRefundContext()
     {
         return $this->context->withPath(['stores', $this->storeId, 'charges', $this->id, 'refunds']);
+    }
+
+    protected function getQrMerchantTokenContext()
+    {
+        return $this->context->withPath(['stores', $this->storeId, 'charges', $this->id, 'qr']);
+    }
+
+    protected function getOnlineTokenContext()
+    {
+        return $this->context->withPath(['stores', $this->storeId, 'charges', $this->id, 'issuerToken']);
     }
 }

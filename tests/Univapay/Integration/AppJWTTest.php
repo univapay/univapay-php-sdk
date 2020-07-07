@@ -7,7 +7,7 @@ use Univapay\Resources\Authentication\MerchantAppJWT;
 use Univapay\Resources\Authentication\StoreAppJWT;
 use PHPUnit\Framework\TestCase;
 
-class AppJWTTest extends TestCase
+class AppJwtTest extends TestCase
 {
     use IntegrationSuite;
 

@@ -6,22 +6,26 @@ use DateTimeZone;
 use Univapay\Enums\ActiveFilter;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\ConvenienceStore;
+use Univapay\Enums\Gateway;
 use Univapay\Enums\InstallmentPlanType;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
 use Univapay\Enums\RefundReason;
 use Univapay\Enums\TokenType;
-use Univapay\Resources\InstallmentPlan;
-use Univapay\Resources\ScheduleSettings;
 use Univapay\Resources\PaymentData\Address;
 use Univapay\Resources\PaymentData\ConvenienceStoreData;
+use Univapay\Resources\PaymentData\CvvAuthorize;
 use Univapay\Resources\PaymentData\PhoneNumber;
 use Univapay\Resources\PaymentData\PaidyData;
 use Univapay\Resources\PaymentMethod\ApplePayPayment;
 use Univapay\Resources\PaymentMethod\CardPayment;
 use Univapay\Resources\PaymentMethod\ConvenienceStorePayment;
+use Univapay\Resources\PaymentMethod\OnlinePayment;
 use Univapay\Resources\PaymentMethod\PaidyPayment;
-use Univapay\Resources\PaymentMethod\QRScanPayment;
+use Univapay\Resources\PaymentMethod\QrMerchantPayment;
+use Univapay\Resources\PaymentMethod\QrScanPayment;
+use Univapay\Resources\Subscription\InstallmentPlan;
+use Univapay\Resources\Subscription\ScheduleSettings;
 use UnivapayTest\Integration\CardNumber;
 use Money\Money;
 
@@ -36,7 +40,8 @@ trait Requests
     public function createValidToken(
         PaymentType $paymentType = null,
         TokenType $type = null,
-        $cardNumber = null
+        $cardNumber = null,
+        CvvAuthorize $cvvAuth = null
     ) {
         $paymentType = isset($paymentType) ? $paymentType : PaymentType::CARD();
         $type = isset($type) ? $type : TokenType::ONE_TIME();
@@ -45,7 +50,7 @@ trait Requests
 
         switch ($paymentType) {
             case PaymentType::CARD():
-                $paymentMethod = $this->createCardPayment($type, $cardNumber);
+                $paymentMethod = $this->createCardPayment($type, $cardNumber, $cvvAuth);
                 break;
             case PaymentType::APPLE_PAY():
                 $paymentMethod = $this->createApplePayPayment($type, $cardNumber);
@@ -54,15 +59,21 @@ trait Requests
                 $paymentMethod = $this->createKonbiniPayment($type);
                 break;
             case PaymentType::QR_SCAN():
-                $paymentMethod = $this->createQRScanPayment();
+                $paymentMethod = $this->createQrScanPayment();
+                break;
+            case PaymentType::QR_MERCHANT():
+                $paymentMethod = $this->createQrMerchantPayment();
                 break;
             case PaymentType::PAIDY():
                 $paymentMethod = $this->createPaidyPayment($type);
+                break;
+            case PaymentType::ONLINE():
+                $paymentMethod = $this->createOnlinePayment($type);
         }
         return $this->getClient()->createToken($paymentMethod);
     }
 
-    public function createCardPayment(TokenType $type, $cardNumber = null)
+    public function createCardPayment(TokenType $type, $cardNumber = null, CvvAuthorize $cvvAuth = null)
     {
         $cardNumber = isset($cardNumber) ? $cardNumber : static::$SUCCESSFUL;
         return new CardPayment(
@@ -83,7 +94,8 @@ trait Requests
                 '101-1111'
             ),
             new PhoneNumber(PhoneNumber::JP, '12910298309128'),
-            ['customer_id' => 'PHP TEST']
+            ['customer_id' => 'PHP TEST'],
+            $cvvAuth
         );
     }
 
@@ -128,11 +140,29 @@ trait Requests
         );
     }
 
-    public function createQRScanPayment()
+    public function createQrScanPayment()
     {
-        return new QRScanPayment(
+        return new QrScanPayment(
             'test@test.com',
             '9000000100000000000000',
+            ['customer_id' => 'PHP TEST']
+        );
+    }
+
+    public function createQrMerchantPayment()
+    {
+        return new QrMerchantPayment(
+            'test@test.com',
+            Gateway::ALIPAY_MERCHANT_QR(),
+            ['customer_id' => 'PHP TEST']
+        );
+    }
+
+    public function createOnlinePayment()
+    {
+        return new OnlinePayment(
+            'test@test.com',
+            Gateway::ALIPAY_ONLINE(),
             ['customer_id' => 'PHP TEST']
         );
     }
@@ -166,16 +196,19 @@ trait Requests
         );
     }
 
-    public function createValidCharge($capture = null, $captureAt = null, $onlyDirectCurrency = null)
-    {
-        $capture = isset($capture) ? $capture : true;
-        $transactionToken = $this->createValidToken();
+    public function createValidCharge(
+        $capture = null,
+        $captureAt = null,
+        $onlyDirectCurrency = null,
+        PaymentType $paymentType = null,
+        TokenType $tokenType = null
+    ) {
+        $transactionToken = $this->createValidToken($paymentType, $tokenType);
         $charge = $this->getClient()->createCharge(
             $transactionToken->id,
             Money::JPY(1000),
             $capture,
             $captureAt,
-            null,
             null,
             $onlyDirectCurrency
         );
@@ -193,7 +226,7 @@ trait Requests
         )->awaitResult();
     }
 
-    public function createValidSubscription()
+    public function createValidSubscription($authorized = null, DateInterval $captureAfter = null)
     {
         $this->deactivateExistingSubscriptionToken();
         return $this
@@ -201,7 +234,13 @@ trait Requests
             ->createSubscription(
                 Money::JPY(10000),
                 Period::BIWEEKLY(),
-                Money::JPY(1000)
+                Money::JPY(1000),
+                null,
+                null,
+                null,
+                null,
+                $authorized,
+                $captureAfter
             )
             ->awaitResult();
     }

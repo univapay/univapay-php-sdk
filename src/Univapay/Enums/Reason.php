@@ -24,8 +24,12 @@ final class Reason extends TypedEnum
     
     // Transaction Tokens
     public static function RECURRING_TOKEN_NOT_ALLOWED() { return self::create(); }
+    public static function TRANSACTION_TOKEN_IS_NOT_RECURRING() { return self::create(); }
     public static function INVALID_PHONE_NUMBER() { return self::create(); }
     public static function ONLY_JAPANESE_PHONE_NUMBER_ALLOWED() { return self::create(); }
+
+    // Charges
+    public static function CAPTURE_ONLY_FOR_CARD_PAYMENT() { return self::create(); }
 
     // Subscriptions
     public static function NON_SUBSCRIPTION_PAYMENT() { return self::create(); }

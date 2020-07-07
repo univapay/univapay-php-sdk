@@ -1,6 +1,6 @@
 # Univapay PHP SDK
 
-[![CircleCI](https://circleci.com/gh/univapay/univapay-php-sdk/tree/develop.svg?style=svg)](https://circleci.com/gh/univapay/univapay-php-sdk/tree/develop)
+![Github Actions CI](https://github.com/univapay/univapay-php-sdk/workflows/PHP%20lint%20&%20test/badge.svg)
 
 This PHP SDK provides a convenient way to integrate your services with the Univapay payments gateway.
 
@@ -44,9 +44,9 @@ This SDK uses the `moneyphp` library to model amounts and currency. Please refer
 All currencies and amounts will be automatically converted to `Currency` and `Money` objects. Only formatted amounts (denoted by the `.*Formatted` key) will be in string form.
 
 ```php
-use Univapay\PaymentMethod\CardPayment;
 use Money\Currency;
 use Money\Money;
+use Univapay\PaymentMethod\CardPayment;
 
 $paymentMethod = new CardPayment(...);
 $charge = $client

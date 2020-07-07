@@ -4,6 +4,7 @@ namespace UnivapayTest\Integration;
 use DateTime;
 use Univapay\Enums\CancelStatus;
 use Univapay\Enums\ChargeStatus;
+use Univapay\Enums\PaymentType;
 use Univapay\Errors\UnivapayLogicError;
 use Univapay\Errors\UnivapayRequestError;
 use Money\Currency;
@@ -117,5 +118,24 @@ class ChargeTest extends TestCase
         
         $this->expectException(UnivapayRequestError::class);
         $charge->cancel();
+    }
+
+    public function testCreateQrMerchantCharge()
+    {
+        $charge = $this->createValidCharge(null, null, null, PaymentType::QR_MERCHANT());
+        $this->assertEquals(ChargeStatus::AWAITING(), $charge->status);
+        
+        $qrToken = $charge->qrMerchantToken();
+        $this->assertTrue($qrToken->ready);
+        $this->assertNotNull($qrToken->qrImageUrl);
+    }
+
+    public function testCreateOnlineCharge()
+    {
+        $charge = $this->createValidCharge(null, null, null, PaymentType::ONLINE());
+        $this->assertEquals(ChargeStatus::AWAITING(), $charge->status);
+        
+        $qrToken = $charge->onlineToken();
+        $this->assertNotNull($qrToken->issuerToken);
     }
 }

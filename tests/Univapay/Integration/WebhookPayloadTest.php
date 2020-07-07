@@ -32,6 +32,7 @@ class WebhookPayloadTest extends TestCase
              "someString":"abcdefg"
           },
           "mode":"test",
+          "type": "normal",
           "created_on":"2017-06-22T02:46:00.972639Z"
        }
     }

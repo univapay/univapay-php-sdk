@@ -2,6 +2,10 @@
 
 namespace Univapay\Resources;
 
+use DateInterval;
+use DateTime;
+use Money\Currency;
+use Money\Money;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\Field;
 use Univapay\Enums\InstallmentPlanType;
@@ -12,11 +16,13 @@ use Univapay\Errors\UnivapayLogicError;
 use Univapay\Errors\UnivapayValidationError;
 use Univapay\Resources\Mixins\GetCharges;
 use Univapay\Resources\Mixins\GetScheduledPayments;
+use Univapay\Resources\Subscription\InstallmentPlan;
+use Univapay\Resources\Subscription\ScheduledPayment;
+use Univapay\Resources\Subscription\ScheduleSettings;
+use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\RequesterUtils;
 use Univapay\Utility\Json\JsonSchema;
-use Money\Currency;
-use Money\Money;
 
 class Subscription extends Resource
 {
@@ -32,60 +38,66 @@ class Subscription extends Resource
     public $amount;
     public $amountFormatted;
     public $period;
-    public $initialAmount;
-    public $initialAmountFormatted;
     public $scheduleSettings;
     public $paymentsLeft;
-    public $amountLeft;
-    public $amountLeftFormatted;
     public $status;
     public $metadata;
     public $mode;
     public $createdOn;
+    public $amountLeft;
+    public $amountLeftFormatted;
+    public $initialAmount;
+    public $initialAmountFormatted;
     public $nextPayment;
     public $installmentPlan;
+    public $firstChargeAuthorizationOnly;
+    public $firstChargeCaptureAfter;
 
     public function __construct(
         $id,
         $storeId,
         $transactionTokenId,
-        $currency,
-        $amount,
+        Currency $currency,
+        Money $amount,
         $amountFormatted,
-        $period,
-        $initialAmount,
-        $initialAmountFormatted,
+        Period $period,
         ScheduleSettings $scheduleSettings,
         $paymentsLeft,
-        $amountLeft,
-        $amountLeftFormatted,
-        $status,
+        SubscriptionStatus $status,
         $metadata,
-        $mode,
-        $createdOn,
+        AppTokenMode $mode,
+        DateTime $createdOn,
+        Money $amountLeft = null,
+        $amountLeftFormatted,
+        Money $initialAmount = null,
+        $initialAmountFormatted = null,
         ScheduledPayment $nextPayment = null,
         InstallmentPlan $installmentPlan = null,
+        $firstChargeAuthorizationOnly = null,
+        DateInterval $firstChargeCaptureAfter = null,
         $context = null
     ) {
         parent::__construct($id, $context);
         $this->storeId = $storeId;
         $this->transactionTokenId = $transactionTokenId;
-        $this->currency = new Currency($currency);
-        $this->amount = new Money($amount, $this->currency);
+        $this->currency = $currency;
+        $this->amount = $amount;
         $this->amountFormatted = $amountFormatted;
-        $this->period = Period::fromValue($period);
-        $this->initialAmount = isset($initialAmount) ? new Money($initialAmount, $this->currency) : null;
+        $this->period = $period;
+        $this->initialAmount = $initialAmount;
         $this->initialAmountFormatted = $initialAmountFormatted;
         $this->scheduleSettings = $scheduleSettings;
         $this->nextPayment = $nextPayment;
         $this->paymentsLeft = $paymentsLeft;
-        $this->amountLeft = isset($amountLeft) ? new Money($amountLeft, $this->currency) : null;
+        $this->amountLeft = $amountLeft;
         $this->amountLeftFormatted = $amountLeftFormatted;
-        $this->status = SubscriptionStatus::fromValue($status);
+        $this->status = $status;
         $this->metadata = $metadata;
-        $this->mode = AppTokenMode::fromValue($mode);
-        $this->createdOn = date_create($createdOn);
+        $this->mode = $mode;
+        $this->createdOn = $createdOn;
         $this->installmentPlan = $installmentPlan;
+        $this->firstChargeAuthorizationOnly = $firstChargeAuthorizationOnly;
+        $this->firstChargeCaptureAfter = $firstChargeCaptureAfter;
     }
 
     public function patch(
@@ -225,8 +237,17 @@ class Subscription extends Resource
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
+            ->upsert('currency', true, FormatterUtils::of('getCurrency'))
+            ->upsert('amount', true, FormatterUtils::getMoney('currency'))
+            ->upsert('period', true, FormatterUtils::getTypedEnum(Period::class))
+            ->upsert('initial_amount', false, FormatterUtils::getMoney('currency'))
             ->upsert('schedule_settings', true, ScheduleSettings::getSchema()->getParser())
+            ->upsert('amount_left', false, FormatterUtils::getMoney('currency'))
+            ->upsert('status', true, FormatterUtils::getTypedEnum(SubscriptionStatus::class))
+            ->upsert('mode', true, FormatterUtils::getTypedEnum(AppTokenMode::class))
+            ->upsert('created_on', true, FormatterUtils::of('getDateTime'))
             ->upsert('next_payment', false, ScheduledPayment::getSchema()->getParser())
-            ->upsert('installment_plan', false, InstallmentPlan::getSchema()->getParser());
+            ->upsert('installment_plan', false, InstallmentPlan::getSchema()->getParser())
+            ->upsert('first_charge_capture_after', false, FormatterUtils::of('getDateInterval'));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Univapay\Resources;
 
+use DateInterval;
 use DateTime;
 use DateTimeZone;
 use Univapay\Enums\AppTokenMode;
@@ -17,9 +18,15 @@ use Univapay\Errors\UnivapayValidationError;
 use Univapay\Resources\Mixins\GetTransactionTokens;
 use Univapay\Resources\PaymentData\CardData;
 use Univapay\Resources\PaymentData\ConvenienceStoreData;
+use Univapay\Resources\PaymentData\OnlineData;
 use Univapay\Resources\PaymentData\PaidyData;
-use Univapay\Resources\PaymentData\QRScanData;
+use Univapay\Resources\PaymentData\QrMerchantData;
+use Univapay\Resources\PaymentData\QrScanData;
 use Univapay\Resources\PaymentMethod\PaymentMethodPatch;
+use Univapay\Resources\Subscription\InstallmentPlan;
+use Univapay\Resources\Subscription\ScheduleSettings;
+use Univapay\Utility\DateUtils;
+use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\RequesterUtils;
 use Univapay\Utility\Json\JsonSchema;
@@ -35,41 +42,41 @@ class TransactionToken extends Resource
     public $paymentType;
     public $mode;
     public $type;
-    public $usageLimit;
     public $confirmed;
-    public $metadata;
     public $createdOn;
-    public $lastUsedOn;
     public $data;
+    public $metadata;
+    public $usageLimit;
+    public $lastUsedOn;
 
     public function __construct(
         $id,
         $storeId,
         $email,
         $active,
-        $paymentType,
-        $mode,
-        $type,
-        $usageLimit,
+        PaymentType $paymentType,
+        AppTokenMode $mode,
+        TokenType $type,
         $confirmed,
-        $metadata,
-        $createdOn,
-        $lastUsedOn,
+        DateTime $createdOn,
         $data,
-        $context
+        $metadata = null,
+        UsageLimit $usageLimit = null,
+        DateTime $lastUsedOn = null,
+        $context = null
     ) {
         parent::__construct($id, $context);
         $this->email = $email;
         $this->active = $active;
         $this->storeId = $storeId;
-        $this->paymentType = PaymentType::fromValue($paymentType);
-        $this->mode = AppTokenMode::fromValue($mode);
-        $this->type = TokenType::fromValue($type);
-        $this->usageLimit = UsageLimit::fromValue($usageLimit);
+        $this->paymentType = $paymentType;
+        $this->mode = $mode;
+        $this->type = $type;
         $this->confirmed = $confirmed;
         $this->metadata = $metadata;
-        $this->createdOn = date_create($createdOn);
-        $this->lastUsedOn = isset($lastUsedOn) ? date_create($lastUsedOn) : null;
+        $this->createdOn = $createdOn;
+        $this->usageLimit = $usageLimit;
+        $this->lastUsedOn = $lastUsedOn;
         // The payment data may not be available when retrieving from a list. Triggering a ->fetch() will fix this
         $this->data = $data;
     }
@@ -77,6 +84,12 @@ class TransactionToken extends Resource
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
+            ->upsert('payment_type', true, FormatterUtils::getTypedEnum(PaymentType::class))
+            ->upsert('mode', true, FormatterUtils::getTypedEnum(AppTokenMode::class))
+            ->upsert('type', true, FormatterUtils::getTypedEnum(TokenType::class))
+            ->upsert('created_on', true, FormatterUtils::of('getDateTime'))
+            ->upsert('usage_limit', false, FormatterUtils::getTypedEnum(UsageLimit::class))
+            ->upsert('last_used_on', false, FormatterUtils::of('getDateTime'))
             ->upsert('data', false, function ($value, $json) {
                 $paymentType = PaymentType::fromValue($json['payment_type']);
                 switch ($paymentType) {
@@ -86,9 +99,13 @@ class TransactionToken extends Resource
                     case PaymentType::KONBINI():
                         return ConvenienceStoreData::getSchema()->parse($value);
                     case PaymentType::QR_SCAN():
-                        return QRScanData::getSchema()->parse($value);
+                        return QrScanData::getSchema()->parse($value);
+                    case PaymentType::QR_MERCHANT():
+                        return QrMerchantData::getSchema()->parse($value);
                     case PaymentType::PAIDY():
                         return PaidyData::getSchema()->parse($value);
+                    case PaymentType::ONLINE():
+                        return OnlineData::getSchema()->parse($value);
                 }
             });
     }
@@ -113,24 +130,26 @@ class TransactionToken extends Resource
         $capture = null,
         DateTime $captureAt = null,
         array $metadata = null,
-        $descriptor = null,
         $onlyDirectCurrency = null
     ) {
         if ($this->type === TokenType::SUBSCRIPTION()) {
             throw new UnivapayLogicError(Reason::NON_SUBSCRIPTION_PAYMENT());
         }
-        if (isset($captureAt) && ($captureAt < date_create('+1 hour') || $captureAt > date_create('+7 days'))) {
-            throw new UnivapayLogicError(Reason::INVALID_SCHEDULED_CAPTURE_DATE());
-        }
+        $this->validateCapture($capture, $captureAt);
 
         $payload = $money->jsonSerialize() + [
             'transaction_token_id' => $this->id,
-            'capture' => $capture,
-            'capture_at' => isset($captureAt) ? $captureAt->format(DateTime::ATOM) : null,
-            'only_direct_currency' => isset($onlyDirectCurrency) ? 'true' : 'false',
-            'descriptor' => $descriptor,
             'metadata' => $metadata
-        ];
+        ] + (isset($capture)
+            ? ['capture' => $capture]
+            : []
+        ) + (isset($captureAt)
+            ? ['capture_at' => $captureAt->format(DateTime::ATOM)]
+            : []
+        ) + (isset($onlyDirectCurrency)
+            ? ['only_direct_currency' => $onlyDirectCurrency]
+            : []
+        );
 
         $context = $this->context->withPath('charges');
         return RequesterUtils::executePost(Charge::class, $context, FunctionalUtils::stripNulls($payload));
@@ -142,7 +161,10 @@ class TransactionToken extends Resource
         Money $initialAmount = null,
         ScheduleSettings $scheduleSettings = null,
         InstallmentPlan $installmentPlan = null,
-        array $metadata = null
+        array $metadata = null,
+        $onlyDirectCurrency = null,
+        $firstChargeAuthorizationOnly = null,
+        DateInterval $firstChargeCaptureAfter = null
     ) {
         if ($this->type !== TokenType::SUBSCRIPTION()) {
             throw new UnivapayLogicError(Reason::NOT_SUBSCRIPTION_PAYMENT());
@@ -158,6 +180,7 @@ class TransactionToken extends Resource
         Period::MONTHLY() !== $period) {
             throw new UnivapayValidationError(Field::PRESERVE_END_OF_MONTH(), Reason::MUST_BE_MONTH_BASE_TO_SET());
         }
+        $this->validateCapture($firstChargeAuthorizationOnly, null, $firstChargeCaptureAfter);
         
         $payload = $money->jsonSerialize() + [
             'transaction_token_id' => $this->id,
@@ -165,10 +188,41 @@ class TransactionToken extends Resource
             'initial_amount' => isset($initialAmount) ? $initialAmount->getAmount() : null,
             'schedule_settings' => $scheduleSettings,
             'installment_plan' => $installmentPlan,
-            'metadata' => $metadata
-        ];
+            'metadata' => $metadata,
+        ] + (isset($firstChargeAuthorizationOnly)
+            ? ['first_charge_authorization_only' => $firstChargeAuthorizationOnly]
+            : []
+        ) + (isset($firstChargeCaptureAfter)
+            ? ['first_charge_capture_after' => DateUtils::asPeriodString($firstChargeCaptureAfter)]
+            : []
+        ) + (isset($onlyDirectCurrency)
+            ? ['only_direct_currency' => $onlyDirectCurrency]
+            : []
+        );
 
         $context = $this->context->withPath('subscriptions');
         return RequesterUtils::executePost(Subscription::class, $context, FunctionalUtils::stripNulls($payload));
+    }
+
+    private function validateCapture(
+        $capture = null,
+        DateTime $captureAtAbsolute = null,
+        DateInterval $captureAtRelative = null
+    ) {
+        if (isset($captureAtRelative)) {
+            $captureAtAbsolute = date_create()->add($captureAtRelative);
+        }
+        if (isset($captureAtAbsolute)) {
+            if ($captureAtAbsolute < date_create('+1 hour') || $captureAtAbsolute > date_create('+7 days')) {
+                throw new UnivapayLogicError(Reason::INVALID_SCHEDULED_CAPTURE_DATE());
+            }
+        }
+        if (isset($capture)) {
+            if ($this->paymentType !== PaymentType::CARD() &&
+                $this->paymentType !== PaymentType::APPLE_PAY() &&
+                $this->paymentType !== PaymentType::PAIDY()) {
+                throw new UnivapayLogicError(Reason::CAPTURE_ONLY_FOR_CARD_PAYMENT());
+            }
+        }
     }
 }
