@@ -135,7 +135,8 @@ class ChargeTest extends TestCase
         $charge = $this->createValidCharge(null, null, null, PaymentType::ONLINE());
         $this->assertEquals(ChargeStatus::AWAITING(), $charge->status);
         
-        $qrToken = $charge->onlineToken();
-        $this->assertNotNull($qrToken->issuerToken);
+        $onlineToken = $charge->onlineToken();
+        $this->assertNotNull($onlineToken->issuerToken);
+        $this->assertNotNull($onlineToken->callMethod);
     }
 }
