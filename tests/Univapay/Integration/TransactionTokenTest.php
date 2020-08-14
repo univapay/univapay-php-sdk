@@ -51,7 +51,7 @@ class TransactionTokenTest extends TestCase
         $this->assertTrue($transactionToken->data->cvvAuthorize->enabled);
         $this->assertNull($transactionToken->data->cvvAuthorize->currency);
         $this->assertEquals(CvvAuthorizationStatus::PENDING(), $transactionToken->data->cvvAuthorize->status);
-        sleep(3);
+        sleep(5);
         
         $transactionToken = $transactionToken->fetch();
         $this->assertEquals('test@test.com', $transactionToken->email);
@@ -81,7 +81,7 @@ class TransactionTokenTest extends TestCase
         $this->assertTrue($transactionToken->data->cvvAuthorize->enabled);
         $this->assertEquals(new Currency("USD"), $transactionToken->data->cvvAuthorize->currency);
         $this->assertEquals(CvvAuthorizationStatus::PENDING(), $transactionToken->data->cvvAuthorize->status);
-        sleep(3);
+        sleep(5);
         
         $transactionToken = $transactionToken->fetch();
         $this->assertEquals('test@test.com', $transactionToken->email);
