@@ -93,7 +93,7 @@ The following resources supports long polling to wait for the next status change
 - `Cancel`
 - `Subscription`
 
-This is useful since these requests initially returns with a `PENDING` status. Long polling allows you to fetch the updated model when the resource has changed its status. If no changes occurs within 5 seconds, it will return the resource at that state.
+This is useful since these requests initially returns with a `PENDING` status. Long polling allows you to fetch the updated model when the resource has changed its status. If no changes occurs within 3 seconds, it will return the resource at that state.
 
 ```php
 $charge = $client
@@ -183,4 +183,4 @@ The following env vars are required when running the tests:
 ```shell
 grunt phpunit
 ```
-_Note: CircleCI only runs on branches that has an open PR_
+_Note: Github Actions only runs on branches that has an open PR_
