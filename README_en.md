@@ -4,6 +4,8 @@
 
 This PHP SDK provides a convenient way to integrate your services with the UnivaPay payments gateway.
 
+*[日本語](README.md)*
+
 ## Requirements
 
 - PHP >= 5.6
