@@ -8,8 +8,10 @@ use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\ConvenienceStore;
 use Univapay\Enums\CvvAuthorizationStatus;
 use Univapay\Enums\Gateway;
+use Univapay\Enums\OnlineBrand;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\QrBrand;
+use Univapay\Enums\QrBrandMerchant;
 use Univapay\Enums\TokenType;
 use Univapay\Errors\UnivapayRequestError;
 use Univapay\Resources\PaymentData\CvvAuthorize;
@@ -156,7 +158,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals(PaymentType::QR_MERCHANT(), $transactionToken->paymentType);
         $this->assertNull($transactionToken->confirmed);
-        $this->assertEquals(Gateway::ALIPAY_MERCHANT_QR(), $transactionToken->data->gateway);
+        $this->assertEquals(QrBrandMerchant::ALIPAY_MERCHANT_QR(), $transactionToken->data->brand);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
     }
 
@@ -183,7 +185,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals(PaymentType::ONLINE(), $transactionToken->paymentType);
         $this->assertNull($transactionToken->confirmed);
-        $this->assertEquals(Gateway::ALIPAY_ONLINE(), $transactionToken->data->gateway);
+        $this->assertEquals(OnlineBrand::ALIPAY_ONLINE(), $transactionToken->data->brand);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
     }
 

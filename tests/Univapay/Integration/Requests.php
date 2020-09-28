@@ -8,8 +8,10 @@ use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\ConvenienceStore;
 use Univapay\Enums\Gateway;
 use Univapay\Enums\InstallmentPlanType;
+use Univapay\Enums\OnlineBrand;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
+use Univapay\Enums\QrBrandMerchant;
 use Univapay\Enums\RefundReason;
 use Univapay\Enums\TokenType;
 use Univapay\Resources\PaymentData\Address;
@@ -153,7 +155,7 @@ trait Requests
     {
         return new QrMerchantPayment(
             'test@test.com',
-            Gateway::ALIPAY_MERCHANT_QR(),
+            QrBrandMerchant::ALIPAY_MERCHANT_QR(),
             ['customer_id' => 'PHP TEST']
         );
     }
@@ -162,7 +164,7 @@ trait Requests
     {
         return new OnlinePayment(
             'test@test.com',
-            Gateway::ALIPAY_ONLINE(),
+            OnlineBrand::ALIPAY_ONLINE(),
             ['customer_id' => 'PHP TEST']
         );
     }
