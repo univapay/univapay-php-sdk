@@ -22,9 +22,9 @@ composer require univapay/php-sdk
 ## Usage
 
 ```php
-use UnivapayUnivapayClient;
-use UnivapayUnivapayClientOptions;
-use UnivapayRequestsHandlersRateLimitHandler;
+use Univapay\Univapay\Client;
+use Univapay\UnivapayClientOptions;
+use Univapay\RequestsHandlers\RateLimitHandler;
 
 $client = new UnivapayClient(AppJWT::createToken('token', 'secret'));
 
@@ -46,9 +46,9 @@ This SDK uses the `moneyphp` library to model amounts and currency. Please refer
 All currencies and amounts will be automatically converted to `Currency` and `Money` objects. Only formatted amounts (denoted by the `.*Formatted` key) will be in string form.
 
 ```php
-use MoneyCurrency;
-use MoneyMoney;
-use UnivapayPaymentMethodCardPayment;
+use Money\Currency;
+use Money\Money;
+use Univapay\PaymentMethod\CardPayment;
 
 $paymentMethod = new CardPayment(...);
 $charge = $client
@@ -61,12 +61,12 @@ $charge->requestAmount === new Money(1000, $charge->currency); // true
 
 ### Enumerators
 
-As PHP has no native built in enumeration support, we provide a class called `TypedEnum` to provide type safety when working with enumerators. Each enumerator class is final and extends `TypedEnum` to provide static functions that operate similarly to enumerators in other languages like Java. A enum classes can be found in the `UnivapayEnums` namespace.
+As PHP has no native built in enumeration support, we provide a class called `TypedEnum` to provide type safety when working with enumerators. Each enumerator class is final and extends `TypedEnum` to provide static functions that operate similarly to enumerators in other languages like Java. Enum classes can be found in the `Univapay\Enums` namespace.
 
 _By default, if the value is not specified during creation, it will be snake-cased from the name_
 
 ```php
-use UnivapayEnumsChargeStatus;
+use Univapay\Enums\ChargeStatus;
 
 $values = ChargeStatus::findValues(); // Get a list of all names and values in the enumerator
 $chargeStatus = ChargeStatus::PENDING(); // Note the braces at the end
@@ -109,7 +109,7 @@ All list functions in the SDK returns as a `Paginated` object in descending orde
 
 ```php
 use InvalidArgumentException;
-use UnivapayEnumsCursorDirection;
+use Univapay\Enums\CursorDirection;
 
 try {
     $transactionList = $client->listTransactionsByOptions([
@@ -136,18 +136,20 @@ $firstTenItems = $client->listTransactionsByOptions([
 
 ### Request/Response Handlers
 
-For advance use cases that require additional modification or reaction to responses prior to parsing the data into objects. The SDK provides a `RateLimitHandler` that throttles requests based on back pressure from the API (this is implemented by default in `UnivapayClientOptions->rateLimitHandler`). In addition, a `BasicRetryHandler` is also provided to catch and filter certain exceptions for retry. To specify an exception to catch:
+This is mostly for advance use cases that require additional modification or reaction to responses prior to parsing the data into objects.
+
+The SDK also provides a `RateLimitHandler` that throttles requests based on back pressure from the API (this is implemented by default in `UnivapayClientOptions->rateLimitHandler`). In addition, a `BasicRetryHandler` is also provided to catch and filter certain exceptions for automatic retry handling. To specify an exception to catch:
 
 ```php
-use UnivapayRequestsHandlersBasicRetryHandler;
+use Univapay\RequestsHandlers\BasicRetryHandler;
 
 $subscriptionTokenRetryHandler = new BasicRetryHandler(
-    UnivapayResourceConflictError::class,
+    UnivapayResourceConflictError::class, // Exception to match
     5, // Tries 5 times
     2, // At 2 seconds interval
     // More specific filtering based on the error, takes in the error as the first parameter
     // return true to retry, false to ignore.
-    function (UnivapayResourceConflictError $error) {
+    function (UnivapayResourceConflictError $error) { // Closure takes one parameter and must match the declared Exception class
         return $error->code === 'NON_UNIQUE_ACTIVE_TOKEN';
     }
 );
@@ -159,6 +161,8 @@ $client->setHandlers($subscriptionTokenRetryHandler);
 ```
 
 ## SDK Development
+
+This is only required when doing development on the SDK. There is no need to execute these steps for normal SDK usage.
 
 Building:
 ```shell
