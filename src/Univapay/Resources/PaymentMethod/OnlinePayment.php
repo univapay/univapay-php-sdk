@@ -18,9 +18,10 @@ class OnlinePayment extends PaymentMethod implements JsonSerializable
     public function __construct(
         $email,
         OnlineBrand $brand,
-        array $metadata = null
+        array $metadata = null,
+        $ipAddress = null
     ) {
-        parent::__construct(PaymentType::ONLINE(), null, $email, null, $metadata);
+        parent::__construct(PaymentType::ONLINE(), null, $email, $ipAddress, null, $metadata);
         $this->brand = $brand;
     }
 

@@ -22,7 +22,8 @@ class ConvenienceStorePayment extends PaymentMethod implements JsonSerializable
         ConvenienceStoreData $convenienceStoreData,
         TokenType $type = null,
         UsageLimit $usageLimit = null,
-        array $metadata = null
+        array $metadata = null,
+        $ipAddress = null
     ) {
         if ($convenienceStoreData->phoneNumber->countryCode != PhoneNumber::JP) {
             throw new UnivapayValidationError(
@@ -38,7 +39,7 @@ class ConvenienceStorePayment extends PaymentMethod implements JsonSerializable
             );
         }
 
-        parent::__construct(PaymentType::KONBINI(), $type, $email, $usageLimit, $metadata);
+        parent::__construct(PaymentType::KONBINI(), $type, $email, $ipAddress, $usageLimit, $metadata);
         $this->convenienceStoreData = $convenienceStoreData;
     }
 

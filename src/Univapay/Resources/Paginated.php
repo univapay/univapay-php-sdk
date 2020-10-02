@@ -5,6 +5,7 @@ namespace Univapay\Resources;
 use Univapay\Errors\UnivapayNoMoreItemsError;
 use Univapay\Requests\RequestContext;
 use Univapay\Requests\Requester;
+use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils as fp;
 use Univapay\Utility\RequesterUtils;
 
@@ -52,7 +53,7 @@ class Paginated
     ) {
         $parser = $jsonableClass::getContextParser($context);
         return new Paginated(
-            array_map($parser, $response['items']),
+            call_user_func(FormatterUtils::getListOf($parser), $response['items'], $response, $response),
             $response['has_more'],
             $query,
             $jsonableClass,

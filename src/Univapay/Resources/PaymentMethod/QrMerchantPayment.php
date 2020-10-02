@@ -19,9 +19,10 @@ class QrMerchantPayment extends PaymentMethod implements JsonSerializable
     public function __construct(
         $email,
         QrBrandMerchant $brand,
-        array $metadata = null
+        array $metadata = null,
+        $ipAddress = null
     ) {
-        parent::__construct(PaymentType::QR_MERCHANT(), null, $email, null, $metadata);
+        parent::__construct(PaymentType::QR_MERCHANT(), null, $email, $ipAddress, null, $metadata);
         $this->brand = $brand;
     }
 

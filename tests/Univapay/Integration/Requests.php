@@ -43,7 +43,8 @@ trait Requests
         PaymentType $paymentType = null,
         TokenType $type = null,
         $cardNumber = null,
-        CvvAuthorize $cvvAuth = null
+        CvvAuthorize $cvvAuth = null,
+        $ipAddress = null
     ) {
         $paymentType = isset($paymentType) ? $paymentType : PaymentType::CARD();
         $type = isset($type) ? $type : TokenType::ONE_TIME();
@@ -52,7 +53,7 @@ trait Requests
 
         switch ($paymentType) {
             case PaymentType::CARD():
-                $paymentMethod = $this->createCardPayment($type, $cardNumber, $cvvAuth);
+                $paymentMethod = $this->createCardPayment($type, $cardNumber, $cvvAuth, $ipAddress);
                 break;
             case PaymentType::APPLE_PAY():
                 $paymentMethod = $this->createApplePayPayment($type, $cardNumber);
@@ -75,8 +76,12 @@ trait Requests
         return $this->getClient()->createToken($paymentMethod);
     }
 
-    public function createCardPayment(TokenType $type, $cardNumber = null, CvvAuthorize $cvvAuth = null)
-    {
+    public function createCardPayment(
+        TokenType $type,
+        $cardNumber = null,
+        CvvAuthorize $cvvAuth = null,
+        $ipAddress = null
+    ) {
         $cardNumber = isset($cardNumber) ? $cardNumber : static::$SUCCESSFUL;
         return new CardPayment(
             'test@test.com',
@@ -97,7 +102,8 @@ trait Requests
             ),
             new PhoneNumber(PhoneNumber::JP, '12910298309128'),
             ['customer_id' => 'PHP TEST'],
-            $cvvAuth
+            $cvvAuth,
+            $ipAddress
         );
     }
 
