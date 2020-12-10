@@ -39,7 +39,6 @@ class Charge extends Resource
     public $requestedAmountFormatted;
     public $status;
     public $mode;
-    public $type;
     public $createdOn;
     public $chargedCurrency;
     public $chargedAmount;
@@ -60,7 +59,6 @@ class Charge extends Resource
         $requestedAmountFormatted,
         ChargeStatus $status,
         AppTokenMode $mode,
-        ChargeType $type,
         DateTime $createdOn,
         Currency $chargedCurrency = null,
         Money $chargedAmount = null,
@@ -88,7 +86,6 @@ class Charge extends Resource
         $this->error = $error;
         $this->metadata = $metadata;
         $this->mode = $mode;
-        $this->type = $type;
         $this->createdOn = $createdOn;
     }
 
@@ -103,7 +100,6 @@ class Charge extends Resource
             ->upsert('capture_at', false, FormatterUtils::of('getDateTime'))
             ->upsert('status', true, FormatterUtils::getTypedEnum(ChargeStatus::class))
             ->upsert('mode', true, FormatterUtils::getTypedEnum(AppTokenMode::class))
-            ->upsert('type', true, FormatterUtils::getTypedEnum(ChargeType::class))
             ->upsert('created_on', true, FormatterUtils::of('getDateTime'));
     }
 
