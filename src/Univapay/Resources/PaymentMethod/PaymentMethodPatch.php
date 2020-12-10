@@ -6,7 +6,7 @@ use JsonSerializable;
 
 class PaymentMethodPatch implements JsonSerializable
 {
-    public $email;
+    private $email;
     public $metadata;
 
     public function __construct($email = null, array $metadata = null)

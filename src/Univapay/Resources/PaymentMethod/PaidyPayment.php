@@ -22,7 +22,8 @@ class PaidyPayment extends PaymentMethod implements JsonSerializable
         $email = null,
         TokenType $type = null,
         UsageLimit $usageLimit = null,
-        array $metadata = null
+        array $metadata = null,
+        $ipAddress = null
     ) {
         if (isset($paidyData->phoneNumber) && $paidyData->phoneNumber->countryCode != PhoneNumber::JP) {
             throw new UnivapayValidationError(
@@ -38,7 +39,7 @@ class PaidyPayment extends PaymentMethod implements JsonSerializable
             );
         }
 
-        parent::__construct(PaymentType::PAIDY(), $type, $email, $usageLimit, $metadata);
+        parent::__construct(PaymentType::PAIDY(), $type, $email, $ipAddress, $usageLimit, $metadata);
         $this->paidyData = $paidyData;
     }
 

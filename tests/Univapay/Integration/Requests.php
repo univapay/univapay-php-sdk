@@ -8,8 +8,10 @@ use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\ConvenienceStore;
 use Univapay\Enums\Gateway;
 use Univapay\Enums\InstallmentPlanType;
+use Univapay\Enums\OnlineBrand;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
+use Univapay\Enums\QrBrandMerchant;
 use Univapay\Enums\RefundReason;
 use Univapay\Enums\TokenType;
 use Univapay\Resources\PaymentData\Address;
@@ -41,7 +43,8 @@ trait Requests
         PaymentType $paymentType = null,
         TokenType $type = null,
         $cardNumber = null,
-        CvvAuthorize $cvvAuth = null
+        CvvAuthorize $cvvAuth = null,
+        $ipAddress = null
     ) {
         $paymentType = isset($paymentType) ? $paymentType : PaymentType::CARD();
         $type = isset($type) ? $type : TokenType::ONE_TIME();
@@ -50,7 +53,7 @@ trait Requests
 
         switch ($paymentType) {
             case PaymentType::CARD():
-                $paymentMethod = $this->createCardPayment($type, $cardNumber, $cvvAuth);
+                $paymentMethod = $this->createCardPayment($type, $cardNumber, $cvvAuth, $ipAddress);
                 break;
             case PaymentType::APPLE_PAY():
                 $paymentMethod = $this->createApplePayPayment($type, $cardNumber);
@@ -73,8 +76,12 @@ trait Requests
         return $this->getClient()->createToken($paymentMethod);
     }
 
-    public function createCardPayment(TokenType $type, $cardNumber = null, CvvAuthorize $cvvAuth = null)
-    {
+    public function createCardPayment(
+        TokenType $type,
+        $cardNumber = null,
+        CvvAuthorize $cvvAuth = null,
+        $ipAddress = null
+    ) {
         $cardNumber = isset($cardNumber) ? $cardNumber : static::$SUCCESSFUL;
         return new CardPayment(
             'test@test.com',
@@ -95,7 +102,8 @@ trait Requests
             ),
             new PhoneNumber(PhoneNumber::JP, '12910298309128'),
             ['customer_id' => 'PHP TEST'],
-            $cvvAuth
+            $cvvAuth,
+            $ipAddress
         );
     }
 
@@ -153,7 +161,7 @@ trait Requests
     {
         return new QrMerchantPayment(
             'test@test.com',
-            Gateway::ALIPAY_MERCHANT_QR(),
+            QrBrandMerchant::ALIPAY_MERCHANT_QR(),
             ['customer_id' => 'PHP TEST']
         );
     }
@@ -162,7 +170,7 @@ trait Requests
     {
         return new OnlinePayment(
             'test@test.com',
-            Gateway::ALIPAY_ONLINE(),
+            OnlineBrand::ALIPAY_ONLINE(),
             ['customer_id' => 'PHP TEST']
         );
     }

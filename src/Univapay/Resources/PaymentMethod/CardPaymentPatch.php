@@ -6,7 +6,7 @@ use JsonSerializable;
 
 class CardPaymentPatch extends PaymentMethodPatch implements JsonSerializable
 {
-    public $cvv;
+    private $cvv;
 
     public function __construct($cvv, $email = null, array $metadata = null)
     {

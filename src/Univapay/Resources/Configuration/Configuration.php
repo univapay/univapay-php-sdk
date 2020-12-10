@@ -90,7 +90,7 @@ class Configuration
                 ->upsert(
                     'qr_scan_configuration',
                     true,
-                    $formatter = QrConfiguration::getSchema()->getParser()
+                    $formatter = QrScanConfiguration::getSchema()->getParser()
                 )
                 ->upsert(
                     'convenience_configuration',

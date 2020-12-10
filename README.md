@@ -1,23 +1,25 @@
-# Univapay PHP SDK
+# UnivaPay PHP SDK
 
 ![Github Actions CI](https://github.com/univapay/univapay-php-sdk/workflows/PHP%20lint%20&%20test/badge.svg)
 
-This PHP SDK provides a convenient way to integrate your services with the Univapay payments gateway.
+UnivaPay PHP SDKは、UnivaPay決済ゲートウェイと連携する便利なメソッドを提供します。
 
-## Requirements
+*[English](README_en.md)*
 
-- PHP >= 5.6
+## 必要なもの
+
+- PHP 5.6以上
 - Composer
 - npm (dev only)
-- Univapay store application token _and/or_ merchant application token
+- UnivaPayのストアアプリケーショントークンまたはマーチャントアプリケーショントークン
 
-## Installation
+## インストール
 
 ```shell
 composer require univapay/php-sdk
 ```
 
-## Usage
+## 利用方法
 
 ```php
 use Univapay\UnivapayClient;
@@ -26,22 +28,23 @@ use Univapay\Requests\Handlers\RateLimitHandler;
 
 $client = new UnivapayClient(AppJWT::createToken('token', 'secret'));
 
-// For more options, create and modify the client options object before instantiating the client
-// See UnivapayClientOptions for full options list
+// その他のオプションは、クライアントをインスタンス化する前にクライアントオプションオブジェクトを作成および変更します
+// すべてのオプションについては、UnivapayClientOptionsを参照してください
 $clientOptions = new UnivapayClientOptions();
 $clientOptions->rateLimitHandler = new RateLimitHandler(5, 2);
 $client = new UnivapayClient(AppJWT::createToken('token', 'secret'), $clientOptions);
 
-// See the examples folder for usage examples
+// 使用例については、examplesフォルダを参照してください
 ```
 
-### Application Tokens
+### アプリケーショントークン
 
-Both store and merchant type application tokens are supported by this SDK. Apart from creating transaction tokens and charges which require a store type token, all other features are supported by both token types.
+このSDKでは、ストアタイプとマーチャントタイプの両方のアプリケーショントークンがサポートされています。 ストアタイプトークンを必要とするトランザクショントークンや課金の作成以外のすべての機能は、両方のトークンタイプでサポートされています。
 
-### Money models
-This SDK uses the `moneyphp` library to model amounts and currency. Please refer to the [documentation](http://moneyphp.org/en/latest/index.html) for more details.
-All currencies and amounts will be automatically converted to `Currency` and `Money` objects. Only formatted amounts (denoted by the `.*Formatted` key) will be in string form.
+### 通貨モデル
+このSDKは`moneyphp`ライブラリを使用して金額と通貨をモデル化します。詳細は、[ドキュメント](http://moneyphp.org/en/latest/index.html)を参照してください。
+
+すべての通貨と金額は自動的に`Currency`と`Money`オブジェクトに変換されます。フォーマットされた金額（`.*Formatted`キーで示される）のみがString形式になります。
 
 ```php
 use Money\Currency;
@@ -57,20 +60,20 @@ $charge->currency === new Currency('USD'); // true
 $charge->requestAmount === new Money(1000, $charge->currency); // true
 ```
 
-### Enumerators
+### 列挙型
 
-As PHP has no native built in enumeration support, we provide a class called `TypedEnum` to provide type safety when working with enumerators. Each enumerator class is final and extends `TypedEnum` to provide static functions that operate similarly to enumerators in other languages like Java. A enum classes can be found in the `Univapay\Enums` namespace.
+PHPにはネイティブの組み込み列挙型サポートがないため、列挙子を操作するときに型の安全性を提供するために、`TypedEnum`というクラスを提供します。各列挙子クラスは最終版であり、 `TypedEnum`を拡張して、Javaなどの他の言語の列挙子と同様に動作する静的関数を提供します。列挙型クラスは、`Univapay\Enums`という名前空間にあります。
 
-_By default, if the value is not specified during creation, it will be snake-cased from the name_
+_デフォルトでは、作成時に値が指定されていない場合、スネークケースになります。_
 
 ```php
 use Univapay\Enums\ChargeStatus;
 
-$values = ChargeStatus::findValues(); // Get a list of all names and values in the enumerator
-$chargeStatus = ChargeStatus::PENDING(); // Note the braces at the end
+$values = ChargeStatus::findValues(); // 列挙子のすべての名前と値のリストを取得する
+$chargeStatus = ChargeStatus::PENDING(); // 最後のカッコに注意してください
 $chargeStatus->getValue() === 'pending'; // true
 $chargeStatus === ChargeStatus::fromValue('pending'); // true
-// Also works for switch statements
+// switchステートメントでも機能します
 switch ($chargeStatus) {
     case ChargeStatus::PENDING():
         // Do something
@@ -79,21 +82,21 @@ switch ($chargeStatus) {
 }
 ```
 
-### Updating resource models
-To update/refresh any resource models (model classes that extends `Resource`)
+### リソースモデルの更新
+リソースモデル（`Resource`を拡張するモデルクラス）を更新するには、下記のようにします。
 
 ```php
 $charge->fetch();
 ```
 
-### Long polling
-The following resources supports long polling to wait for the next status change:
+### ポーリング
+次のリソースは、ステータス変更を待機するためのロングポーリングがサポートされています。
 - `Charge`
 - `Refund`
 - `Cancel`
 - `Subscription`
 
-This is useful since these requests initially returns with a `PENDING` status. Long polling allows you to fetch the updated model when the resource has changed its status. If no changes occurs within 5 seconds, it will return the resource at that state.
+これらのリクエストは最初に`PENDING`ステータスを戻します。ロングポーリングでは、リソースのステータスが変更されたときに、更新されたモデルをフェッチできます。3秒以内に変更が発生しない場合、その時点のリソースが返されます。
 
 ```php
 $charge = $client
@@ -101,9 +104,9 @@ $charge = $client
     ->awaitResult(); // $charge->status == SUCCESSFUL
 ```
 
-### Lists and pagination
+### リストとページネーション
 
-All list functions in the SDK returns as a `Paginated` object in descending order of their creation time. When passing in parameters through an array, be careful to ensure your input matches the expected type, otherwise an `InvalidArgumentException` will be thrown.
+SDKのすべてのリスト関数は、作成日時の降順で`Paginated`オブジェクトとして返されます。配列を介してパラメーターを渡すときは、入力が期待されるタイプと一致するように注意してください。一致しない場合、`InvalidArgumentException`がスローされます。
 
 ```php
 use InvalidArgumentException;
@@ -115,13 +118,13 @@ try {
         'to' => date_create('+1 week')
     ]);
 } catch (InvalidArgumentException $error) {
-    // When input parameters does not correspond to the correct type
+    // 入力パラメーターが正しいタイプに対応していない場合
 }
 
-$transactions = $transactionList->items; // Default limit per page = 10 items
+$transactions = $transactionList->items; // 1ページあたりのデフォルトの上限 = 10アイテム
 
 if ($transactionList->hasMore) {
-    $transactionList = $transactionList->getNext(); // The list does not mutate internally
+    $transactionList = $transactionList->getNext(); // リストは内部で変化しない
     $transactions = array_merge($transactions, $transactionList->items);
 }
 
@@ -132,55 +135,55 @@ $firstTenItems = $client->listTransactionsByOptions([
 ]);
 ```
 
-### Request/Response Handlers
+### リクエスト/レスポンスハンドラ
 
-For advance use cases that require additional modification or reaction to responses prior to parsing the data into objects. The SDK provides a `RateLimitHandler` that throttles requests based on back pressure from the API (this is implemented by default in `UnivapayClientOptions->rateLimitHandler`). In addition, a `BasicRetryHandler` is also provided to catch and filter certain exceptions for retry. To specify an exception to catch:
+データをオブジェクトに解析する前に追加の変更または応答への反応を必要とする場合の使用例です。 SDKは、APIからのバックプレッシャーに基づいてリクエストを調整する `RateLimitHandler`を提供します（これはデフォルトで` UnivapayClientOptions-> rateLimitHandler`に実装されています）。 さらに、 `BasicRetryHandler`も提供されており、再試行のために特定の例外をキャッチしてフィルタリングします。 キャッチする例外を指定するには：
 
 ```php
 use Univapay\Requests\Handlers\BasicRetryHandler;
 
 $subscriptionTokenRetryHandler = new BasicRetryHandler(
     UnivapayResourceConflictError::class,
-    5, // Tries 5 times
-    2, // At 2 seconds interval
-    // More specific filtering based on the error, takes in the error as the first parameter
-    // return true to retry, false to ignore.
+    5, // 5回トライする
+    2, // 2秒毎
+    // エラーに基づいたより具体的なフィルタリングは、最初のパラメーターからエラー内容を取得してください
+    // 再試行する場合はtrueを、無視する場合はfalseを返します
     function (UnivapayResourceConflictError $error) {
         return $error->code === 'NON_UNIQUE_ACTIVE_TOKEN';
     }
 );
 $client->addHandlers($subscriptionTokenRetryHandler);
 
-// To reset or to clear and add new handlers from scratch
-// The rateLimitHandler will be automatically added from UnivapayClientOptions
+// 新しいハンドラーをリセットするか、クリアして最初から追加する
+// rateLimitHandlerはUnivapayClientOptionsから自動的に追加されます
 $client->setHandlers($subscriptionTokenRetryHandler);
 ```
 
-## SDK Development
+## SDK開発者向け
 
-Building:
+ビルド:
 ```shell
 composer install
 npm install
 
-# Optionally
+# 必要に応じて
 npm install -g grunt
 ```
 
-Code formatting:
+コードフォーマット:
 ```shell
 grunt phpcs
 ```
 
-Tests:
+テスト:
 
-The following env vars are required when running the tests:
+テストを実行するには、次の環境変数が必要です。
 
-- `UNIVAPAY_PHP_TEST_TOKEN` - This should be a `test` mode token
+- `UNIVAPAY_PHP_TEST_TOKEN` - `test`モードのトークンである必要があります
 - `UNIVAPAY_PHP_TEST_SECRET`
-- `UNIVAPAY_PHP_TEST_ENDPOINT` - This would point to a local API instance or a staging instance
+- `UNIVAPAY_PHP_TEST_ENDPOINT` - ローカルAPIインスタンスまたはステージングインスタンスを指します
 
 ```shell
 grunt phpunit
 ```
-_Note: CircleCI only runs on branches that has an open PR_
+_注：Github Actionsは、プルリクエストがOpenされているブランチでのみ実行されます_

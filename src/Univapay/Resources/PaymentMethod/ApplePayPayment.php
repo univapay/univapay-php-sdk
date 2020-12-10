@@ -23,9 +23,10 @@ class ApplePayPayment extends PaymentMethod implements JsonSerializable
         UsageLimit $usageLimit = null,
         Address $address = null,
         PhoneNumber $phoneNumber = null,
-        array $metadata = null
+        array $metadata = null,
+        $ipAddress = null
     ) {
-        parent::__construct(PaymentType::APPLE_PAY(), $type, $email, $usageLimit, $metadata);
+        parent::__construct(PaymentType::APPLE_PAY(), $type, $email, $ipAddress, $usageLimit, $metadata);
         $this->cardholder = $cardholder;
         $this->applePayToken = $applePayToken;
         $this->address = $address;

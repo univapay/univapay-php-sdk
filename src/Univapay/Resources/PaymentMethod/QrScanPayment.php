@@ -17,9 +17,10 @@ class QrScanPayment extends PaymentMethod implements JsonSerializable
     public function __construct(
         $email,
         $scannedQr,
-        array $metadata = null
+        array $metadata = null,
+        $ipAddress = null
     ) {
-        parent::__construct(PaymentType::QR_SCAN(), null, $email, null, $metadata);
+        parent::__construct(PaymentType::QR_SCAN(), null, $email, $ipAddress, null, $metadata);
         $this->scannedQr = $scannedQr;
     }
 

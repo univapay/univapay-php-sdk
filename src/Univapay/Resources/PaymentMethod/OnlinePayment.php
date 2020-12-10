@@ -4,7 +4,7 @@ namespace Univapay\Resources\PaymentMethod;
 
 use JsonSerializable;
 use Univapay\Enums\Field;
-use Univapay\Enums\Gateway;
+use Univapay\Enums\OnlineBrand;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Reason;
 use Univapay\Enums\TokenType;
@@ -13,15 +13,16 @@ use Univapay\Utility\FunctionalUtils;
 
 class OnlinePayment extends PaymentMethod implements JsonSerializable
 {
-    private $gateway;
+    private $brand;
 
     public function __construct(
         $email,
-        Gateway $gateway,
-        array $metadata = null
+        OnlineBrand $brand,
+        array $metadata = null,
+        $ipAddress = null
     ) {
-        parent::__construct(PaymentType::ONLINE(), null, $email, null, $metadata);
-        $this->gateway = $gateway;
+        parent::__construct(PaymentType::ONLINE(), null, $email, $ipAddress, null, $metadata);
+        $this->brand = $brand;
     }
 
     // Does not take in a token type
@@ -32,7 +33,7 @@ class OnlinePayment extends PaymentMethod implements JsonSerializable
     public function jsonSerialize()
     {
         $parentData = parent::jsonSerialize();
-        $parentData['data'] = ['gateway' => $this->gateway->getName()];
+        $parentData['data'] = ['brand' => $this->brand->getName()];
 
         return $parentData;
     }

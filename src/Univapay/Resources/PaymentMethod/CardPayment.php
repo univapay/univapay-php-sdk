@@ -36,9 +36,10 @@ class CardPayment extends PaymentMethod implements JsonSerializable
         Address $address = null,
         PhoneNumber $phoneNumber = null,
         array $metadata = null,
-        CvvAuthorize $cvvAuthorize = null
+        CvvAuthorize $cvvAuthorize = null,
+        $ipAddress = null
     ) {
-        parent::__construct(PaymentType::CARD(), $type, $email, $usageLimit, $metadata);
+        parent::__construct(PaymentType::CARD(), $type, $email, $ipAddress, $usageLimit, $metadata);
         $this->cardholder = $cardholder;
         $this->cardNumber = $cardNumber;
         $this->expMonth = $expMonth;

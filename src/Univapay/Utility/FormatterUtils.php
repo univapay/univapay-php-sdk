@@ -62,4 +62,14 @@ class FormatterUtils
             return new Money($value, new Currency($currencyValue));
         };
     }
+    
+    public static function getListOf($schemaParser = 'Univapay\Utility\FunctionalUtils::identity')
+    {
+        return function (array $values, $json = null, $parent = null) use ($schemaParser) {
+            $curriedParser = function ($value) use ($schemaParser, $json, $parent) {
+                return call_user_func($schemaParser, $value, $json, $parent);
+            };
+            return array_map($curriedParser, $values);
+        };
+    }
 }
