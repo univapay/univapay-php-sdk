@@ -22,6 +22,7 @@ final class QrBrand extends TypedEnum
     public static function GLOBAL_PAY() { return self::create(); }
     public static function ORIGAMI() { return self::create(); }
     public static function D_BARAI() { return self::create(); }
+    public static function AU_PAY() { return self::create(); }
     public static function PAY_PAY() { return self::create(); }
     public static function MERPAY() { return self::create(); }
     public static function RAKUTEN_PAY() { return self::create(); }
