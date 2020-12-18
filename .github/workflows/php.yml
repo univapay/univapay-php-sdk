@@ -48,7 +48,7 @@ jobs:
 
     - name: Install composer dependencies
       if: steps.composer-cache.outputs.cache-hit != 'true'
-      run: composer install --prefer-dist --no-progress --no-suggest -n
+      run: composer install --prefer-dist --no-progress -n
       
     - name: PHP Lint
       run: node_modules/.bin/grunt phpcs
