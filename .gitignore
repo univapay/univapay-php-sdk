@@ -195,3 +195,5 @@ phpunit
 # End of https://www.gitignore.io/api/emacs
 
 \.vscode/
+
+.metals/
