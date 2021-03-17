@@ -11,10 +11,10 @@ final class QrBrand extends TypedEnum
     public static function ALIPAY_HK() { return self::create(); }
     public static function ALIPAY_SINGAPORE() { return self::create(); }
     public static function TOUCH_N_GO() { return self::create('tng'); }
-    public static function EZLINK() { return self::create('tng'); }
-    public static function GCASH() { return self::create('tng'); }
-    public static function DANA() { return self::create('tng'); }
-    public static function TRUEMONEY() { return self::create('tng'); }
+    public static function EZLINK() { return self::create(); }
+    public static function GCASH() { return self::create(); }
+    public static function DANA() { return self::create(); }
+    public static function TRUEMONEY() { return self::create(); }
     public static function BARTONG() { return self::create(); }
     public static function KAKAOPAY() { return self::create(); }
     public static function JKOPAY() { return self::create(); }
