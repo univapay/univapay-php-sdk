@@ -17,7 +17,7 @@ $paymentMethod = new CardPayment(
     '02',
     '2022',
     '123',
-    null,
+    null, // Set TokenType::RECURRING() here for recurring tokens. See TokenType for other token types.
     null,
     new Address(
         'test line 1',
@@ -32,12 +32,18 @@ $paymentMethod = new CardPayment(
 $client->createToken($paymentMethod)->createCharge(Money::USD(1000));
 // Or
 $token = $client->createToken($paymentMethod);
+// If you are using recurring tokens, you can save the token ID ($token->id) for later use
+// The recurring token is unique to the customer's card, so ensure you store it in a way that
+// that can be easily referenced later
+
+// If you have saved an existing recurring token ID, replace $token->id with the ID
 $charge = $client->createCharge($token->id, Money::USD(1000));
 $charge = $charge->awaitResult();
+$status = $charge->status; // Check the status of the charge
 
 $refund = $charge
     ->createRefund(Money::USD(1000), RefundReason::FRAUD(), 'test', ['something' => null])
-    ->awaitResult(); // Long polls for the next status change, with a 5s timeout
+    ->awaitResult(); // Long polls for the next status change, with a 3s timeout
 
 // Use fetch to fetch the latest data from the API
 $refund->fetch();
