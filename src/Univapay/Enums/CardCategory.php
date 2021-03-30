@@ -8,7 +8,7 @@ final class CardCategory extends TypedEnum
     public static function CLASSIC() { return self::create(); }
     public static function GOLD() { return self::create(); }
     public static function TITANIUM() { return self::create(); }
-    public static function PLATINIUM() { return self::create(); }
+    public static function PLATINUM() { return self::create(); }
     public static function ATM() { return self::create(); }
     public static function ELECTRON() { return self::create(); }
     public static function MAESTRO() { return self::create(); }
