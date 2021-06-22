@@ -4,6 +4,7 @@ require_once('vendor/autoload.php');
 
 use Univapay\UnivapayClient;
 use Univapay\Enums\RefundReason;
+use Univapay\Resources\Authentication\AppJWT; 
 use Univapay\Resources\PaymentData\Address;
 use Univapay\Resources\PaymentData\PhoneNumber;
 use Univapay\Resources\PaymentMethod\CardPayment;
@@ -29,7 +30,7 @@ $paymentMethod = new CardPayment(
     )
 );
 
-$client->createToken($paymentMethod)->createCharge(Money::USD(1000));
+$charge = $client->createToken($paymentMethod)->createCharge(Money::USD(1000))->awaitResult();
 // Or
 $token = $client->createToken($paymentMethod);
 // If you are using recurring tokens, you can save the token ID ($token->id) for later use
