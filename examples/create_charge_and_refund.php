@@ -16,7 +16,7 @@ $paymentMethod = new CardPayment(
     'PHP example',
     '4242424242424242',
     '02',
-    '2022',
+    '2025',
     '123',
     null, // Set TokenType::RECURRING() here for recurring tokens. See TokenType for other token types.
     null,
@@ -25,9 +25,9 @@ $paymentMethod = new CardPayment(
         'test line 2',
         'test state',
         'jp',
-        '101-1111',
-        new PhoneNumber(PhoneNumber::JP, '12910298309128')
-    )
+        '101-1111'
+    ),
+    new PhoneNumber(PhoneNumber::JP, '12910298309128')
 );
 
 $charge = $client->createToken($paymentMethod)->createCharge(Money::USD(1000))->awaitResult();
