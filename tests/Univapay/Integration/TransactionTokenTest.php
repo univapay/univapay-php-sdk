@@ -35,7 +35,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
         $this->assertEquals('PHP TEST', $transactionToken->data->card->cardholder);
         $this->assertEquals('02', $transactionToken->data->card->expMonth);
-        $this->assertEquals('2022', $transactionToken->data->card->expYear);
+        $this->assertEquals('2025', $transactionToken->data->card->expYear);
         $this->assertEquals('test line 1', $transactionToken->data->billing->line1);
         $this->assertEquals('test line 2', $transactionToken->data->billing->line2);
         $this->assertEquals('test state', $transactionToken->data->billing->state);
@@ -63,7 +63,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
         $this->assertEquals('PHP TEST', $transactionToken->data->card->cardholder);
         $this->assertEquals('02', $transactionToken->data->card->expMonth);
-        $this->assertEquals('2022', $transactionToken->data->card->expYear);
+        $this->assertEquals('2025', $transactionToken->data->card->expYear);
         $this->assertEquals('test line 1', $transactionToken->data->billing->line1);
         $this->assertEquals('test line 2', $transactionToken->data->billing->line2);
         $this->assertEquals('test state', $transactionToken->data->billing->state);
@@ -93,7 +93,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
         $this->assertEquals('PHP TEST', $transactionToken->data->card->cardholder);
         $this->assertEquals('02', $transactionToken->data->card->expMonth);
-        $this->assertEquals('2022', $transactionToken->data->card->expYear);
+        $this->assertEquals('2025', $transactionToken->data->card->expYear);
         $this->assertEquals('test line 1', $transactionToken->data->billing->line1);
         $this->assertEquals('test line 2', $transactionToken->data->billing->line2);
         $this->assertEquals('test state', $transactionToken->data->billing->state);
