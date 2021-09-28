@@ -5,6 +5,7 @@ use DateInterval;
 use DateTimeZone;
 use Univapay\Enums\ActiveFilter;
 use Univapay\Enums\AppTokenMode;
+use Univapay\Enums\CallMethod;
 use Univapay\Enums\ConvenienceStore;
 use Univapay\Enums\Gateway;
 use Univapay\Enums\InstallmentPlanType;
@@ -152,7 +153,7 @@ trait Requests
     {
         return new QrScanPayment(
             'test@test.com',
-            '9000000100000000000000',
+            '9000818100000000000000',
             ['customer_id' => 'PHP TEST']
         );
     }
@@ -170,8 +171,11 @@ trait Requests
     {
         return new OnlinePayment(
             'test@test.com',
-            OnlineBrand::ALIPAY_ONLINE(),
-            ['customer_id' => 'PHP TEST']
+            OnlineBrand::WE_CHAT_ONLINE(),
+            ['customer_id' => 'PHP TEST'],
+            '127.0.0.1',
+            CallMethod::WEB(),
+            'PHP TEST'
         );
     }
 

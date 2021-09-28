@@ -5,6 +5,7 @@ use DateInterval;
 use Money\Currency;
 use Univapay\Enums\ActiveFilter;
 use Univapay\Enums\AppTokenMode;
+use Univapay\Enums\CallMethod;
 use Univapay\Enums\ConvenienceStore;
 use Univapay\Enums\CvvAuthorizationStatus;
 use Univapay\Enums\Gateway;
@@ -147,8 +148,8 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals(PaymentType::QR_SCAN(), $transactionToken->paymentType);
         $this->assertNull($transactionToken->confirmed);
-        $this->assertEquals(Gateway::ORIGAMI(), $transactionToken->data->gateway);
-        $this->assertEquals(QrBrand::ORIGAMI(), $transactionToken->data->brand);
+        $this->assertEquals(Gateway::PAY_PAY(), $transactionToken->data->gateway);
+        $this->assertEquals(QrBrand::PAY_PAY(), $transactionToken->data->brand);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
     }
 
@@ -185,8 +186,11 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals(PaymentType::ONLINE(), $transactionToken->paymentType);
         $this->assertNull($transactionToken->confirmed);
-        $this->assertEquals(OnlineBrand::ALIPAY_ONLINE(), $transactionToken->data->brand);
+        $this->assertEquals(OnlineBrand::WE_CHAT_ONLINE(), $transactionToken->data->brand);
+        $this->assertEquals('127.0.0.1', $transactionToken->ipAddress);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
+        $this->assertEquals(CallMethod::WEB(), $transactionToken->data->callMethod);
+        $this->assertEquals('PHP TEST', $transactionToken->data->userIdentifier);
     }
 
     public function testGetExistingToken()
