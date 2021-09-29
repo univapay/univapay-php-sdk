@@ -43,7 +43,13 @@ $charge = $charge->awaitResult();
 $status = $charge->status; // Check the status of the charge
 
 $refund = $charge
-    ->createRefund(Money::USD(1000), RefundReason::FRAUD(), 'test', ['something' => null])
+    ->createRefund(
+        Money::USD(1000),
+        // Please select an appropriate reason. See RefundReason.php for available options
+        RefundReason::CUSTOMER_REQUEST(),
+        'test',
+        ['something' => null]
+    )
     ->awaitResult(); // Long polls for the next status change, with a 3s timeout
 
 // Use fetch to fetch the latest data from the API
