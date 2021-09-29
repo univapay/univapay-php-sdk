@@ -48,6 +48,7 @@ class TransactionToken extends Resource
     public $metadata;
     public $usageLimit;
     public $lastUsedOn;
+    public $ipAddress;
 
     public function __construct(
         $id,
@@ -63,6 +64,7 @@ class TransactionToken extends Resource
         $metadata = null,
         UsageLimit $usageLimit = null,
         DateTime $lastUsedOn = null,
+        $ipAddress = null,
         $context = null
     ) {
         parent::__construct($id, $context);
@@ -77,6 +79,7 @@ class TransactionToken extends Resource
         $this->createdOn = $createdOn;
         $this->usageLimit = $usageLimit;
         $this->lastUsedOn = $lastUsedOn;
+        $this->ipAddress = $ipAddress;
         // The payment data may not be available when retrieving from a list. Triggering a ->fetch() will fix this
         $this->data = $data;
     }
