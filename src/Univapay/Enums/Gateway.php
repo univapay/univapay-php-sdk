@@ -8,6 +8,7 @@ final class Gateway extends TypedEnum
     public static function ALLIED_WALLET_NEXT_GEN() { return self::create(); }
     public static function BALTIC_BILL() { return self::create(); }
     public static function BLU_SKY() { return self::create(); }
+    public static function CYREX_PAY() { return self::create(); }
     public static function FIRST_DATA() { return self::create(); }
     public static function IPS() { return self::create(); }
     public static function MEIKO_PAY() { return self::create(); }
@@ -38,6 +39,7 @@ final class Gateway extends TypedEnum
     public static function ALIPAY_MERCHANT_QR() { return self::create(); }
     public static function ALIPAY_CONNECT_MPM() { return self::create(); }
     public static function PAY_PAY_MERCHANT() { return self::create(); }
+    public static function WE_CHAT_MPM() { return self::create(); }
 
     public static function DENSAN() { return self::create(); }
 
@@ -46,4 +48,5 @@ final class Gateway extends TypedEnum
     public static function ALIPAY_ONLINE() { return self::create(); }
     public static function ALIPAY_CONNECT_ONLINE() { return self::create(); }
     public static function PAY_PAY_ONLINE() { return self::create(); }
+    public static function WE_CHAT_ONLINE() { return self::create(); }
 }
