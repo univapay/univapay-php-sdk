@@ -37,5 +37,6 @@ final class QrBrand extends TypedEnum
     public static function HOKUHOKU_PAY_HOKKAIDO() { return self::create(); }
     public static function HOKUHOKU_PAY_HOKURIKU() { return self::create(); }
     public static function COI_PAY_HIROSHIMA() { return self::create(); }
+    public static function SMBC() { return self::create(); }
     public static function UNKNOWN() { return self::create(); }
 }
