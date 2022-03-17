@@ -144,6 +144,13 @@ EOD;
         $this->assertInstanceOf(ScheduledPayment::class, $subscription->nextPayment);
     }
 
+    public function testCreateFixedAmountInstallmentSubscription()
+    {
+        $subscription = $this->createValidFixedAmountInstallmentSubscription();
+        $this->assertEquals(InstallmentPlanType::FIXED_CYCLE_AMOUNT(), $subscription->installmentPlan->planType);
+        $this->assertEquals(Money::JPY(1000), $subscription->installmentPlan->fixedCycleAmount);
+    }
+
     public function testGetSubscription()
     {
         $subscription = $this->createValidSubscription();
