@@ -295,6 +295,27 @@ trait Requests
             ->awaitResult();
     }
     
+
+    public function createValidFixedAmountInstallmentSubscription()
+    {
+        $this->deactivateExistingSubscriptionToken();
+        $installmentPlan = new InstallmentPlan(
+            InstallmentPlanType::FIXED_CYCLE_AMOUNT(),
+            null,
+            Money::JPY(1000)
+        );
+        return $this
+            ->createValidToken(PaymentType::CARD(), TokenType::SUBSCRIPTION())
+            ->createSubscription(
+                Money::JPY(10000),
+                Period::BIWEEKLY(),
+                Money::JPY(1000),
+                null,
+                $installmentPlan
+            )
+            ->awaitResult();
+    }
+    
     public function createUnconfirmedSubscription()
     {
         $this->deactivateExistingSubscriptionToken();
