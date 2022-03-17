@@ -67,7 +67,8 @@ class FormatterUtils
     {
         return function (array $values, $json = null, $parent = null) use ($schemaParser) {
             $curriedParser = function ($value) use ($schemaParser, $json, $parent) {
-                return call_user_func($schemaParser, $value, $json, $parent);
+                // Pass the item as the contextRoot instead of the whole paginated json as that is expected
+                return call_user_func($schemaParser, $value, $value);
             };
             return array_map($curriedParser, $values);
         };
