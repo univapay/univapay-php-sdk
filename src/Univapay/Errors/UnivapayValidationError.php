@@ -18,7 +18,7 @@ class UnivapayValidationError extends UnivapayRequestError
     public function addError(Field $field, Reason $reason)
     {
         parent::$errors[] = [
-            'field' => $field>getValue(),
+            'field' => $field->getValue(),
             'reason' => $reason->getValue()
         ];
         return $this;
