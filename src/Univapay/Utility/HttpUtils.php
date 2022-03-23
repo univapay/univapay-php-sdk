@@ -2,7 +2,6 @@
 
 namespace Univapay\Utility;
 
-use Requests_Response;
 use Univapay\Errors\UnivapayForbiddenError;
 use Univapay\Errors\UnivapayRateLimitedError;
 use Univapay\Errors\UnivapayRequestError;
@@ -10,6 +9,7 @@ use Univapay\Errors\UnivapayResourceConflictError;
 use Univapay\Errors\UnivapayNotFoundError;
 use Univapay\Errors\UnivapayServerError;
 use Univapay\Errors\UnivapayUnauthorizedError;
+use WpOrg\Requests\Response;
 
 const BAD_REQUEST = 400;
 
@@ -36,7 +36,7 @@ abstract class HttpUtils
         }
     }
 
-    public static function checkResponse(Requests_Response $response)
+    public static function checkResponse(Response $response)
     {
         switch ($response->status_code) {
             case BAD_REQUEST:

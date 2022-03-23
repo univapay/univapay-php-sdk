@@ -16,7 +16,7 @@ class BasicRetryHandlerTest extends TestCase
     private $rateLimitHandledClient;
     private $rateLimitUnhandledClient;
 
-    public function tearDown()
+    public function tearDown(): void
     {
         sleep(1); // Sleep to let the API register the subscription token previously created so it can be deleted
         $this->deactivateExistingSubscriptionToken();

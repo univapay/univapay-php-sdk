@@ -14,7 +14,7 @@ class RateLimitHandlerTest extends TestCase
     private $rateLimitHandledClient;
     private $rateLimitUnhandledClient;
 
-    public function setUp()
+    public function setUp(): void
     {
         if (is_null($this->storeAppJWT)) {
             $this->init();

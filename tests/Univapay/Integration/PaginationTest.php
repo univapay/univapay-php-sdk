@@ -16,7 +16,7 @@ class PaginationTest extends TestCase
 {
     use IntegrationSuite;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         if (isset($GLOBALS['testPagination:setupComplete']) &&
             !$GLOBALS['testPagination:setupComplete']) {
