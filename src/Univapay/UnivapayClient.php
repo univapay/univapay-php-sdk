@@ -23,6 +23,7 @@ use Univapay\Requests\Requester;
 use Univapay\Requests\Handlers\RateLimitHandler;
 use Univapay\Requests\Handlers\RequestHandler;
 use Univapay\Resources\BankAccount;
+use Univapay\Resources\Cancel;
 use Univapay\Resources\CardConfiguration;
 use Univapay\Resources\Charge;
 use Univapay\Resources\CheckoutInfo;
