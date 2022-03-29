@@ -3,9 +3,9 @@
 namespace Univapay\Requests;
 
 use Closure;
-use Requests;
 use Univapay\Requests\Handlers\RequestHandler;
 use Univapay\Utility\HttpUtils;
+use WpOrg\Requests\Requests;
 
 class HttpRequester implements Requester
 {
