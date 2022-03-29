@@ -4,7 +4,7 @@ require_once('vendor/autoload.php');
 
 use Univapay\UnivapayClient;
 use Univapay\Enums\RefundReason;
-use Univapay\Resources\Authentication\AppJWT; 
+use Univapay\Resources\Authentication\AppJWT;
 use Univapay\Resources\PaymentData\Address;
 use Univapay\Resources\PaymentData\PhoneNumber;
 use Univapay\Resources\PaymentMethod\CardPayment;
