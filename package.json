@@ -2,7 +2,7 @@
     "name": "univapay-php-sdk",
     "version": "1.0.0",
     "devDependencies": {
-        "grunt": "^1.4.0",
+        "grunt": "^1.5.3",
         "grunt-contrib-watch": "^1.1.0",
         "grunt-phpcbf": "^0.1.1",
         "grunt-phpcs": "^0.4.0",
