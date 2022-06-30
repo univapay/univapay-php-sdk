@@ -28,7 +28,7 @@ class PaidyData implements JsonSerializable
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
-            ->upsert('phone_number', true, PhoneNumber::getSchema()->getParser())
+            ->upsert('phone_number', false, PhoneNumber::getSchema()->getParser())
             ->upsert('shipping_address', true, Address::getSchema()->getParser());
     }
 
