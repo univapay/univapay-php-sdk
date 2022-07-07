@@ -6,6 +6,7 @@ use JsonSerializable;
 use Univapay\Enums\CallMethod;
 use Univapay\Enums\Field;
 use Univapay\Enums\OnlineBrand;
+use Univapay\Enums\OsType;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Reason;
 use Univapay\Enums\TokenType;
@@ -17,6 +18,7 @@ class OnlinePayment extends PaymentMethod implements JsonSerializable
     private $brand;
     private $callMethod;
     private $userIdentifier;
+    private $osType;
 
     public function __construct(
         $email,
@@ -24,12 +26,14 @@ class OnlinePayment extends PaymentMethod implements JsonSerializable
         array $metadata = null,
         $ipAddress = null,
         CallMethod $callMethod = null,
-        $userIdentifier = null
+        $userIdentifier = null,
+        OsType $osType = null
     ) {
         parent::__construct(PaymentType::ONLINE(), null, $email, $ipAddress, null, $metadata);
         $this->brand = $brand;
         $this->callMethod = $callMethod;
         $this->userIdentifier = $userIdentifier;
+        $this->osType = $osType;
     }
 
     // Does not take in a token type
@@ -48,6 +52,9 @@ class OnlinePayment extends PaymentMethod implements JsonSerializable
             'user_identifier' => isset($this->userIdentifier)
                 ? $this->userIdentifier
                 : null,
+            'os_type' => isset($this->osType)
+                ? $this->osType
+                : null
         ]);
 
         return $parentData;

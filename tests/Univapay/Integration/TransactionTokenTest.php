@@ -10,6 +10,7 @@ use Univapay\Enums\ConvenienceStore;
 use Univapay\Enums\CvvAuthorizationStatus;
 use Univapay\Enums\Gateway;
 use Univapay\Enums\OnlineBrand;
+use Univapay\Enums\OsType;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\QrBrand;
 use Univapay\Enums\QrBrandMerchant;
@@ -191,6 +192,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
         $this->assertEquals(CallMethod::WEB(), $transactionToken->data->callMethod);
         $this->assertEquals('PHP TEST', $transactionToken->data->userIdentifier);
+        $this->assertEquals(OsType::ANDROID(), $transactionToken->data->osType);
     }
 
     public function testGetExistingToken()

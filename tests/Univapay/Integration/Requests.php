@@ -10,6 +10,7 @@ use Univapay\Enums\ConvenienceStore;
 use Univapay\Enums\Gateway;
 use Univapay\Enums\InstallmentPlanType;
 use Univapay\Enums\OnlineBrand;
+use Univapay\Enums\OsType;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
 use Univapay\Enums\QrBrandMerchant;
@@ -175,7 +176,8 @@ trait Requests
             ['customer_id' => 'PHP TEST'],
             '127.0.0.1',
             CallMethod::WEB(),
-            'PHP TEST'
+            'PHP TEST',
+            OsType::ANDROID()
         );
     }
 
