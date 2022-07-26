@@ -1,6 +1,6 @@
 # UnivaPay PHP SDK
 
-![Github Actions CI](https://github.com/univapay/univapay-php-sdk/workflows/PHP%20lint%20&%20test/badge.svg)
+[![PHP lint & test](https://github.com/univapay/univapay-php-sdk/actions/workflows/php.yml/badge.svg?branch=master)](https://github.com/univapay/univapay-php-sdk/actions/workflows/php.yml)
 
 UnivaPay PHP SDKは、UnivaPay決済ゲートウェイと連携する便利なメソッドを提供します。
 
