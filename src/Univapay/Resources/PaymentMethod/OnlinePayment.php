@@ -53,7 +53,7 @@ class OnlinePayment extends PaymentMethod implements JsonSerializable
                 ? $this->userIdentifier
                 : null,
             'os_type' => isset($this->osType)
-                ? $this->osType
+                ? $this->osType->getName()
                 : null
         ]);
 
