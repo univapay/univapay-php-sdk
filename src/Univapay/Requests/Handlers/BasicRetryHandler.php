@@ -3,7 +3,7 @@
 namespace Univapay\Requests\Handlers;
 
 use Closure;
-use Univapay\Errors\UnivapayError;
+use Exception;
 
 class BasicRetryHandler implements RequestHandler
 {
@@ -26,7 +26,7 @@ class BasicRetryHandler implements RequestHandler
         while ($retryCount < $this->tries) {
             try {
                 return $request($requestData);
-            } catch (UnivapayError $error) {
+            } catch (Exception $error) {
                 if (!$error instanceof $this->exceptionClass) {
                     throw $error;
                 }
