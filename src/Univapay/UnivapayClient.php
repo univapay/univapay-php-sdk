@@ -78,7 +78,7 @@ class UnivapayClient
         }
         $this->appToken = $appToken;
         $this->clientOptions = $clientOptions;
-        $this->requester = new HttpRequester($this->clientOptions->rateLimitHandler);
+        $this->requester = new HttpRequester(...$this->clientOptions->getRequestHandlers());
     }
 
     public function getContext()
@@ -101,7 +101,7 @@ class UnivapayClient
 
     public function setHandlers(RequestHandler ...$handlers)
     {
-        $this->requester->setHandlers($this->clientOptions->rateLimitHandler, ...$handlers);
+        $this->requester->setHandlers(...array_merge($this->clientOptions->getRequestHandlers(), $handlers));
     }
 
     public function getMe()

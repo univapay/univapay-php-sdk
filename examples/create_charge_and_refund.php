@@ -39,7 +39,8 @@ $token = $client->createToken($paymentMethod);
 
 // If you have saved an existing recurring token ID, replace $token->id with the ID
 $charge = $client->createCharge($token->id, Money::USD(1000));
-$charge = $charge->awaitResult();
+// Optionally specify the number of times to retry until a non waiting status returns.
+$charge = $charge->awaitResult(3);
 $status = $charge->status; // Check the status of the charge
 
 $refund = $charge
@@ -52,5 +53,9 @@ $refund = $charge
     )
     ->awaitResult(); // Long polls for the next status change, with a 3s timeout
 
-// Use fetch to fetch the latest data from the API
+// Use `fetch` to get the latest data from the API
 $refund->fetch();
+
+// Alternatively use `awaitResult` to poll for a non waiting status.
+// Optionally specify the number of times to retry until a non waiting status returns.
+$refund->awaitResult(3);

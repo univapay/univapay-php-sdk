@@ -108,6 +108,11 @@ class Charge extends Resource
         return $this->context->withPath(['stores', $this->storeId, 'charges', $this->id]);
     }
 
+    protected function pollableStatuses()
+    {
+        return [ChargeStatus::PENDING()];
+    }
+
     public function patch(array $metadata)
     {
         return RequesterUtils::executePatch(self::class, $this->getIdContext(), ['metadata' => $metadata]);

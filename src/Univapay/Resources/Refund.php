@@ -70,4 +70,9 @@ class Refund extends Resource
             ->upsert('mode', true, FormatterUtils::getTypedEnum(AppTokenMode::class))
             ->upsert('created_on', true, FormatterUtils::of('getDateTime'));
     }
+
+    protected function pollableStatuses()
+    {
+        return [RefundStatus::PENDING()];
+    }
 }
