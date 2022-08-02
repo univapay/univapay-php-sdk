@@ -224,6 +224,11 @@ class Subscription extends Resource
         return $this->context->withPath(['stores', $this->storeId, 'subscriptions', $this->id]);
     }
 
+    protected function pollableStatuses()
+    {
+        return [SubscriptionStatus::UNVERIFIED()];
+    }
+
     protected function getChargeContext()
     {
         return $this->context->withPath(['stores', $this->storeId, 'subscriptions', $this->id, 'charges']);

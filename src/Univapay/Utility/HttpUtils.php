@@ -70,11 +70,16 @@ abstract class HttpUtils
         }
     }
 
-    public static function addJsonHeader(array $headers)
+    public static function getJsonHeader()
     {
-        return array_merge([
+        return [
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
-        ], $headers);
+        ];
+    }
+
+    public static function getIdempotencyHeader()
+    {
+        return ['idempotency-key' => uniqid('', true)];
     }
 }

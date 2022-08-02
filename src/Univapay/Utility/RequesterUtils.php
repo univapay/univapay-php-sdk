@@ -9,10 +9,15 @@ use Univapay\Resources\SimpleList;
 
 abstract class RequesterUtils
 {
-    public static function getHeaders(RequestContext $requestContext, array $headers = [])
-    {
+    public static function getHeaders(
+        RequestContext $requestContext,
+        bool $enableIdempotency = false,
+        array $headers = []
+    ) {
         return array_merge(
-            HttpUtils::addJsonHeader($requestContext->getAuthorizationHeaders()),
+            $requestContext->getAuthorizationHeaders(),
+            HttpUtils::getJsonHeader(),
+            $enableIdempotency? HttpUtils::getIdempotencyHeader(): [],
             $headers
         );
     }
@@ -41,7 +46,7 @@ abstract class RequesterUtils
         $response = $requestContext->getRequester()->post(
             $requestContext->getFullURL(),
             $payload,
-            self::getHeaders($requestContext)
+            self::getHeaders($requestContext, true)
         );
         if (is_null($parser)) {
             return $response;
@@ -58,7 +63,7 @@ abstract class RequesterUtils
         $response = $requestContext->getRequester()->post(
             $requestContext->getFullURL(),
             $payload,
-            self::getHeaders($requestContext)
+            self::getHeaders($requestContext, true)
         );
         return SimpleList::fromResponse($response, $parser, $requestContext);
     }
@@ -71,7 +76,7 @@ abstract class RequesterUtils
         $response = $requestContext->getRequester()->patch(
             $requestContext->getFullURL(),
             $payload,
-            self::getHeaders($requestContext)
+            self::getHeaders($requestContext, true)
         );
         return $parser::getSchema()->parse($response, [$requestContext]);
     }

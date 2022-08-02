@@ -178,7 +178,7 @@ EOD;
             null,
             ['reason' => 'PHP SDK test'],
             new InstallmentPlan(InstallmentPlanType::FIXED_CYCLE_AMOUNT(), null, Money::JPY(2000))
-        )->awaitResult();
+        )->awaitResult(5);
         $this->assertEquals(Money::JPY(10000), $patchedSubscription->amount);
         $this->assertEquals(new Currency('JPY'), $patchedSubscription->currency);
         $this->assertEquals(Period::MONTHLY(), $patchedSubscription->period);
