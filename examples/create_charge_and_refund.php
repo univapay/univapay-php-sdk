@@ -10,7 +10,8 @@ use Univapay\Resources\PaymentData\PhoneNumber;
 use Univapay\Resources\PaymentMethod\CardPayment;
 use Money\Money;
 
-$client = new UnivapayClient(AppJWT::createToken('token', 'secret'));
+$storeAppToken = AppJWT::createToken('token', 'secret');
+$client = new UnivapayClient($storeAppToken);
 $paymentMethod = new CardPayment(
     'test@test.com',
     'PHP example',
@@ -59,3 +60,13 @@ $refund->fetch();
 // Alternatively use `awaitResult` to poll for a non waiting status.
 // Optionally specify the number of times to retry until a non waiting status returns.
 $refund->awaitResult(3);
+
+// To make an authorization charge and save the charge ID for later
+$charge = $client->createCharge($token->id, Money::USD(1000), false);
+
+// Get the charge object from store ID and charge ID
+$charge = $client->getCharge($storeAppToken->storeId, $chargeId);
+// Capture the charge
+$charge->capture(); // Full amount
+$charge->capture(Money::USD(500)); // Partial amount
+$charge = $charge->awaitResult(3); // Check the charge status
