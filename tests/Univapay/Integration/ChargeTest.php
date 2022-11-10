@@ -157,7 +157,7 @@ EOD;
     {
         $charge = $this->createValidCharge(false);
         $this->assertEquals(ChargeStatus::AUTHORIZED(), $charge->status);
-        $cancel = $charge->cancel(['something'=>'anything'])->awaitResult();
+        $cancel = $charge->cancel(['something'=>'anything'])->awaitResult(5);
         $this->assertEquals(CancelStatus::SUCCESSFUL(), $cancel->status);
         $this->assertEquals($cancel->metadata['something'], 'anything');
     }

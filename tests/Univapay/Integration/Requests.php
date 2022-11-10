@@ -226,7 +226,7 @@ trait Requests
             null,
             $onlyDirectCurrency
         );
-        return $charge->awaitResult();
+        return $charge->awaitResult(5);
     }
 
     public function createValidRefund()
@@ -237,7 +237,7 @@ trait Requests
             RefundReason::FRAUD(),
             'test',
             ['something' => 'value']
-        )->awaitResult();
+        )->awaitResult(5);
     }
 
     public function createValidSubscription($authorized = null, DateInterval $captureAfter = null)
@@ -256,7 +256,7 @@ trait Requests
                 $authorized,
                 $captureAfter
             )
-            ->awaitResult();
+            ->awaitResult(5);
     }
 
     public function createValidScheduleSubscription()
@@ -275,7 +275,7 @@ trait Requests
                 Money::JPY(1000),
                 $schedule
             )
-            ->awaitResult();
+            ->awaitResult(5);
     }
 
     public function createValidInstallmentSubscription()
@@ -294,7 +294,7 @@ trait Requests
                 null,
                 $installmentPlan
             )
-            ->awaitResult();
+            ->awaitResult(5);
     }
     
 
@@ -315,7 +315,7 @@ trait Requests
                 null,
                 $installmentPlan
             )
-            ->awaitResult();
+            ->awaitResult(5);
     }
     
     public function createUnconfirmedSubscription()
@@ -328,7 +328,7 @@ trait Requests
                 Period::BIWEEKLY(),
                 Money::JPY(1000)
             )
-            ->awaitResult();
+            ->awaitResult(5);
     }
 
     public function deactivateExistingSubscriptionToken()

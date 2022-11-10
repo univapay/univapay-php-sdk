@@ -8,9 +8,17 @@ trait Pollable
 {
     abstract protected function getIdContext();
 
-    public function awaitResult()
+    abstract protected function pollableStatuses();
+
+    public function awaitResult($retry = 0)
     {
         $idContext = $this->getIdContext();
-        return RequesterUtils::executeGet(self::class, $idContext, ['polling' => 'true']);
+        $response = RequesterUtils::executeGet(self::class, $idContext, ['polling' => 'true']);
+        $retryCount = 0;
+        while ($retryCount < $retry && in_array($response->status, $this->pollableStatuses())) {
+            $retryCount++;
+            $response = RequesterUtils::executeGet(self::class, $idContext, ['polling' => 'true']);
+        }
+        return $response;
     }
 }

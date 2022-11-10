@@ -10,7 +10,8 @@ use Univapay\Resources\PaymentData\PhoneNumber;
 use Univapay\Resources\PaymentMethod\CardPayment;
 use Money\Money;
 
-$client = new UnivapayClient(AppJWT::createToken('token', 'secret'));
+$storeAppToken = AppJWT::createToken('token', 'secret');
+$client = new UnivapayClient($storeAppToken);
 $paymentMethod = new CardPayment(
     'test@test.com',
     'PHP example',
@@ -39,7 +40,8 @@ $token = $client->createToken($paymentMethod);
 
 // If you have saved an existing recurring token ID, replace $token->id with the ID
 $charge = $client->createCharge($token->id, Money::USD(1000));
-$charge = $charge->awaitResult();
+// Optionally specify the number of times to retry until a non waiting status returns.
+$charge = $charge->awaitResult(3);
 $status = $charge->status; // Check the status of the charge
 
 $refund = $charge
@@ -52,5 +54,19 @@ $refund = $charge
     )
     ->awaitResult(); // Long polls for the next status change, with a 3s timeout
 
-// Use fetch to fetch the latest data from the API
+// Use `fetch` to get the latest data from the API
 $refund->fetch();
+
+// Alternatively use `awaitResult` to poll for a non waiting status.
+// Optionally specify the number of times to retry until a non waiting status returns.
+$refund->awaitResult(3);
+
+// To make an authorization charge and save the charge ID for later
+$charge = $client->createCharge($token->id, Money::USD(1000), false);
+
+// Get the charge object from store ID and charge ID
+$charge = $client->getCharge($storeAppToken->storeId, $chargeId);
+// Capture the charge
+$charge->capture(); // Full amount
+$charge->capture(Money::USD(500)); // Partial amount
+$charge = $charge->awaitResult(3); // Check the charge status
