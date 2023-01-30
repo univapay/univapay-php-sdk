@@ -46,7 +46,7 @@ final class Gateway extends TypedEnum
     public static function PAIDY() { return self::create(); }
 
     public static function ALIPAY_ONLINE() { return self::create(); }
-    public static function ALIPAY_CONNECT_ONLINE() { return self::create(); }
+    public static function ALIPAY_PLUS_ONLINE() { return self::create(); }
     public static function PAY_PAY_ONLINE() { return self::create(); }
     public static function WE_CHAT_ONLINE() { return self::create(); }
 }
