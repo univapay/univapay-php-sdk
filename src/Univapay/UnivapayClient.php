@@ -251,6 +251,13 @@ class UnivapayClient
             $event = WebhookEvent::fromValue($data['event']);
             $parser = null;
             switch ($event) {
+                case WebhookEvent::TOKEN_CREATED():
+                case WebhookEvent::TOKEN_UPDATED():
+                case WebhookEvent::TOKEN_CVV_AUTH_UPDATED():
+                case WebhookEvent::RECURRING_TOKEN_DELETED():
+                    $parser = TransactionToken::getContextParser($this->getTransactionTokenContext());
+                    break;
+
                 case WebhookEvent::CHARGE_UPDATED():
                 case WebhookEvent::CHARGE_FINISHED():
                     $parser = Charge::getContextParser($this->getChargeContext());
@@ -268,14 +275,14 @@ class UnivapayClient
                     $parser = Refund::getContextParser($this->getStoreBasedContext());
                     break;
 
+                case WebhookEvent::CANCEL_FINISHED():
+                    $parser = Cancel::getContextParser($this->getStoreBasedContext());
+                    break;
+
                 case WebhookEvent::TRANSFER_CREATED():
                 case WebhookEvent::TRANSFER_UPDATED():
                 case WebhookEvent::TRANSFER_FINALIZED():
                     $parser = Transfer::getContextParser($this->getTransferContext());
-                    break;
-
-                case WebhookEvent::CANCEL_FINISHED():
-                    $parser = Cancel::getContextParser($this->getStoreBasedContext());
                     break;
             }
             return new WebhookPayload($event, $parser($data['data']));
