@@ -46,4 +46,9 @@ class Cancel extends Resource
             ['stores', $this->storeId, 'charges', $this->chargeId, 'cancels', $this->id]
         );
     }
+    
+    protected function pollableStatuses()
+    {
+        return [CancelStatus::PENDING()];
+    }
 }

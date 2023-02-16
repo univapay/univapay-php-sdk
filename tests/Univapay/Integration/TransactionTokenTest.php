@@ -10,6 +10,7 @@ use Univapay\Enums\ConvenienceStore;
 use Univapay\Enums\CvvAuthorizationStatus;
 use Univapay\Enums\Gateway;
 use Univapay\Enums\OnlineBrand;
+use Univapay\Enums\OsType;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\QrBrand;
 use Univapay\Enums\QrBrandMerchant;
@@ -54,7 +55,7 @@ class TransactionTokenTest extends TestCase
         $this->assertTrue($transactionToken->data->cvvAuthorize->enabled);
         $this->assertNull($transactionToken->data->cvvAuthorize->currency);
         $this->assertEquals(CvvAuthorizationStatus::PENDING(), $transactionToken->data->cvvAuthorize->status);
-        sleep(5);
+        sleep(10);
         
         $transactionToken = $transactionToken->fetch();
         $this->assertEquals('test@test.com', $transactionToken->email);
@@ -139,7 +140,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals(PhoneNumber::JP, $transactionToken->data->phoneNumber->countryCode);
         $this->assertEquals('12910298309128', $transactionToken->data->phoneNumber->localNumber);
         $this->assertEquals(ConvenienceStore::SEVEN_ELEVEN(), $transactionToken->data->convenienceStore);
-        $this->assertEquals(new DateInterval('P7D'), $transactionToken->data->expirationPeriod);
+        $this->assertEquals(new DateInterval('PT168H'), $transactionToken->data->expirationPeriod);
     }
 
     public function testCreateQrScanToken()
@@ -191,6 +192,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
         $this->assertEquals(CallMethod::WEB(), $transactionToken->data->callMethod);
         $this->assertEquals('PHP TEST', $transactionToken->data->userIdentifier);
+        $this->assertEquals(OsType::ANDROID(), $transactionToken->data->osType);
     }
 
     public function testGetExistingToken()

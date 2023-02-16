@@ -95,12 +95,17 @@ The following resources supports long polling to wait for the next status change
 - `Cancel`
 - `Subscription`
 
-This is useful since these requests initially returns with a `PENDING` status. Long polling allows you to fetch the updated model when the resource has changed its status. If no changes occurs within 3 seconds, it will return the resource at that state.
+This is useful since these requests initially returns with a `PENDING` status. Long polling allows you to fetch the updated model when the resource has changed its status. If no changes occurs within 3 seconds, it will return the resource at that state. Optionally, a retry count may be passed in to automatically retry the long polling if the a `PENDING` status was returned.
 
 ```php
 $charge = $client
     ->createCharge($token->id, Money::USD(1000)) // $charge->status == PENDING
     ->awaitResult(); // $charge->status == SUCCESSFUL
+
+// OR
+$charge = $client
+    ->createCharge($token->id, Money::USD(1000)) // $charge->status == PENDING
+    ->awaitResult(5); // Retries up to 5 times (up to 15s) until a non PENDING status is retrieved
 ```
 
 ### Lists and pagination

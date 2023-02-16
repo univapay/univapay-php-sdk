@@ -1,6 +1,6 @@
 # UnivaPay PHP SDK
 
-![Github Actions CI](https://github.com/univapay/univapay-php-sdk/workflows/PHP%20lint%20&%20test/badge.svg)
+[![PHP lint & test](https://github.com/univapay/univapay-php-sdk/actions/workflows/php.yml/badge.svg?branch=master)](https://github.com/univapay/univapay-php-sdk/actions/workflows/php.yml)
 
 UnivaPay PHP SDKは、UnivaPay決済ゲートウェイと連携する便利なメソッドを提供します。
 
@@ -96,12 +96,17 @@ $charge->fetch();
 - `Cancel`
 - `Subscription`
 
-これらのリクエストは最初に`PENDING`ステータスを戻します。ロングポーリングでは、リソースのステータスが変更されたときに、更新されたモデルをフェッチできます。3秒以内に変更が発生しない場合、その時点のリソースが返されます。
+これらのリクエストは最初に`PENDING`ステータスを戻します。ロングポーリングでは、リソースのステータスが変更されたときに、更新されたモデルをフェッチできます。3秒以内に変更が発生しない場合、その時点のリソースが返されます。オプションとして、`PENDING`ステータスが返された場合に、自動的にリトライするためのリトライ回数を渡すことができます。
 
 ```php
 $charge = $client
     ->createCharge($token->id, Money::USD(1000)) // $charge->status == PENDING
     ->awaitResult(); // $charge->status == SUCCESSFUL
+    
+// OR
+$charge = $client
+    ->createCharge($token->id, Money::USD(1000)) // $charge->status == PENDING
+    ->awaitResult(5); // `PENDING`以外ステータスを返すまで、5回まで（最大15秒）をリトライを実行
 ```
 
 ### リストとページネーション

@@ -10,6 +10,7 @@ use Univapay\Enums\ConvenienceStore;
 use Univapay\Enums\Gateway;
 use Univapay\Enums\InstallmentPlanType;
 use Univapay\Enums\OnlineBrand;
+use Univapay\Enums\OsType;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
 use Univapay\Enums\QrBrandMerchant;
@@ -175,7 +176,8 @@ trait Requests
             ['customer_id' => 'PHP TEST'],
             '127.0.0.1',
             CallMethod::WEB(),
-            'PHP TEST'
+            'PHP TEST',
+            OsType::ANDROID()
         );
     }
 
@@ -224,7 +226,7 @@ trait Requests
             null,
             $onlyDirectCurrency
         );
-        return $charge->awaitResult();
+        return $charge->awaitResult(5);
     }
 
     public function createValidRefund()
@@ -235,7 +237,7 @@ trait Requests
             RefundReason::FRAUD(),
             'test',
             ['something' => 'value']
-        )->awaitResult();
+        )->awaitResult(5);
     }
 
     public function createValidSubscription($authorized = null, DateInterval $captureAfter = null)
@@ -254,7 +256,7 @@ trait Requests
                 $authorized,
                 $captureAfter
             )
-            ->awaitResult();
+            ->awaitResult(5);
     }
 
     public function createValidScheduleSubscription()
@@ -273,7 +275,7 @@ trait Requests
                 Money::JPY(1000),
                 $schedule
             )
-            ->awaitResult();
+            ->awaitResult(5);
     }
 
     public function createValidInstallmentSubscription()
@@ -292,7 +294,7 @@ trait Requests
                 null,
                 $installmentPlan
             )
-            ->awaitResult();
+            ->awaitResult(5);
     }
     
 
@@ -313,7 +315,7 @@ trait Requests
                 null,
                 $installmentPlan
             )
-            ->awaitResult();
+            ->awaitResult(5);
     }
     
     public function createUnconfirmedSubscription()
@@ -326,7 +328,7 @@ trait Requests
                 Period::BIWEEKLY(),
                 Money::JPY(1000)
             )
-            ->awaitResult();
+            ->awaitResult(5);
     }
 
     public function deactivateExistingSubscriptionToken()
