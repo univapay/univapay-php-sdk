@@ -226,7 +226,16 @@ class Subscription extends Resource
 
     protected function pollableStatuses()
     {
-        return [SubscriptionStatus::UNVERIFIED()];
+        return [
+            (string) SubscriptionStatus::UNVERIFIED() => array_diff(
+                SubscriptionStatus::findValues(),
+                [SubscriptionStatus::UNVERIFIED()]
+            ),
+            (string) SubscriptionStatus::AUTHORIZED() => array_diff(
+                SubscriptionStatus::findValues(),
+                [SubscriptionStatus::UNVERIFIED(), SubscriptionStatus::AUTHORIZED()]
+            )
+        ];
     }
 
     protected function getChargeContext()

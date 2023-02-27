@@ -110,7 +110,15 @@ class Charge extends Resource
 
     protected function pollableStatuses()
     {
-        return [ChargeStatus::PENDING()];
+        return [
+            (string) ChargeStatus::PENDING() => array_diff(ChargeStatus::findValues(), [ChargeStatus::PENDING()]),
+            (string) ChargeStatus::AUTHORIZED() => [
+                ChargeStatus::SUCCESSFUL(), ChargeStatus::FAILED(), ChargeStatus::ERROR(), ChargeStatus::CANCELED()
+            ],
+            (string) ChargeStatus::AWAITING() => [
+                ChargeStatus::SUCCESSFUL(), ChargeStatus::FAILED(), ChargeStatus::ERROR(), ChargeStatus::CANCELED()
+            ]
+        ];
     }
 
     public function patch(array $metadata)

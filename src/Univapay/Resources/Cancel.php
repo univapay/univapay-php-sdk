@@ -49,6 +49,6 @@ class Cancel extends Resource
     
     protected function pollableStatuses()
     {
-        return [CancelStatus::PENDING()];
+        return [(string) CancelStatus::PENDING() => array_diff(CancelStatus::findValues(), [CancelStatus::PENDING()])];
     }
 }
