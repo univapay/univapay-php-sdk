@@ -73,6 +73,6 @@ class Refund extends Resource
 
     protected function pollableStatuses()
     {
-        return [RefundStatus::PENDING()];
+        return [(string) RefundStatus::PENDING() => array_diff(RefundStatus::findValues(), [RefundStatus::PENDING()])];
     }
 }

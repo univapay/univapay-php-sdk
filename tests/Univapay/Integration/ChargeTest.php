@@ -160,6 +160,8 @@ EOD;
         $cancel = $charge->cancel(['something'=>'anything'])->awaitResult(5);
         $this->assertEquals(CancelStatus::SUCCESSFUL(), $cancel->status);
         $this->assertEquals($cancel->metadata['something'], 'anything');
+        $postCancelCharge = $charge->awaitResult(5);
+        $this->assertEquals(ChargeStatus::CANCELED(), $postCancelCharge->status);
     }
     
     public function testInvalidCancel()
