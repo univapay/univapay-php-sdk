@@ -12,4 +12,5 @@ final class PaymentType extends TypedEnum
     public static function APPLE_PAY() { return self::create(); }
     public static function PAIDY() { return self::create(); }
     public static function ONLINE() { return self::create(); }
+    public static function BANK_TRANSFER() { return self::create(); }
 }
