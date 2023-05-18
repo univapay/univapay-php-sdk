@@ -16,6 +16,7 @@ final class CardCategory extends TypedEnum
     public static function DEBIT() { return self::create(); }
     public static function ELECTRON() { return self::create(); }
     public static function GOLD() { return self::create(); }
+    public static function INFINITE() { return self::create(); }
     public static function MAESTRO() { return self::create(); }
     public static function PERSONAL() { return self::create(); }
     public static function PLATINUM() { return self::create(); }
