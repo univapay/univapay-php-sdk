@@ -19,6 +19,7 @@ use Univapay\Resources\Mixins\GetScheduledPayments;
 use Univapay\Resources\Subscription\InstallmentPlan;
 use Univapay\Resources\Subscription\ScheduledPayment;
 use Univapay\Resources\Subscription\ScheduleSettings;
+use Univapay\Resources\Subscription\SubscriptionPlan;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\RequesterUtils;
@@ -49,6 +50,7 @@ class Subscription extends Resource
     public $initialAmount;
     public $initialAmountFormatted;
     public $nextPayment;
+    public $subscriptionPlan;
     public $installmentPlan;
     public $firstChargeAuthorizationOnly;
     public $firstChargeCaptureAfter;
@@ -72,6 +74,7 @@ class Subscription extends Resource
         Money $initialAmount = null,
         $initialAmountFormatted = null,
         ScheduledPayment $nextPayment = null,
+        SubscriptionPlan $subscriptionPlan = null,
         InstallmentPlan $installmentPlan = null,
         $firstChargeAuthorizationOnly = null,
         DateInterval $firstChargeCaptureAfter = null,
@@ -95,6 +98,7 @@ class Subscription extends Resource
         $this->metadata = $metadata;
         $this->mode = $mode;
         $this->createdOn = $createdOn;
+        $this->subscriptionPlan = $subscriptionPlan;
         $this->installmentPlan = $installmentPlan;
         $this->firstChargeAuthorizationOnly = $firstChargeAuthorizationOnly;
         $this->firstChargeCaptureAfter = $firstChargeCaptureAfter;
@@ -107,6 +111,7 @@ class Subscription extends Resource
         ScheduleSettings $scheduleSettings = null,
         SubscriptionStatus $status = null,
         array $metadata = null,
+        SubscriptionPlan $subscriptionPlan = null,
         InstallmentPlan $installmentPlan = null
     ) {
         if (SubscriptionStatus::CANCELED() == $this->status) {
@@ -138,8 +143,8 @@ class Subscription extends Resource
                     throw new UnivapayValidationError(Field::STATUS(), Reason::FORBIDDEN_PARAMETER());
             }
         }
-        if (isset($installmentPlan) && !$this->isEditable()) {
-            throw new UnivapayLogicError(Reason::INSTALLMENT_ALREADY_SET());
+        if ((isset($subscriptionPlan) || isset($installmentPlan)) && !$this->isEditable()) {
+            throw new UnivapayLogicError(Reason::PLAN_ALREADY_SET());
         }
 
         $payload = [
@@ -149,6 +154,7 @@ class Subscription extends Resource
             'schedule_settings' => $scheduleSettings,
             'status' => isset($status) ? $status->getValue() : null,
             'metadata' => $metadata,
+            'subscription_plan' => $subscriptionPlan,
             'installment_plan' => $installmentPlan
         ];
         if (isset($money)) {
@@ -261,6 +267,7 @@ class Subscription extends Resource
             ->upsert('mode', true, FormatterUtils::getTypedEnum(AppTokenMode::class))
             ->upsert('created_on', true, FormatterUtils::of('getDateTime'))
             ->upsert('next_payment', false, ScheduledPayment::getSchema()->getParser())
+            ->upsert('subscription_plan', false, SubscriptionPlan::getSchema()->getParser())
             ->upsert('installment_plan', false, InstallmentPlan::getSchema()->getParser())
             ->upsert('first_charge_capture_after', false, FormatterUtils::of('getDateInterval'));
     }

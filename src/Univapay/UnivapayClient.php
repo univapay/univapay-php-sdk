@@ -49,6 +49,7 @@ use Univapay\Resources\PaymentMethod\PaymentMethod;
 use Univapay\Resources\Subscription\InstallmentPlan;
 use Univapay\Resources\Subscription\ScheduledPayment;
 use Univapay\Resources\Subscription\ScheduleSettings;
+use Univapay\Resources\Subscription\SubscriptionPlan;
 use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\HttpUtils;
 use Univapay\Utility\RequesterUtils;
@@ -188,6 +189,7 @@ class UnivapayClient
         Period $period,
         Money $initialAmount = null,
         ScheduleSettings $scheduleSettings = null,
+        SubscriptionPlan $subscriptionPlan = null,
         InstallmentPlan $installmentPlan = null,
         array $metadata = null
     ) {
@@ -198,6 +200,7 @@ class UnivapayClient
                 $period,
                 $initialAmount,
                 $scheduleSettings,
+                $subscriptionPlan,
                 $installmentPlan,
                 $metadata
             );
@@ -215,13 +218,15 @@ class UnivapayClient
         Period $period,
         Money $initialAmount = null,
         ScheduleSettings $scheduleSettings = null,
+        SubscriptionPlan $subscriptionPlan = null,
         InstallmentPlan $installmentPlan = null
     ) {
         $payload = $amount->jsonSerialize() + [
             'payment_type' => $paymentType->getValue(),
             'period' => $period->getValue(),
             'schedule_settings' => $scheduleSettings,
-            'installment_plan' => $installmentPlan,
+            'subscription_plan' => $subscriptionPlan,
+            'installment_plan' => $installmentPlan
         ];
         if (isset($initialAmount)) {
             if ($initialAmount->isNegative()) {
