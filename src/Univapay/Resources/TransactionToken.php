@@ -25,6 +25,7 @@ use Univapay\Resources\PaymentData\QrScanData;
 use Univapay\Resources\PaymentMethod\PaymentMethodPatch;
 use Univapay\Resources\Subscription\InstallmentPlan;
 use Univapay\Resources\Subscription\ScheduleSettings;
+use Univapay\Resources\Subscription\SubscriptionPlan;
 use Univapay\Utility\DateUtils;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils;
@@ -163,6 +164,7 @@ class TransactionToken extends Resource
         Period $period,
         Money $initialAmount = null,
         ScheduleSettings $scheduleSettings = null,
+        SubscriptionPlan $subscriptionPlan = null,
         InstallmentPlan $installmentPlan = null,
         array $metadata = null,
         $onlyDirectCurrency = null,
@@ -190,6 +192,7 @@ class TransactionToken extends Resource
             'period' => $period->getValue(),
             'initial_amount' => isset($initialAmount) ? $initialAmount->getAmount() : null,
             'schedule_settings' => $scheduleSettings,
+            'subscription_plan' => $subscriptionPlan,
             'installment_plan' => $installmentPlan,
             'metadata' => $metadata,
         ] + (isset($firstChargeAuthorizationOnly)

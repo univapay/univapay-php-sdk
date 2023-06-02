@@ -8,6 +8,7 @@ use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\InstallmentPlanType;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
+use Univapay\Enums\SubscriptionPlanType;
 use Univapay\Enums\SubscriptionStatus;
 use Univapay\Enums\TokenType;
 use Univapay\Errors\UnivapayValidationError;
@@ -17,6 +18,7 @@ use Univapay\Resources\Subscription;
 use Univapay\Resources\Subscription\InstallmentPlan;
 use Univapay\Resources\Subscription\ScheduledPayment;
 use Univapay\Resources\Subscription\ScheduleSettings;
+use Univapay\Resources\Subscription\SubscriptionPlan;
 use Money\Currency;
 use Money\Money;
 use PHPUnit\Framework\TestCase;
@@ -59,7 +61,7 @@ class SubscriptionTest extends TestCase
             "first_charge_capture_after": "PT5H",
             "payments_left": 9,
             "status": "canceled",
-            "installment_plan": {
+            "subscription_plan": {
                 "plan_type": "fixed_cycle_amount",
                 "fixed_cycle_amount": 1000
             },
@@ -89,8 +91,8 @@ EOD;
         $this->assertEquals(AppTokenMode::TEST(), $subscription->mode);
         $this->assertInstanceOf(ScheduledPayment::class, $subscription->nextPayment);
         $this->assertEquals(date_create('2017-07-04T06:06:05.580391Z'), $subscription->createdOn);
-        $this->assertEquals(InstallmentPlanType::FIXED_CYCLE_AMOUNT(), $subscription->installmentPlan->planType);
-        $this->assertEquals(Money::JPY(1000), $subscription->installmentPlan->fixedCycleAmount);
+        $this->assertEquals(SubscriptionPlanType::FIXED_CYCLE_AMOUNT(), $subscription->subscriptionPlan->planType);
+        $this->assertEquals(Money::JPY(1000), $subscription->subscriptionPlan->fixedCycleAmount);
         $this->assertEquals('9', $subscription->paymentsLeft);
         $this->assertEquals(Money::JPY(5000), $subscription->amountLeft);
         $this->assertEquals(5000, $subscription->amountLeftFormatted);
@@ -135,20 +137,18 @@ EOD;
     // Bug in test mode installments
     public function testCreateInstallmentSubscription()
     {
-        $this->markTestSkipped("Bug in test mode installments");
-        $subscription = $this->createValidInstallmentSubscription();
+        $subscription = $this->createValidInstallmentPlan();
         $this->assertEquals(InstallmentPlanType::FIXED_CYCLES(), $subscription->installmentPlan->planType);
-        $this->assertEquals('10', $subscription->installmentPlan->fixedCycles);
-        $this->assertEquals('9', $subscription->paymentsLeft);
-        $this->assertInstanceOf(Money::class, $subscription->amountLeft);
-        $this->assertInstanceOf(ScheduledPayment::class, $subscription->nextPayment);
+        $this->assertEquals('12', $subscription->installmentPlan->fixedCycles);
+        $this->assertEquals(null, $subscription->paymentsLeft);
+        $this->assertEquals(Money::JPY(0), $subscription->amountLeft);
     }
 
-    public function testCreateFixedAmountInstallmentSubscription()
+    public function testCreateFixedAmountSubscriptionPlan()
     {
-        $subscription = $this->createValidFixedAmountInstallmentSubscription();
-        $this->assertEquals(InstallmentPlanType::FIXED_CYCLE_AMOUNT(), $subscription->installmentPlan->planType);
-        $this->assertEquals(Money::JPY(1000), $subscription->installmentPlan->fixedCycleAmount);
+        $subscription = $this->createValidFixedAmountSubscriptionPlan();
+        $this->assertEquals(SubscriptionPlanType::FIXED_CYCLE_AMOUNT(), $subscription->subscriptionPlan->planType);
+        $this->assertEquals(Money::JPY(1000), $subscription->subscriptionPlan->fixedCycleAmount);
     }
 
     public function testGetSubscription()
@@ -177,7 +177,7 @@ EOD;
             $schedule,
             null,
             ['reason' => 'PHP SDK test'],
-            new InstallmentPlan(InstallmentPlanType::FIXED_CYCLE_AMOUNT(), null, Money::JPY(2000))
+            new SubscriptionPlan(SubscriptionPlanType::FIXED_CYCLE_AMOUNT(), null, Money::JPY(2000))
         )->awaitResult(5);
         $this->assertEquals(Money::JPY(10000), $patchedSubscription->amount);
         $this->assertEquals(new Currency('JPY'), $patchedSubscription->currency);
@@ -190,10 +190,10 @@ EOD;
         $this->assertEquals(new DateTimeZone('Asia/Tokyo'), $patchedSubscription->scheduleSettings->zoneId);
         $this->assertTrue($patchedSubscription->scheduleSettings->preserveEndOfMonth);
         $this->assertEquals(
-            InstallmentPlanType::FIXED_CYCLE_AMOUNT(),
-            $patchedSubscription->installmentPlan->planType
+            SubscriptionPlanType::FIXED_CYCLE_AMOUNT(),
+            $patchedSubscription->subscriptionPlan->planType
         );
-        $this->assertEquals(Money::JPY(2000), $patchedSubscription->installmentPlan->fixedCycleAmount);
+        $this->assertEquals(Money::JPY(2000), $patchedSubscription->subscriptionPlan->fixedCycleAmount);
     }
 
     public function testPatchSubscriptionStatuses()
@@ -250,7 +250,7 @@ EOD;
 
     public function testListPaymentsForSubscription()
     {
-        $subscription = $this->createValidInstallmentSubscription();
+        $subscription = $this->createValidInstallmentPlan();
         $getSubscription = $this->getClient()->getSubscription($this->storeAppJWT->storeId, $subscription->id);
         $payments = $getSubscription->listScheduledPayments();
         $this->assertInstanceOf(Paginated::class, $payments);
@@ -266,21 +266,39 @@ EOD;
         $this->assertInstanceOf(Paginated::class, $charges);
     }
 
-    public function testCreateSubscriptionSimulation()
+    public function testCreateSubscriptionPlanSimulation()
     {
         $schedule = new ScheduleSettings(date_create('last day of next month'), null, true);
-        $installmentPlan = new InstallmentPlan(InstallmentPlanType::FIXED_CYCLE_AMOUNT(), null, Money::JPY(1000));
+        $subscriptionPlan = new SubscriptionPlan(SubscriptionPlanType::FIXED_CYCLE_AMOUNT(), null, Money::JPY(1000));
         $simulatedPayments = $this->getClient()->createSubscriptionSimulation(
             PaymentType::CARD(),
             Money::JPY(10000),
             Period::MONTHLY(),
             Money::JPY(100),
             $schedule,
-            $installmentPlan
+            $subscriptionPlan
         );
 
         $this->assertInstanceOf(SimpleList::class, $simulatedPayments);
         $this->assertEquals(5, count($simulatedPayments->items));
+        $this->assertInstanceOf(ScheduledPayment::class, reset($simulatedPayments->items));
+    }
+
+    public function testCreateInstallmentPlanSimulation()
+    {
+        $installmentPlan = new InstallmentPlan(InstallmentPlanType::FIXED_CYCLES(), 12);
+        $simulatedPayments = $this->getClient()->createSubscriptionSimulation(
+            PaymentType::CARD(),
+            Money::JPY(10000),
+            Period::MONTHLY(),
+            null,
+            null,
+            null,
+            $installmentPlan
+        );
+
+        $this->assertInstanceOf(SimpleList::class, $simulatedPayments);
+        $this->assertEquals(1, count($simulatedPayments->items));
         $this->assertInstanceOf(ScheduledPayment::class, reset($simulatedPayments->items));
     }
 }
