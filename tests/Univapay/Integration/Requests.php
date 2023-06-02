@@ -15,6 +15,7 @@ use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
 use Univapay\Enums\QrBrandMerchant;
 use Univapay\Enums\RefundReason;
+use Univapay\Enums\SubscriptionPlanType;
 use Univapay\Enums\TokenType;
 use Univapay\Resources\PaymentData\Address;
 use Univapay\Resources\PaymentData\ConvenienceStoreData;
@@ -30,6 +31,7 @@ use Univapay\Resources\PaymentMethod\QrMerchantPayment;
 use Univapay\Resources\PaymentMethod\QrScanPayment;
 use Univapay\Resources\Subscription\InstallmentPlan;
 use Univapay\Resources\Subscription\ScheduleSettings;
+use Univapay\Resources\Subscription\SubscriptionPlan;
 use UnivapayTest\Integration\CardNumber;
 use Money\Money;
 
@@ -253,6 +255,7 @@ trait Requests
                 null,
                 null,
                 null,
+                null,
                 $authorized,
                 $captureAfter
             )
@@ -278,19 +281,20 @@ trait Requests
             ->awaitResult(5);
     }
 
-    public function createValidInstallmentSubscription()
+    public function createValidInstallmentPlan()
     {
         $this->deactivateExistingSubscriptionToken();
         $installmentPlan = new InstallmentPlan(
             InstallmentPlanType::FIXED_CYCLES(),
-            10
+            12
         );
         return $this
             ->createValidToken(PaymentType::CARD(), TokenType::SUBSCRIPTION())
             ->createSubscription(
                 Money::JPY(10000),
-                Period::BIWEEKLY(),
-                Money::JPY(1000),
+                Period::MONTHLY(),
+                null,
+                null,
                 null,
                 $installmentPlan
             )
@@ -298,11 +302,11 @@ trait Requests
     }
     
 
-    public function createValidFixedAmountInstallmentSubscription()
+    public function createValidFixedAmountSubscriptionPlan()
     {
         $this->deactivateExistingSubscriptionToken();
-        $installmentPlan = new InstallmentPlan(
-            InstallmentPlanType::FIXED_CYCLE_AMOUNT(),
+        $subscriptionPlan = new SubscriptionPlan(
+            SubscriptionPlanType::FIXED_CYCLE_AMOUNT(),
             null,
             Money::JPY(1000)
         );
@@ -313,7 +317,7 @@ trait Requests
                 Period::BIWEEKLY(),
                 Money::JPY(1000),
                 null,
-                $installmentPlan
+                $subscriptionPlan
             )
             ->awaitResult(5);
     }
