@@ -22,7 +22,7 @@ composer require univapay/php-sdk
 ## Usage
 
 ```php
-use Univapay\Univapay\Client;
+use Univapay\Client;
 use Univapay\UnivapayClientOptions;
 use Univapay\RequestsHandlers\RateLimitHandler;
 
