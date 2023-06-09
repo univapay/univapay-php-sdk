@@ -1,5 +1,6 @@
 name: PHP lint & test
 
+concurrency: ${{ github.workflow }}
 on:
   push:
     branches:

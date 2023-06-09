@@ -46,7 +46,7 @@ EOD;
 
     public function testListChargesForScheduledPayment()
     {
-        $subscription = $this->createValidInstallmentSubscription();
+        $subscription = $this->createValidInstallmentPlan();
         $getSubscription = $this->getClient()->getSubscription($this->storeAppJWT->storeId, $subscription->id);
         $payments = $getSubscription->listScheduledPayments();
         $charges = end($payments->items)->listCharges();
