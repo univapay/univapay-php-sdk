@@ -161,7 +161,7 @@ class TransactionToken extends Resource
 
     public function createSubscription(
         Money $money,
-        Period $period,
+        Period $period = null,
         Money $initialAmount = null,
         ScheduleSettings $scheduleSettings = null,
         SubscriptionPlan $subscriptionPlan = null,
@@ -169,10 +169,14 @@ class TransactionToken extends Resource
         array $metadata = null,
         $onlyDirectCurrency = null,
         $firstChargeAuthorizationOnly = null,
-        DateInterval $firstChargeCaptureAfter = null
+        DateInterval $firstChargeCaptureAfter = null,
+        DateInterval $cyclicalPeriod = null
     ) {
         if ($this->type !== TokenType::SUBSCRIPTION()) {
             throw new UnivapayLogicError(Reason::NOT_SUBSCRIPTION_PAYMENT());
+        }
+        if (!isset($period) && !isset($cyclicalPeriod)) {
+            throw new UnivapayValidationError(Field::PERIOD(), Reason::PERIOD_OR_CYCLICAL_PERIOD_MUST_BE_SET());
         }
         if (!$money->isPositive()) {
             throw new UnivapayValidationError(Field::AMOUNT(), Reason::INVALID_AMOUNT());
@@ -189,12 +193,13 @@ class TransactionToken extends Resource
         
         $payload = $money->jsonSerialize() + [
             'transaction_token_id' => $this->id,
-            'period' => $period->getValue(),
+            'period' => isset($period) ? $period->getValue() : null,
+            'cyclical_period' => isset($cyclicalPeriod) ? DateUtils::asPeriodString($cyclicalPeriod) : null,
             'initial_amount' => isset($initialAmount) ? $initialAmount->getAmount() : null,
-            'schedule_settings' => $scheduleSettings,
-            'subscription_plan' => $subscriptionPlan,
-            'installment_plan' => $installmentPlan,
-            'metadata' => $metadata,
+            'schedule_settings' => isset($scheduleSettings) ? $scheduleSettings->jsonSerialize() : null,
+            'subscription_plan' => isset($subscriptionPlan) ? $subscriptionPlan->jsonSerialize() : null,
+            'installment_plan' => isset($installmentPlan) ? $installmentPlan->jsonSerialize() : null,
+            'metadata' => $metadata
         ] + (isset($firstChargeAuthorizationOnly)
             ? ['first_charge_authorization_only' => $firstChargeAuthorizationOnly]
             : []
