@@ -39,6 +39,7 @@ class Subscription extends Resource
     public $amount;
     public $amountFormatted;
     public $period;
+    public $cyclicalPeriod;
     public $scheduleSettings;
     public $paymentsLeft;
     public $status;
@@ -62,7 +63,8 @@ class Subscription extends Resource
         Currency $currency,
         Money $amount,
         $amountFormatted,
-        Period $period,
+        Period $period = null,
+        DateInterval $cyclicalPeriod = null,
         ScheduleSettings $scheduleSettings,
         $paymentsLeft,
         SubscriptionStatus $status,
@@ -87,6 +89,7 @@ class Subscription extends Resource
         $this->amount = $amount;
         $this->amountFormatted = $amountFormatted;
         $this->period = $period;
+        $this->cyclicalPeriod = $cyclicalPeriod;
         $this->initialAmount = $initialAmount;
         $this->initialAmountFormatted = $initialAmountFormatted;
         $this->scheduleSettings = $scheduleSettings;
@@ -112,7 +115,8 @@ class Subscription extends Resource
         SubscriptionStatus $status = null,
         array $metadata = null,
         SubscriptionPlan $subscriptionPlan = null,
-        InstallmentPlan $installmentPlan = null
+        InstallmentPlan $installmentPlan = null,
+        DateInterval $cyclicalPeriod = null
     ) {
         if (SubscriptionStatus::CANCELED() == $this->status) {
             throw new UnivapayLogicError(Reason::CANNOT_CHANGE_CANCELED_SUBSCRIPTION());
@@ -124,6 +128,9 @@ class Subscription extends Resource
             throw new UnivapayValidationError(Field::INITIAL_AMOUNT(), Reason::INVALID_FORMAT());
         }
         if (isset($period) && !$this->isEditable()) {
+            throw new UnivapayLogicError(Reason::CANNOT_SET_AFTER_SUBSCRIPTION_STARTED());
+        }
+        if (isset($cyclicalPeriod) && !$this->isEditable()) {
             throw new UnivapayLogicError(Reason::CANNOT_SET_AFTER_SUBSCRIPTION_STARTED());
         }
         if (isset($status)) {
@@ -151,6 +158,7 @@ class Subscription extends Resource
             'transaction_token_id' => $transactionTokenId,
             'initial_amount' => isset($initialAmount) ? $initialAmount->getAmount() : null,
             'period' => isset($period) ? $period->getValue() : null,
+            'cyclical_period' => isset($cyclicalPeriod) ? DateUtils::asPeriodString($cyclicalPeriod) : null,
             'schedule_settings' => $scheduleSettings,
             'status' => isset($status) ? $status->getValue() : null,
             'metadata' => $metadata,
@@ -259,7 +267,8 @@ class Subscription extends Resource
         return JsonSchema::fromClass(self::class)
             ->upsert('currency', true, FormatterUtils::of('getCurrency'))
             ->upsert('amount', true, FormatterUtils::getMoney('currency'))
-            ->upsert('period', true, FormatterUtils::getTypedEnum(Period::class))
+            ->upsert('period', false, FormatterUtils::getTypedEnum(Period::class))
+            ->upsert('cyclical_period', false, FormatterUtils::of('getDateInterval'))
             ->upsert('initial_amount', false, FormatterUtils::getMoney('currency'))
             ->upsert('schedule_settings', true, ScheduleSettings::getSchema()->getParser())
             ->upsert('amount_left', false, FormatterUtils::getMoney('currency'))
