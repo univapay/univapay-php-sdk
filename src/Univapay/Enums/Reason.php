@@ -42,4 +42,5 @@ final class Reason extends TypedEnum
     public static function CANNOT_SET_AFTER_SUBSCRIPTION_STARTED() { return self::create(); }
     public static function CANNOT_CHANGE_TOKEN() { return self::create(); }
     public static function NEED_AT_LEAST_TWO_CYCLES() { return self::create(); }
+    public static function PERIOD_OR_CYCLICAL_PERIOD_MUST_BE_SET() { return self::create(); }
 }

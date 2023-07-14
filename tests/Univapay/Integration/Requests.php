@@ -262,6 +262,31 @@ trait Requests
             ->awaitResult(5);
     }
 
+    public function createValidCyclicalPeriodSubscription(
+        $authorized = null,
+        $cyclicalPeriod = null,
+        DateInterval $captureAfter = null,
+        ScheduleSettings $scheduleSettings = null
+    ) {
+        $this->deactivateExistingSubscriptionToken();
+        return $this
+            ->createValidToken(PaymentType::CARD(), TokenType::SUBSCRIPTION())
+            ->createSubscription(
+                Money::JPY(10000),
+                null,
+                Money::JPY(1000),
+                $scheduleSettings,
+                null,
+                null,
+                null,
+                null,
+                $authorized,
+                $captureAfter,
+                $cyclicalPeriod
+            )
+            ->awaitResult(5);
+    }
+
     public function createValidScheduleSubscription()
     {
         $this->deactivateExistingSubscriptionToken();
