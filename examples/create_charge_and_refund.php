@@ -25,6 +25,7 @@ $paymentMethod = new CardPayment(
         'test line 1',
         'test line 2',
         'test state',
+        'test city',
         'jp',
         '101-1111'
     ),
