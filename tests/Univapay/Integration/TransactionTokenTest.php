@@ -174,7 +174,7 @@ class TransactionTokenTest extends TestCase
     public function testCreatePaidyToken()
     {
         $transactionToken = $this->createValidToken(PaymentType::PAIDY(), TokenType::RECURRING());
-        $this->assertEquals('test@test.com', $transactionToken->email);
+        $this->assertEquals('test+paidy@test.com', $transactionToken->email);
         $this->assertEquals(PaymentType::PAIDY(), $transactionToken->paymentType);
         $this->assertTrue($transactionToken->confirmed);
         $this->assertEquals(TokenType::RECURRING(), $transactionToken->type);
@@ -191,7 +191,7 @@ class TransactionTokenTest extends TestCase
     public function testCreateOnlineToken()
     {
         $transactionToken = $this->createValidToken(PaymentType::ONLINE());
-        $this->assertEquals('test@test.com', $transactionToken->email);
+        $this->assertEquals('test+online@test.com', $transactionToken->email);
         $this->assertEquals(PaymentType::ONLINE(), $transactionToken->paymentType);
         $this->assertNull($transactionToken->confirmed);
         $this->assertEquals(OnlineBrand::WE_CHAT_ONLINE(), $transactionToken->data->brand);
