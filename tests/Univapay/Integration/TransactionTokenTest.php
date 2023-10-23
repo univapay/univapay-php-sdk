@@ -257,7 +257,7 @@ class TransactionTokenTest extends TestCase
 
     public function testPatchExistingCardPayment()
     {
-        $transactionToken = $this->createValidToken();
+        $transactionToken = $this->createValidToken(PaymentType::CARD(), TokenType::RECURRING());
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
         
