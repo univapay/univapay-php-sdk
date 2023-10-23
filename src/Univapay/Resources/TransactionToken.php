@@ -223,11 +223,6 @@ class TransactionToken extends Resource
         if (isset($captureAtRelative)) {
             $captureAtAbsolute = date_create()->add($captureAtRelative);
         }
-        if (isset($captureAtAbsolute)) {
-            if ($captureAtAbsolute < date_create('+1 hour') || $captureAtAbsolute > date_create('+7 days')) {
-                throw new UnivapayLogicError(Reason::INVALID_SCHEDULED_CAPTURE_DATE());
-            }
-        }
         if (isset($capture)) {
             if ($this->paymentType !== PaymentType::CARD() &&
                 $this->paymentType !== PaymentType::APPLE_PAY() &&

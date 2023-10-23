@@ -173,7 +173,7 @@ trait Requests
     public function createOnlinePayment()
     {
         return new OnlinePayment(
-            'test@test.com',
+            'test+online@test.com',
             OnlineBrand::WE_CHAT_ONLINE(),
             ['customer_id' => 'PHP TEST'],
             '127.0.0.1',
@@ -205,7 +205,7 @@ trait Requests
                     '08012345678'
                 )
             ),
-            'test@test.com',
+            'test+paidy@test.com',
             $type,
             null,
             ['customer_id' => 'PHP TEST']
