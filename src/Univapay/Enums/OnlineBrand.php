@@ -25,7 +25,7 @@ final class OnlineBrand extends TypedEnum
     public static function NAVER_PAY() { return self::create(); }
     public static function RABBIT_LINE_PAY() { return self::create(); }
     public static function TINBA() { return self::create(); }
-    public static function TOSS() { return self::create(); }
+    public static function TOSS_PAY() { return self::create(); }
     public static function TOUCH_N_GO() { return self::create('tng'); }
     public static function TRUEMONEY() { return self::create(); }
 }

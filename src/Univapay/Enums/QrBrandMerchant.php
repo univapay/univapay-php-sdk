@@ -22,7 +22,7 @@ final class QrBrandMerchant extends TypedEnum
     public static function TRUEMONEY() { return self::create(); }
     public static function TINBA() { return self::create(); }
     public static function NAVERPAY() { return self::create(); }
-    public static function TOSS() { return self::create(); }
+    public static function TOSSPAY() { return self::create(); }
     public static function OCBC() { return self::create(); }
     public static function CHANGIPAY() { return self::create(); }
     public static function HIPAY() { return self::create(); }

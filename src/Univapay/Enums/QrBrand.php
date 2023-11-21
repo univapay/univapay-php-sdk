@@ -25,6 +25,7 @@ final class QrBrand extends TypedEnum
     public static function HIPAY() { return self::create(); }
     public static function PUBLICBANK() { return self::create('pbengagemy'); }
     public static function MPAY() { return self::create(); }
+    public static function TOSSPAY() { return self::create(); }
     public static function JKOPAY() { return self::create(); }
     public static function DASH() { return self::create(); }
     public static function GLOBAL_PAY() { return self::create(); }
