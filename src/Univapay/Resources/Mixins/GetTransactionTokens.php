@@ -23,7 +23,7 @@ trait GetTransactionTokens
 
     public function listTransactionTokens(
         $search = null,
-        $UnivapayCustomerId = null,
+        $univapayCustomerId = null,
         TokenType $type = null,
         AppTokenMode $mode = null,
         ActiveFilter $active = null,
@@ -39,7 +39,7 @@ trait GetTransactionTokens
         $query = FunctionalUtils::stripNulls([
             'search' => $search,
             'active' => isset($active) ? $active->getValue() : null,
-            'customer_id' => $UnivapayCustomerId,
+            'customer_id' => $univapayCustomerId,
             'type' => isset($type) ? $type->getValue() : null,
             'mode' => isset($mode) ? $mode->getValue() : null,
             'cursor' => $cursor,
