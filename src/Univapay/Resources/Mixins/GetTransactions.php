@@ -27,6 +27,7 @@ trait GetTransactions
         AppTokenMode $mode = null,
         $gatewayCredentialsId = null,
         $gatewayTransactionId = null,
+        $metadata = null,
         $cursor = null,
         $limit = null,
         CursorDirection $cursorDirection = null
@@ -38,6 +39,7 @@ trait GetTransactions
             'type' => isset($type) ? $type->getValue() : null,
             'search' => $search,
             'mode' => isset($mode) ? $mode->getValue() : null,
+            'metadata' => $metadata,
             'cursor' => $cursor,
             'limit' => $limit,
             'cursor_direction' => isset($cursorDirection) ? $cursorDirection.getValue() : null
