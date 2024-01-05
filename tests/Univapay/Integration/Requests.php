@@ -248,9 +248,8 @@ trait Requests
         TokenType $type = null
     ) {
         $this->deactivateExistingSubscriptionToken();
-        $type = isset($type) ? $type : TokenType::SUBSCRIPTION();
         return $this
-            ->createValidToken(PaymentType::CARD(), $type)
+            ->createValidToken(PaymentType::CARD(), $type ?? TokenType::SUBSCRIPTION())
             ->createSubscription(
                 Money::JPY(10000),
                 Period::BIWEEKLY(),
