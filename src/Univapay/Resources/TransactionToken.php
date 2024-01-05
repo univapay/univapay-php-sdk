@@ -172,7 +172,7 @@ class TransactionToken extends Resource
         DateInterval $firstChargeCaptureAfter = null,
         DateInterval $cyclicalPeriod = null
     ) {
-        if ($this->type !== TokenType::SUBSCRIPTION()) {
+        if ($this->type == TokenType::ONE_TIME()) {
             throw new UnivapayLogicError(Reason::NOT_SUBSCRIPTION_PAYMENT());
         }
         if (!isset($period) && !isset($cyclicalPeriod)) {
