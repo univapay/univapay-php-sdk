@@ -242,11 +242,14 @@ trait Requests
         )->awaitResult(5);
     }
 
-    public function createValidSubscription($authorized = null, DateInterval $captureAfter = null)
-    {
+    public function createValidSubscription(
+        $authorized = null,
+        DateInterval $captureAfter = null,
+        TokenType $type = null
+    ) {
         $this->deactivateExistingSubscriptionToken();
         return $this
-            ->createValidToken(PaymentType::CARD(), TokenType::SUBSCRIPTION())
+            ->createValidToken(PaymentType::CARD(), $type ?? TokenType::SUBSCRIPTION())
             ->createSubscription(
                 Money::JPY(10000),
                 Period::BIWEEKLY(),
