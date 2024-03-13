@@ -40,11 +40,11 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals(PaymentType::CARD(), $transactionToken->paymentType);
         $this->assertEquals('PHP TEST', $transactionToken->data->card->cardholder);
         $this->assertEquals('02', $transactionToken->data->card->expMonth);
-        $this->assertEquals('2025', $transactionToken->data->card->expYear);
+        $this->assertEquals('2030', $transactionToken->data->card->expYear);
         $this->assertEquals(CardType::CREDIT(), $transactionToken->data->card->cardType);
-        $this->assertEquals(CardCategory::GOLD(), $transactionToken->data->card->category);
+        $this->assertEquals(CardCategory::SIGNATURE(), $transactionToken->data->card->category);
         $this->assertEquals(CardSubBrand::None(), $transactionToken->data->card->subBrand);
-        $this->assertEquals('BANCO SANTANDER BRASIL, S.A.', $transactionToken->data->card->issuer);
+        $this->assertEquals('BANCO SANTANDER S.A.', $transactionToken->data->card->issuer);
         $this->assertEquals('test line 1', $transactionToken->data->billing->line1);
         $this->assertEquals('test line 2', $transactionToken->data->billing->line2);
         $this->assertEquals('test state', $transactionToken->data->billing->state);
@@ -72,7 +72,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
         $this->assertEquals('PHP TEST', $transactionToken->data->card->cardholder);
         $this->assertEquals('02', $transactionToken->data->card->expMonth);
-        $this->assertEquals('2025', $transactionToken->data->card->expYear);
+        $this->assertEquals('2030', $transactionToken->data->card->expYear);
         $this->assertEquals('test line 1', $transactionToken->data->billing->line1);
         $this->assertEquals('test line 2', $transactionToken->data->billing->line2);
         $this->assertEquals('test state', $transactionToken->data->billing->state);
@@ -102,7 +102,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
         $this->assertEquals('PHP TEST', $transactionToken->data->card->cardholder);
         $this->assertEquals('02', $transactionToken->data->card->expMonth);
-        $this->assertEquals('2025', $transactionToken->data->card->expYear);
+        $this->assertEquals('2030', $transactionToken->data->card->expYear);
         $this->assertEquals('test line 1', $transactionToken->data->billing->line1);
         $this->assertEquals('test line 2', $transactionToken->data->billing->line2);
         $this->assertEquals('test state', $transactionToken->data->billing->state);
@@ -174,7 +174,7 @@ class TransactionTokenTest extends TestCase
     public function testCreatePaidyToken()
     {
         $transactionToken = $this->createValidToken(PaymentType::PAIDY(), TokenType::RECURRING());
-        $this->assertEquals('test@test.com', $transactionToken->email);
+        $this->assertEquals('test+paidy@test.com', $transactionToken->email);
         $this->assertEquals(PaymentType::PAIDY(), $transactionToken->paymentType);
         $this->assertTrue($transactionToken->confirmed);
         $this->assertEquals(TokenType::RECURRING(), $transactionToken->type);
@@ -191,7 +191,7 @@ class TransactionTokenTest extends TestCase
     public function testCreateOnlineToken()
     {
         $transactionToken = $this->createValidToken(PaymentType::ONLINE());
-        $this->assertEquals('test@test.com', $transactionToken->email);
+        $this->assertEquals('test+online@test.com', $transactionToken->email);
         $this->assertEquals(PaymentType::ONLINE(), $transactionToken->paymentType);
         $this->assertNull($transactionToken->confirmed);
         $this->assertEquals(OnlineBrand::WE_CHAT_ONLINE(), $transactionToken->data->brand);
@@ -257,7 +257,7 @@ class TransactionTokenTest extends TestCase
 
     public function testPatchExistingCardPayment()
     {
-        $transactionToken = $this->createValidToken();
+        $transactionToken = $this->createValidToken(PaymentType::CARD(), TokenType::RECURRING());
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
         

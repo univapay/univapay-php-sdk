@@ -172,7 +172,7 @@ class TransactionToken extends Resource
         DateInterval $firstChargeCaptureAfter = null,
         DateInterval $cyclicalPeriod = null
     ) {
-        if ($this->type !== TokenType::SUBSCRIPTION()) {
+        if ($this->type == TokenType::ONE_TIME()) {
             throw new UnivapayLogicError(Reason::NOT_SUBSCRIPTION_PAYMENT());
         }
         if (!isset($period) && !isset($cyclicalPeriod)) {
@@ -222,11 +222,6 @@ class TransactionToken extends Resource
     ) {
         if (isset($captureAtRelative)) {
             $captureAtAbsolute = date_create()->add($captureAtRelative);
-        }
-        if (isset($captureAtAbsolute)) {
-            if ($captureAtAbsolute < date_create('+1 hour') || $captureAtAbsolute > date_create('+7 days')) {
-                throw new UnivapayLogicError(Reason::INVALID_SCHEDULED_CAPTURE_DATE());
-            }
         }
         if (isset($capture)) {
             if ($this->paymentType !== PaymentType::CARD() &&

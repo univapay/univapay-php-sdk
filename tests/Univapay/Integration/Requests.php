@@ -92,7 +92,7 @@ trait Requests
             'PHP test',
             $cardNumber,
             '02',
-            '2025',
+            '2030',
             '123',
             $type,
             null,
@@ -173,7 +173,7 @@ trait Requests
     public function createOnlinePayment()
     {
         return new OnlinePayment(
-            'test@test.com',
+            'test+online@test.com',
             OnlineBrand::WE_CHAT_ONLINE(),
             ['customer_id' => 'PHP TEST'],
             '127.0.0.1',
@@ -205,7 +205,7 @@ trait Requests
                     '08012345678'
                 )
             ),
-            'test@test.com',
+            'test+paidy@test.com',
             $type,
             null,
             ['customer_id' => 'PHP TEST']
@@ -242,11 +242,14 @@ trait Requests
         )->awaitResult(5);
     }
 
-    public function createValidSubscription($authorized = null, DateInterval $captureAfter = null)
-    {
+    public function createValidSubscription(
+        $authorized = null,
+        DateInterval $captureAfter = null,
+        TokenType $type = null
+    ) {
         $this->deactivateExistingSubscriptionToken();
         return $this
-            ->createValidToken(PaymentType::CARD(), TokenType::SUBSCRIPTION())
+            ->createValidToken(PaymentType::CARD(), $type ?? TokenType::SUBSCRIPTION())
             ->createSubscription(
                 Money::JPY(10000),
                 Period::BIWEEKLY(),

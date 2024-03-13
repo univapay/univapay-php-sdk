@@ -112,14 +112,14 @@ EOD;
 
     public function testTooLongCaptureAtCharge()
     {
-        $this->expectException(UnivapayLogicError::class);
+        $this->expectException(UnivapayRequestError::class);
         $captureAt = date_create('+14 day');
         $charge = $this->createValidCharge(false, $captureAt);
     }
 
     public function testTooShortCaptureAtCharge()
     {
-        $this->expectException(UnivapayLogicError::class);
+        $this->expectException(UnivapayRequestError::class);
         $captureAt = date_create('+30 minutes');
         $charge = $this->createValidCharge(false, $captureAt);
     }

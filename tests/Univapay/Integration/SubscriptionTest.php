@@ -187,6 +187,16 @@ EOD;
         $this->assertInstanceOf(DateTime::class, $subscription->createdOn);
     }
 
+    public function testCreateSubscriptionWithRecurring()
+    {
+        $subscription = $this->createValidSubscription(null, null, TokenType::RECURRING());
+        $this->assertEquals(Money::JPY(10000), $subscription->amount);
+        $this->assertEquals(new Currency('JPY'), $subscription->currency);
+        $this->assertEquals(Period::BIWEEKLY(), $subscription->period);
+        $this->assertEquals(Money::JPY(1000), $subscription->initialAmount);
+        $this->assertInstanceOf(DateTime::class, $subscription->createdOn);
+    }
+
     public function testCreateAuthorizedSubscription()
     {
         $subscription = $this->createValidSubscription(true, new DateInterval('PT6H'));

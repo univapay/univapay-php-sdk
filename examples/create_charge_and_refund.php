@@ -17,7 +17,7 @@ $paymentMethod = new CardPayment(
     'PHP example',
     '4242424242424242',
     '02',
-    '2025',
+    '2030',
     '123',
     null, // Set TokenType::RECURRING() here for recurring tokens. See TokenType for other token types.
     null,
@@ -25,6 +25,7 @@ $paymentMethod = new CardPayment(
         'test line 1',
         'test line 2',
         'test state',
+        'test city',
         'jp',
         '101-1111'
     ),

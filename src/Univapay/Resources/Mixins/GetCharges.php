@@ -31,7 +31,7 @@ trait GetCharges
         $amountFrom = null,
         $amountTo = null,
         Currency $currency = null,
-        array $metadata = null,
+        $metadata = null,
         AppTokenMode $mode = null,
         $transactionTokenId = null,
         $gatewayCredentialsId = null,
@@ -72,7 +72,6 @@ trait GetCharges
             'from' => 'ValidationHelper::getAtomDate',
             'to' => 'ValidationHelper::getAtomDate',
             'currency' => 'ValidationHelper::getEnumValue',
-            'metadata' => 'ValidationHelper::isArray',
             'mode' => 'ValidationHelper::getEnumValue',
             'cursor_direction' => 'ValidationHelper::getEnumValue',
         ];
