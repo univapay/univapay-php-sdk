@@ -7,6 +7,7 @@ final class OnlineBrand extends TypedEnum
     // phpcs:disable
     public static function ALIPAY_ONLINE() { return self::create(); }
     public static function ALIPAY_PLUS_ONLINE() { return self::create(); }
+    public static function D_BARAI_ONLINE() { return self::create(); }
     public static function PAY_PAY_ONLINE() { return self::create(); }
     public static function WE_CHAT_ONLINE() { return self::create(); }
 

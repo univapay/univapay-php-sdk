@@ -21,7 +21,7 @@ $paymentMethod = new CardPayment(
     'PHP example',
     '4242424242424242',
     '02',
-    '2025',
+    '2030',
     '123',
     TokenType::SUBSCRIPTION(), // Set TokenType::RECURRING() here for recurring tokens. See TokenType for other token types.
     null,
