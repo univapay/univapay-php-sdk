@@ -11,5 +11,6 @@ final class ConvenienceStore extends TypedEnum
     public static function MINI_STOP() { return self::create(); }
     public static function SEICO_MART() { return self::create(); }
     public static function DAILY_YAMAZAKI() { return self::create(); }
+    public static function YAMAZAKI_DAILY_STORE() { return self::create(); }
     public static function PAY_EASY() { return self::create(); }
 }
