@@ -73,7 +73,7 @@ EOD;
         $this->assertEquals('11ed0cce-59e5-795a-b95c-rd1234567890', $charge->redirect->redirectId);
     }
 
-    public function xtestCreateCharge()
+    public function testCreateCharge()
     {
         $charge = $this->createValidCharge(true);
         $this->assertEquals(Money::JPY(1000), $charge->requestedAmount);
@@ -81,7 +81,7 @@ EOD;
         $this->assertInstanceOf(DateTime::class, $charge->createdOn);
     }
 
-    public function xtestCreateChargeOnToken()
+    public function testCreateChargeOnToken()
     {
         $charge = $this->createValidToken()->createCharge(Money::JPY(1000));
         $this->assertEquals(Money::JPY(1000), $charge->requestedAmount);
@@ -104,28 +104,28 @@ EOD;
         $this->assertNotNull($charge->redirect->redirectId);
     }
 
-    public function xtestAuthCaptureCharge()
+    public function testAuthCaptureCharge()
     {
         $charge = $this->createValidCharge(false);
         $captured = $charge->capture(Money::JPY(1000));
         $this->assertTrue($captured);
     }
 
-    public function xtestPartialAuthCaptureCharge()
+    public function testPartialAuthCaptureCharge()
     {
         $charge = $this->createValidCharge(false);
         $captured = $charge->capture(Money::JPY(500));
         $this->assertTrue($captured);
     }
 
-    public function xtestDefaultAuthCaptureCharge()
+    public function testDefaultAuthCaptureCharge()
     {
         $charge = $this->createValidCharge(false);
         $captured = $charge->capture();
         $this->assertTrue($captured);
     }
 
-    public function xtestCaptureAtCharge()
+    public function testCaptureAtCharge()
     {
         $captureAt = date_create('+1 day midnight');
         $charge = $this->createValidCharge(false, $captureAt);
@@ -133,27 +133,27 @@ EOD;
         $this->assertEquals($captureAt, $charge->captureAt);
     }
 
-    public function xtestTooLongCaptureAtCharge()
+    public function testTooLongCaptureAtCharge()
     {
         $this->expectException(UnivapayRequestError::class);
         $captureAt = date_create('+14 day');
         $charge = $this->createValidCharge(false, $captureAt);
     }
 
-    public function xtestTooShortCaptureAtCharge()
+    public function testTooShortCaptureAtCharge()
     {
         $this->expectException(UnivapayRequestError::class);
         $captureAt = date_create('+30 minutes');
         $charge = $this->createValidCharge(false, $captureAt);
     }
 
-    public function xtestOnlyDirectCurrencyCharge()
+    public function testOnlyDirectCurrencyCharge()
     {
         $charge = $this->createValidCharge(null, null, true);
         $this->assertTrue($charge->onlyDirectCurrency);
     }
 
-    public function xtestPatchCharge()
+    public function testPatchCharge()
     {
         $charge = $this->createValidCharge(true);
         $this->assertEquals(0, count($charge->metadata));
@@ -162,21 +162,21 @@ EOD;
         $this->assertTrue($charge->metadata['testId'] === 12345);
     }
 
-    public function xtestInvalidCharge()
+    public function testInvalidCharge()
     {
         $this->expectException(UnivapayRequestError::class);
         $transactionToken = $this->createValidToken();
         $this->getClient()->createCharge($transactionToken->id, Money::JPY(-1000));
     }
 
-    public function xtestInvalidAuthCapture()
+    public function testInvalidAuthCapture()
     {
         $this->expectException(UnivapayRequestError::class);
         $charge = $this->createValidCharge(false);
         $charge->capture(Money::JPY(2000));
     }
     
-    public function xtestCancelAuthCharge()
+    public function testCancelAuthCharge()
     {
         $charge = $this->createValidCharge(false);
         $this->assertEquals(ChargeStatus::AUTHORIZED(), $charge->status);
@@ -187,7 +187,7 @@ EOD;
         $this->assertEquals(ChargeStatus::CANCELED(), $postCancelCharge->status);
     }
     
-    public function xtestInvalidCancel()
+    public function testInvalidCancel()
     {
         $charge = $this->createValidCharge();
         $this->assertEquals(ChargeStatus::SUCCESSFUL(), $charge->status);
@@ -196,7 +196,7 @@ EOD;
         $charge->cancel();
     }
 
-    public function xtestCreateQrMerchantCharge()
+    public function testCreateQrMerchantCharge()
     {
         $charge = $this->createValidCharge(null, null, null, PaymentType::QR_MERCHANT());
         $this->assertEquals(ChargeStatus::AWAITING(), $charge->status);
@@ -206,7 +206,7 @@ EOD;
         $this->assertNotNull($qrToken->qrImageUrl);
     }
 
-    public function xtestCreateOnlineCharge()
+    public function testCreateOnlineCharge()
     {
         $charge = $this->createValidCharge(null, null, null, PaymentType::ONLINE());
         $this->assertEquals(ChargeStatus::AWAITING(), $charge->status);
