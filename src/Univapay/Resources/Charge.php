@@ -47,6 +47,7 @@ class Charge extends Resource
     public $captureAt;
     public $error;
     public $metadata;
+    public $redirect;
 
     public function __construct(
         $id,
@@ -67,6 +68,7 @@ class Charge extends Resource
         DateTime $captureAt = null,
         $error = null,
         $metadata = null,
+        Redirect $redirect = null,
         $context = null
     ) {
         parent::__construct($id, $context);
@@ -86,6 +88,7 @@ class Charge extends Resource
         $this->error = $error;
         $this->metadata = $metadata;
         $this->mode = $mode;
+        $this->redirect = $redirect;
         $this->createdOn = $createdOn;
     }
 
@@ -100,7 +103,8 @@ class Charge extends Resource
             ->upsert('capture_at', false, FormatterUtils::of('getDateTime'))
             ->upsert('status', true, FormatterUtils::getTypedEnum(ChargeStatus::class))
             ->upsert('mode', true, FormatterUtils::getTypedEnum(AppTokenMode::class))
-            ->upsert('created_on', true, FormatterUtils::of('getDateTime'));
+            ->upsert('created_on', true, FormatterUtils::of('getDateTime'))
+            ->upsert('redirect', false, Redirect::getSchema()->getParser());
     }
 
     protected function getIdContext()

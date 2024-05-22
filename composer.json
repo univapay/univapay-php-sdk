@@ -6,7 +6,7 @@
     "homepage": "https://github.com/univapay/univapay-php-sdk",
     "license": "MIT",
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.2",
         "rmccue/requests": "^2.0.1",
         "moneyphp/money": "^3.3.1"
     },
