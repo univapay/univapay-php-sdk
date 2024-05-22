@@ -155,7 +155,7 @@ class TransactionToken extends Resource
             ? ['only_direct_currency' => $onlyDirectCurrency]
             : []
         ) + (isset($redirect)
-            ? ['redirect' => $redirect]
+            ? ['redirect' => $redirect->jsonSerialize()]
             : []
         );
 
