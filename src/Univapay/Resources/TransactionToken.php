@@ -134,7 +134,8 @@ class TransactionToken extends Resource
         $capture = null,
         DateTime $captureAt = null,
         array $metadata = null,
-        $onlyDirectCurrency = null
+        $onlyDirectCurrency = null,
+        Redirect $redirect = null
     ) {
         if ($this->type === TokenType::SUBSCRIPTION()) {
             throw new UnivapayLogicError(Reason::NON_SUBSCRIPTION_PAYMENT());
@@ -152,6 +153,9 @@ class TransactionToken extends Resource
             : []
         ) + (isset($onlyDirectCurrency)
             ? ['only_direct_currency' => $onlyDirectCurrency]
+            : []
+        ) + (isset($redirect)
+            ? ['redirect' => $redirect]
             : []
         );
 

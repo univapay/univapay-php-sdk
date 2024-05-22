@@ -28,6 +28,7 @@ use Univapay\Resources\CardConfiguration;
 use Univapay\Resources\Charge;
 use Univapay\Resources\CheckoutInfo;
 use Univapay\Resources\Merchant;
+use Univapay\Resources\Redirect;
 use Univapay\Resources\Refund;
 use Univapay\Resources\Store;
 use Univapay\Resources\Subscription;
@@ -164,7 +165,8 @@ class UnivapayClient
         $capture = null,
         DateTime $captureAt = null,
         array $metadata = null,
-        $onlyDirectCurrency = null
+        $onlyDirectCurrency = null,
+        Redirect $redirect = null
     ) {
         return $this
             ->getTransactionToken($transactionTokenId)
@@ -173,7 +175,8 @@ class UnivapayClient
                 $capture,
                 $captureAt,
                 $metadata,
-                $onlyDirectCurrency
+                $onlyDirectCurrency,
+                $redirect
             );
     }
 
