@@ -8,7 +8,7 @@ This PHP SDK provides a convenient way to integrate your services with the Univa
 
 ## Requirements
 
-- PHP >= 7.1.x
+- PHP >= 7.2.x
 - Composer
 - npm (dev only)
 - UnivaPay store application token _and/or_ merchant application token
