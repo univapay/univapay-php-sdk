@@ -8,7 +8,7 @@ UnivaPay PHP SDKは、UnivaPay決済ゲートウェイと連携する便利な�
 
 ## 必要なもの
 
-- PHP 7.1.x 以上
+- PHP 7.2.x 以上
 - Composer
 - npm (dev only)
 - UnivaPayのストアアプリケーショントークンまたはマーチャントアプリケーショントークン

@@ -39,7 +39,7 @@ abstract class PaymentMethod implements JsonSerializable
     // Throws UnivapayValidationError if not valid
     abstract protected function acceptsTokenType(TokenType $type = null);
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         return FunctionalUtils::stripNulls([
             'email' => $this->email,

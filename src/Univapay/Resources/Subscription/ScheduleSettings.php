@@ -41,7 +41,7 @@ class ScheduleSettings implements JsonSerializable
         $this->retryInterval = $retryInterval;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         if (isset($this->startOn) && $this->startOn < date_create()) {
             throw new UnivapayValidationError(Field::START_ON(), Reason::MUST_BE_FUTURE_TIME());

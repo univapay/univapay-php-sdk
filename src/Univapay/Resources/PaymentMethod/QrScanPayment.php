@@ -29,7 +29,7 @@ class QrScanPayment extends PaymentMethod implements JsonSerializable
     {
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         $parentData = parent::jsonSerialize();
         $parentData['data'] = ['scanned_qr' => $this->scannedQr];

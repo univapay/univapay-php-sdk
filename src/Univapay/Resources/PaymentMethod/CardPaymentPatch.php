@@ -14,7 +14,7 @@ class CardPaymentPatch extends PaymentMethodPatch implements JsonSerializable
         $this->cvv = $cvv;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         $values = parent::jsonSerialize();
         $values['data'] = ['cvv' => $this->cvv];
