@@ -48,7 +48,7 @@ class InstallmentPlan implements JsonSerializable
         $this->fixedCycles = $fixedCycles;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         $data = ['plan_type' => $this->planType->getValue()];
         switch ($this->planType) {

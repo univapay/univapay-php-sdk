@@ -38,7 +38,7 @@ class ApplePayPayment extends PaymentMethod implements JsonSerializable
     {
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         $parentData = parent::jsonSerialize();
         $parentData['data'] = [

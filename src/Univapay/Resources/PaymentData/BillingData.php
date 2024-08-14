@@ -42,7 +42,7 @@ class BillingData implements JsonSerializable
             ->upsert('phone_number', false, PhoneNumber::getSchema()->getParser());
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         $data = [
             'line1' => $this->line1,

@@ -34,7 +34,7 @@ class CvvAuthorize implements JsonSerializable
         $this->credentialsId = $credentialsId;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         return FunctionalUtils::stripNulls([
             'enabled' => $this->enabled,

@@ -32,7 +32,7 @@ class PaidyData implements JsonSerializable
             ->upsert('shipping_address', true, Address::getSchema()->getParser());
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         return FunctionalUtils::stripNulls([
             'paidy_token' => $this->paidyToken,

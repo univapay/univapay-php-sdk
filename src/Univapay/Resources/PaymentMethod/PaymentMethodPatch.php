@@ -15,7 +15,7 @@ class PaymentMethodPatch implements JsonSerializable
         $this->metadata = $metadata;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         $values = [];
         if (isset($this->email)) {
