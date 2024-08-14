@@ -42,7 +42,7 @@ class ConvenienceStoreData implements JsonSerializable
             ->upsert('expiration_period', true, FormatterUtils::of('getDateInterval'));
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         return FunctionalUtils::stripNulls([
             'customer_name' => $this->customerName,

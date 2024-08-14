@@ -38,7 +38,7 @@ class Address implements JsonSerializable
         return JsonSchema::fromClass(self::class);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         $data = [
             'line1' => $this->line1,

@@ -31,7 +31,7 @@ class QrMerchantPayment extends PaymentMethod implements JsonSerializable
     {
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         $parentData = parent::jsonSerialize();
         $parentData['data'] = ['brand' => $this->brand->getName()];

@@ -48,7 +48,7 @@ class PaidyPayment extends PaymentMethod implements JsonSerializable
     {
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
         $parentData = parent::jsonSerialize();
         $parentData['data'] = $this->paidyData->jsonSerialize();
