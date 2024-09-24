@@ -10,13 +10,15 @@ class RequestContext
     private $endpoint;
     private $appJWT;
     private $requester;
+    private $headers;
 
-    public function __construct($requester, $endpoint, $path, AppJWT $appJWT)
+    public function __construct($requester, $endpoint, $path, AppJWT $appJWT, $headers = [])
     {
         $this->requester = $requester;
         $this->path = $path;
         $this->endpoint = $endpoint;
         $this->appJWT = $appJWT;
+        $this->headers = $headers;
     }
 
     public function getRequester()
@@ -26,13 +28,13 @@ class RequestContext
 
     public function withAppToken($appJWT)
     {
-        return new RequestContext($this->requester, $this->endpoint, $this->path, $appJWT);
+        return new RequestContext($this->requester, $this->endpoint, $this->path, $appJWT, $this->headers);
     }
 
     public function withPath($path)
     {
         $newPath = is_array($path) ? join('/', $path) : $path;
-        return new RequestContext($this->requester, $this->endpoint, $newPath, $this->appJWT);
+        return new RequestContext($this->requester, $this->endpoint, $newPath, $this->appJWT, $this->headers);
     }
 
     public function appendPath($path)
@@ -56,6 +58,11 @@ class RequestContext
             $secretText = $secret ? $secret . '.' : '';
             return ['Authorization' => "Bearer $secretText$key"];
         }
+    }
+
+    public function getConfigHeaders()
+    {
+        return $this->headers;
     }
 
     public function getFullURL()

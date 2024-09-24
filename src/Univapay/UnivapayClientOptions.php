@@ -23,12 +23,20 @@ class UnivapayClientOptions
      */
     public $networkRetryHandler;
 
+    /**
+     * [Headers] Customs headers to be sent with each request
+     * @var array
+     */
+    public $headers;
+
     public function __construct(
-        $endpoint = 'https://api.univapay.com'
+        $endpoint = 'https://api.univapay.com',
+        $headers = []
     ) {
         $this->endpoint = $endpoint;
         $this->rateLimitHandler = new RateLimitHandler();
         $this->networkRetryHandler = new NetworkRetryHandler();
+        $this->headers = $headers;
     }
 
     public function getRequestHandlers()

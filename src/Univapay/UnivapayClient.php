@@ -85,7 +85,13 @@ class UnivapayClient
 
     public function getContext()
     {
-        return new RequestContext($this->requester, $this->clientOptions->endpoint, '/', $this->appToken);
+        return new RequestContext(
+            $this->requester,
+            $this->clientOptions->endpoint,
+            '/',
+            $this->appToken,
+            $this->clientOptions->headers
+        );
     }
 
     public function getStoreBasedContext()
