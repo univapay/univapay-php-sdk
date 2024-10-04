@@ -47,7 +47,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('BANCO SANTANDER S.A.', $transactionToken->data->card->issuer);
         $this->assertEquals('test line 1', $transactionToken->data->billing->line1);
         $this->assertEquals('test line 2', $transactionToken->data->billing->line2);
-        $this->assertEquals('test state', $transactionToken->data->billing->state);
+        $this->assertEquals('tokyo', $transactionToken->data->billing->state);
         $this->assertEquals('test city', $transactionToken->data->billing->city);
         $this->assertEquals('JP', $transactionToken->data->billing->country);
         $this->assertEquals('101-1111', $transactionToken->data->billing->zip);
@@ -75,7 +75,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('2030', $transactionToken->data->card->expYear);
         $this->assertEquals('test line 1', $transactionToken->data->billing->line1);
         $this->assertEquals('test line 2', $transactionToken->data->billing->line2);
-        $this->assertEquals('test state', $transactionToken->data->billing->state);
+        $this->assertEquals('tokyo', $transactionToken->data->billing->state);
         $this->assertEquals('test city', $transactionToken->data->billing->city);
         $this->assertEquals('JP', $transactionToken->data->billing->country);
         $this->assertEquals('101-1111', $transactionToken->data->billing->zip);
@@ -105,7 +105,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('2030', $transactionToken->data->card->expYear);
         $this->assertEquals('test line 1', $transactionToken->data->billing->line1);
         $this->assertEquals('test line 2', $transactionToken->data->billing->line2);
-        $this->assertEquals('test state', $transactionToken->data->billing->state);
+        $this->assertEquals('tokyo', $transactionToken->data->billing->state);
         $this->assertEquals('test city', $transactionToken->data->billing->city);
         $this->assertEquals('JP', $transactionToken->data->billing->country);
         $this->assertEquals('101-1111', $transactionToken->data->billing->zip);
@@ -127,7 +127,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('PHP TEST', $transactionToken->data->card->cardholder);
         $this->assertEquals('test line 1', $transactionToken->data->billing->line1);
         $this->assertEquals('test line 2', $transactionToken->data->billing->line2);
-        $this->assertEquals('test state', $transactionToken->data->billing->state);
+        $this->assertEquals('tokyo', $transactionToken->data->billing->state);
         $this->assertEquals('test city', $transactionToken->data->billing->city);
         $this->assertEquals('JP', $transactionToken->data->billing->country);
         $this->assertEquals('101-1111', $transactionToken->data->billing->zip);

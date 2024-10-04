@@ -7,10 +7,12 @@ use Univapay\Enums\Field;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Reason;
 use Univapay\Enums\TokenType;
+use Univapay\Enums\UsageLimit;
 use Univapay\Errors\UnivapayValidationError;
 use Univapay\Resources\PaymentData\Address;
 use Univapay\Resources\PaymentData\CvvAuthorize;
 use Univapay\Resources\PaymentData\PhoneNumber;
+use Univapay\Resources\PaymentData\ThreeDS;
 use Univapay\Utility\FunctionalUtils;
 
 class CardPayment extends PaymentMethod implements JsonSerializable
@@ -23,6 +25,7 @@ class CardPayment extends PaymentMethod implements JsonSerializable
     private $address;
     private $phoneNumber;
     private $cvvAuthorize;
+    private $threeDS;
 
     public function __construct(
         $email,
@@ -37,7 +40,8 @@ class CardPayment extends PaymentMethod implements JsonSerializable
         PhoneNumber $phoneNumber = null,
         array $metadata = null,
         CvvAuthorize $cvvAuthorize = null,
-        $ipAddress = null
+        $ipAddress = null,
+        ThreeDS $threeDS = null
     ) {
         parent::__construct(PaymentType::CARD(), $type, $email, $ipAddress, $usageLimit, $metadata);
         $this->cardholder = $cardholder;
@@ -48,6 +52,7 @@ class CardPayment extends PaymentMethod implements JsonSerializable
         $this->address = $address;
         $this->phoneNumber = $phoneNumber;
         $this->cvvAuthorize = $cvvAuthorize;
+        $this->threeDS = $threeDS;
 
         // Extra validation required due to late init of cvvAuthorize
         $this->acceptsTokenType($type);
@@ -75,6 +80,9 @@ class CardPayment extends PaymentMethod implements JsonSerializable
                 : null,
             'cvv_authorize' => isset($this->cvvAuthorize)
                 ? $this->cvvAuthorize->jsonSerialize()
+                : null,
+            'three_ds' => isset($this->threeDS)
+                ? $this->threeDS->jsonSerialize()
                 : null
         ] + (isset($this->address)
             ? $this->address->jsonSerialize()
