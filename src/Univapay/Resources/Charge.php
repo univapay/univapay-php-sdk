@@ -13,6 +13,7 @@ use Univapay\Enums\Reason;
 use Univapay\Enums\RefundReason;
 use Univapay\Enums\TokenType;
 use Univapay\Errors\UnivapayValidationError;
+use Univapay\Resources\IssuerToken\ThreeDS;
 use Univapay\Resources\PaymentToken\QrMerchantToken;
 use Univapay\Resources\PaymentToken\OnlineToken;
 use Univapay\Resources\Mixins\GetCancels;
@@ -164,6 +165,19 @@ class Charge extends Resource
         ]);
         $context = $this->getCancelContext();
         return RequesterUtils::executePost(Cancel::class, $context, $payload);
+    }
+
+    public function issuerTokenThreeDS()
+    {
+        $context = $this->context->withPath([
+            'stores',
+            $this->storeId,
+            'charges',
+            $this->id,
+            'three_ds',
+            'issuer_token'
+        ]);
+        return RequesterUtils::executeGet(ThreeDS::class, $context);
     }
 
     public function qrMerchantToken()
