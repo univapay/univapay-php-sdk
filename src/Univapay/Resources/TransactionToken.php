@@ -4,18 +4,17 @@ namespace Univapay\Resources;
 
 use DateInterval;
 use DateTime;
-use DateTimeZone;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\Field;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
 use Univapay\Enums\Reason;
+use Univapay\Enums\ThreeDSMode;
 use Univapay\Enums\TokenType;
 use Univapay\Enums\UsageLimit;
 use Univapay\Errors\UnivapayLogicError;
-use Univapay\Errors\UnivapaySDKError;
 use Univapay\Errors\UnivapayValidationError;
-use Univapay\Resources\Mixins\GetTransactionTokens;
+use Univapay\Resources\ThreeDS;
 use Univapay\Resources\PaymentData\CardData;
 use Univapay\Resources\PaymentData\ConvenienceStoreData;
 use Univapay\Resources\PaymentData\OnlineData;
@@ -135,7 +134,8 @@ class TransactionToken extends Resource
         DateTime $captureAt = null,
         array $metadata = null,
         $onlyDirectCurrency = null,
-        Redirect $redirect = null
+        Redirect $redirect = null,
+        ThreeDS $threeDS = null
     ) {
         if ($this->type === TokenType::SUBSCRIPTION()) {
             throw new UnivapayLogicError(Reason::NON_SUBSCRIPTION_PAYMENT());
@@ -158,6 +158,12 @@ class TransactionToken extends Resource
             ? ['redirect' => $redirect->jsonSerialize()]
             : []
         );
+
+        if ($this->paymentType === PaymentType::CARD()) {
+            $payload += isset($threeDS)
+                ? ['three_ds' => $threeDS->jsonSerialize()]
+                : ['three_ds' => ['mode' => ThreeDSMode::SKIP()->getValue(), 'redirect_endpoint' => null]];
+        }
 
         $context = $this->context->withPath('charges');
         return RequesterUtils::executePost(Charge::class, $context, FunctionalUtils::stripNulls($payload));
@@ -214,6 +220,12 @@ class TransactionToken extends Resource
             ? ['only_direct_currency' => $onlyDirectCurrency]
             : []
         );
+
+        if ($this->paymentType === PaymentType::CARD()) {
+            $payload += isset($threeDS)
+                ? ['three_ds' => $threeDS->jsonSerialize()]
+                : ['three_ds' => ['mode' => ThreeDSMode::SKIP()->getValue(), 'redirect_endpoint' => null]];
+        }
 
         $context = $this->context->withPath('subscriptions');
         return RequesterUtils::executePost(Subscription::class, $context, FunctionalUtils::stripNulls($payload));

@@ -7,17 +7,17 @@ use Money\Currency;
 use Money\Money;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\ChargeStatus;
-use Univapay\Enums\ChargeType;
 use Univapay\Enums\Field;
 use Univapay\Enums\Reason;
 use Univapay\Enums\RefundReason;
 use Univapay\Enums\TokenType;
 use Univapay\Errors\UnivapayValidationError;
-use Univapay\Resources\IssuerToken\ThreeDS;
 use Univapay\Resources\PaymentToken\QrMerchantToken;
 use Univapay\Resources\PaymentToken\OnlineToken;
+use Univapay\Resources\PaymentToken\ThreeDSToken;
 use Univapay\Resources\Mixins\GetCancels;
 use Univapay\Resources\Mixins\GetRefunds;
+use Univapay\Resources\ThreeDS;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\RequesterUtils;
@@ -49,6 +49,7 @@ class Charge extends Resource
     public $error;
     public $metadata;
     public $redirect;
+    public $threeDS;
 
     public function __construct(
         $id,
@@ -70,6 +71,7 @@ class Charge extends Resource
         $error = null,
         $metadata = null,
         Redirect $redirect = null,
+        $threeDS = null,
         $context = null
     ) {
         parent::__construct($id, $context);
@@ -91,6 +93,7 @@ class Charge extends Resource
         $this->mode = $mode;
         $this->redirect = $redirect;
         $this->createdOn = $createdOn;
+        $this->threeDS = $threeDS;
     }
 
     protected static function initSchema()
@@ -105,7 +108,8 @@ class Charge extends Resource
             ->upsert('status', true, FormatterUtils::getTypedEnum(ChargeStatus::class))
             ->upsert('mode', true, FormatterUtils::getTypedEnum(AppTokenMode::class))
             ->upsert('created_on', true, FormatterUtils::of('getDateTime'))
-            ->upsert('redirect', false, Redirect::getSchema()->getParser());
+            ->upsert('redirect', false, Redirect::getSchema()->getParser())
+            ->upsert('three_ds', false, ThreeDS::getSchema()->getParser());
     }
 
     protected function getIdContext()
@@ -167,19 +171,6 @@ class Charge extends Resource
         return RequesterUtils::executePost(Cancel::class, $context, $payload);
     }
 
-    public function issuerTokenThreeDS()
-    {
-        $context = $this->context->withPath([
-            'stores',
-            $this->storeId,
-            'charges',
-            $this->id,
-            'three_ds',
-            'issuer_token'
-        ]);
-        return RequesterUtils::executeGet(ThreeDS::class, $context);
-    }
-
     public function qrMerchantToken()
     {
         $context = $this->getQrMerchantTokenContext();
@@ -190,6 +181,12 @@ class Charge extends Resource
     {
         $context = $this->getOnlineTokenContext();
         return RequesterUtils::executeGet(OnlineToken::class, $context);
+    }
+
+    public function threeDSToken()
+    {
+        $context = $this->getIssuerToken3DSContext();
+        return RequesterUtils::executeGet(ThreeDSToken::class, $context);
     }
 
     protected function getCaptureContext()
@@ -215,5 +212,10 @@ class Charge extends Resource
     protected function getOnlineTokenContext()
     {
         return $this->context->withPath(['stores', $this->storeId, 'charges', $this->id, 'issuerToken']);
+    }
+
+    protected function getIssuerToken3DSContext()
+    {
+        return $this->context->withPath(['stores', $this->storeId, 'charges', $this->id, 'three_ds', 'issuer_token']);
     }
 }

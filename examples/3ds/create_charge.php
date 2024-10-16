@@ -1,6 +1,7 @@
 <?php
 require_once('vendor/autoload.php');
 
+use Money\Money;
 use Univapay\UnivapayClient;
 use Univapay\UnivapayClientOptions;
 use Univapay\Resources\PaymentData\Address;
@@ -31,12 +32,9 @@ $paymentMethod = new CardPayment(
         '101-1111'
     ),
     new PhoneNumber(PhoneNumber::JP, '12910298309128'),
-    null,
-    null,
-    null,
-    null,
 );
 
 $token = $client->createToken($paymentMethod);
-$charge = $client->getCharge("11ef4801-666d-9d54-ba7c-471de98b40b6", "11ef8210-1bb6-dc8c-a1eb-97d81d6c1d46")->awaitResult();
-$charge->issuerTokenThreeDS();
+$charge = $client->createCharge($token->id, Money::JPY(100))->awaitResult(5);
+
+$charge->threeDSToken();

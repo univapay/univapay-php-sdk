@@ -1,6 +1,6 @@
 <?php
 
-namespace Univapay\Resources\IssuerToken;
+namespace Univapay\Resources;
 
 use Univapay\Resources\Jsonable;
 use Univapay\Utility\Json\JsonSchema;
@@ -12,8 +12,8 @@ class Payload
     public $resourceType;
 
     public function __construct(
-        $resourceId = null,
-        $resourceType = null
+        $resourceId,
+        $resourceType
     ) {
         $this->resourceId = $resourceId;
         $this->resourceType = $resourceType;

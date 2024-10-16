@@ -14,6 +14,7 @@ class MerchantAppJWT extends AppJWT
     public $merchantId;
     public $creatorId;
     public $version;
+    public $iat;
     public $jti;
 
     public function __construct(

@@ -1,26 +1,30 @@
 <?php
 
-namespace Univapay\Resources\IssuerToken;
+namespace Univapay\Resources\PaymentToken;
 
+use Univapay\Enums\CallMethod;
+use Univapay\Enums\PaymentType;
 use Univapay\Resources\Jsonable;
+use Univapay\Resources\Payload;
+use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\Json\JsonSchema;
 
-class ThreeDS
+class ThreeDSToken
 {
     use Jsonable;
 
-    public $callMethod;
+    public CallMethod $callMethod;
     public $contentType;
     public $issuerToken;
     public $payload;
-    public $paymentType;
+    public PaymentType $paymentType;
 
     public function __construct(
-        $callMethod = null,
+        CallMethod $callMethod = null,
         $contentType = null,
         $issuerToken = null,
         $payload = null,
-        $paymentType = null
+        PaymentType $paymentType = null
     ) {
         $this->callMethod = $callMethod;
         $this->contentType = $contentType;
@@ -32,6 +36,8 @@ class ThreeDS
     protected static function initSchema()
     {
         return JsonSchema::fromClass(self::class)
-            ->upsert('payload', false, Payload::getSchema()->getParser());
+            ->upsert('call_method', true, FormatterUtils::getTypedEnum(CallMethod::class))
+            ->upsert('payload', false, Payload::getSchema()->getParser())
+            ->upsert('payment_type', true, FormatterUtils::getTypedEnum(PaymentType::class));
     }
 }
