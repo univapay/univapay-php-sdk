@@ -27,6 +27,8 @@ jobs:
       
     - name: Setup Node.js environment
       uses: actions/setup-node@v3
+      with:
+        node-version: 'lts/*'
     
     - name: Cache Node.js packages
       id: node-cache
@@ -42,25 +44,12 @@ jobs:
       with:
         php-version: ${{ matrix.php }}
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate
-      
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v3
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php${{ matrix.php }}-
-
     - name: Install node dependencies
       if: steps.node-cache.outputs.cache-hit != 'true'
       run: npm install
 
     - name: Install composer dependencies
-      if: steps.composer-cache.outputs.cache-hit != 'true'
-      run: composer update --prefer-dist --no-progress -n
+      run: composer install
       
     - name: PHP Lint
       run: node_modules/.bin/grunt phpcs

@@ -24,10 +24,5 @@
         "classmap": [
             "tests/Univapay"
         ]
-    },
-    "config": {
-        "platform": {
-            "php": "7.2"
-        }
     }
 }
