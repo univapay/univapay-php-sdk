@@ -49,7 +49,7 @@ class ScheduledPayment extends Resource
         $this->amountFormatted = $amountFormatted;
         $this->isPaid = $isPaid;
         $this->isLastPayment = $isLastPayment;
-        $createdOn = $createdOn ?? date('now');
+        $createdOn = $createdOn ?? 'now';
         $this->createdOn = date_create($createdOn);
     }
 
