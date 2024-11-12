@@ -27,6 +27,7 @@ class ScheduledPayment extends Resource
     public $isLastPayment;
     public $createdOn;
 
+    // TODO: split this into a separate class, for each different API
     public function __construct(
         $id,
         $subscriptionId,
@@ -49,6 +50,7 @@ class ScheduledPayment extends Resource
         $this->amountFormatted = $amountFormatted;
         $this->isPaid = $isPaid;
         $this->isLastPayment = $isLastPayment;
+        // add default value for createdOn, `/subscriptions/simulate_plan` does not return createdOn
         $createdOn = $createdOn ?? 'now';
         $this->createdOn = date_create($createdOn);
     }
