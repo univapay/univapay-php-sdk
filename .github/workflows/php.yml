@@ -20,48 +20,40 @@ jobs:
       fail-fast: true
       max-parallel: 1
       matrix:
-        php: ['7.2', '7.4', '8.1']
+        php: ['7.2', '7.4', '8.1', '8.2', '8.3']
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v3
-    
-    - name: Cache Node.js packages
-      id: node-cache
-      uses: actions/cache@v3
-      with:
-        path: node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php }}
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate
-      
-    - name: Cache Composer packages
+    - name: Get composer cache directory
       id: composer-cache
-      uses: actions/cache@v3
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+    
+    - name: Cache dependencies
+      uses: actions/cache@v4
       with:
-        path: vendor
-        key: ${{ runner.os }}-php${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php${{ matrix.php }}-
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.json') }}
+        restore-keys: ${{ runner.os }}-composer-${{ matrix.php }}-
+    
+    - name: Install dependencies
+      run: composer update --prefer-dist --no-progress -n
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: 'lts/*'
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
 
     - name: Install node dependencies
-      if: steps.node-cache.outputs.cache-hit != 'true'
-      run: npm install
+      run: npm ci
 
-    - name: Install composer dependencies
-      if: steps.composer-cache.outputs.cache-hit != 'true'
-      run: composer update --prefer-dist --no-progress -n
-      
     - name: PHP Lint
       run: node_modules/.bin/grunt phpcs
       
