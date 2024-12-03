@@ -5,6 +5,9 @@ namespace Univapay\Enums;
 final class QrBrand extends TypedEnum
 {
     // phpcs:disable
+    public static function BIG_PAY_MY() { return self::create(); }
+    public static function BIG_PAY_SG() { return self::create(); }
+    public static function BIG_PAY_TH() { return self::create(); }
     public static function QQ() { return self::create(); }
     public static function WE_CHAT() { return self::create(); }
     public static function ALIPAY_CONNECT_CPM() { return self::create(); }
@@ -12,6 +15,8 @@ final class QrBrand extends TypedEnum
     public static function ALIPAY_HK() { return self::create(); }
     public static function ALIPAY_SINGAPORE() { return self::create(); }
     public static function KAKAOPAY() { return self::create(); }
+    public static function KASPI_KZ() { return self::create(); }
+    public static function KPLUS() { return self::create(); }
     public static function TOUCH_N_GO() { return self::create('tng'); }
     public static function EZLINK() { return self::create(); }
     public static function GCASH() { return self::create(); }
