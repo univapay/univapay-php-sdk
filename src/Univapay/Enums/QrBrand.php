@@ -16,7 +16,7 @@ final class QrBrand extends TypedEnum
     public static function ALIPAY_SINGAPORE() { return self::create(); }
     public static function KAKAOPAY() { return self::create(); }
     public static function KASPI_KZ() { return self::create(); }
-    public static function KPLUS() { return self::create(); }
+    public static function K_PLUS() { return self::create(); }
     public static function TOUCH_N_GO() { return self::create('tng'); }
     public static function EZLINK() { return self::create(); }
     public static function GCASH() { return self::create(); }
