@@ -26,7 +26,7 @@ use Univapay\Resources\Redirect;
 use Univapay\Resources\Refund;
 use Univapay\Resources\Store;
 use Univapay\Resources\Subscription;
-use Univapay\Resources\ThreeDS;
+use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\TransactionToken;
 use Univapay\Resources\Transfer;
 use Univapay\Resources\WebhookPayload;
@@ -159,7 +159,7 @@ class UnivapayClient
         array $metadata = null,
         $onlyDirectCurrency = null,
         Redirect $redirect = null,
-        ThreeDS $threeDS = null
+        PaymentThreeDS $paymentThreeDS = null
     ) {
         return $this
             ->getTransactionToken($transactionTokenId)
@@ -170,7 +170,7 @@ class UnivapayClient
                 $metadata,
                 $onlyDirectCurrency,
                 $redirect,
-                $threeDS
+                $paymentThreeDS
             );
     }
 

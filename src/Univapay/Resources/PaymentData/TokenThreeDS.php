@@ -8,7 +8,7 @@ use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\Json\JsonSchema;
 
-class ThreeDS
+class TokenThreeDS
 {
     use Jsonable;
 
@@ -33,9 +33,7 @@ class ThreeDS
     {
         return FunctionalUtils::stripNulls([
             'enabled' => $this->enabled,
-            'status' => $this->status,
-            'redirect_endpoint' => $this->redirectEndpoint,
-            'redirect_id' => $this->redirectId
+            'redirect_endpoint' => $this->redirectEndpoint
         ]);
     }
 

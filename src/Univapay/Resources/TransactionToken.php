@@ -9,12 +9,11 @@ use Univapay\Enums\Field;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
 use Univapay\Enums\Reason;
-use Univapay\Enums\ThreeDSMode;
 use Univapay\Enums\TokenType;
 use Univapay\Enums\UsageLimit;
 use Univapay\Errors\UnivapayLogicError;
 use Univapay\Errors\UnivapayValidationError;
-use Univapay\Resources\ThreeDS;
+use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\PaymentData\CardData;
 use Univapay\Resources\PaymentData\ConvenienceStoreData;
 use Univapay\Resources\PaymentData\OnlineData;
@@ -135,7 +134,7 @@ class TransactionToken extends Resource
         array $metadata = null,
         $onlyDirectCurrency = null,
         Redirect $redirect = null,
-        ThreeDS $threeDS = null
+        PaymentThreeDS $threeDS = null
     ) {
         if ($this->type === TokenType::SUBSCRIPTION()) {
             throw new UnivapayLogicError(Reason::NON_SUBSCRIPTION_PAYMENT());

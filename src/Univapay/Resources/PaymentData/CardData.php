@@ -28,6 +28,6 @@ class CardData
             ->upsert('card', true, Card::getSchema()->getParser())
             ->upsert('billing', false, BillingData::getSchema()->getParser())
             ->upsert('cvv_authorize', true, CvvAuthorize::getSchema()->getParser())
-            ->upsert('three_ds', false, ThreeDS::getSchema()->getParser());
+            ->upsert('three_ds', false, TokenThreeDS::getSchema()->getParser());
     }
 }

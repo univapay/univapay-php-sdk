@@ -6,7 +6,7 @@ use Univapay\Enums\ThreeDSMode;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\Json\JsonSchema;
 
-class ThreeDS
+class PaymentThreeDS
 {
     use Jsonable;
 

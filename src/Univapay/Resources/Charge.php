@@ -14,10 +14,10 @@ use Univapay\Enums\TokenType;
 use Univapay\Errors\UnivapayValidationError;
 use Univapay\Resources\PaymentToken\QrMerchantToken;
 use Univapay\Resources\PaymentToken\OnlineToken;
-use Univapay\Resources\PaymentToken\ThreeDSToken;
+use Univapay\Resources\PaymentToken\ThreeDSIssuerToken;
 use Univapay\Resources\Mixins\GetCancels;
 use Univapay\Resources\Mixins\GetRefunds;
-use Univapay\Resources\ThreeDS;
+use Univapay\Resources\PaymentThreeDS;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\RequesterUtils;
@@ -109,7 +109,7 @@ class Charge extends Resource
             ->upsert('mode', true, FormatterUtils::getTypedEnum(AppTokenMode::class))
             ->upsert('created_on', true, FormatterUtils::of('getDateTime'))
             ->upsert('redirect', false, Redirect::getSchema()->getParser())
-            ->upsert('three_ds', false, ThreeDS::getSchema()->getParser());
+            ->upsert('three_ds', false, PaymentThreeDS::getSchema()->getParser());
     }
 
     protected function getIdContext()
@@ -183,10 +183,10 @@ class Charge extends Resource
         return RequesterUtils::executeGet(OnlineToken::class, $context);
     }
 
-    public function threeDSToken()
+    public function threeDSIssuerToken()
     {
         $context = $this->getIssuerToken3DSContext();
-        return RequesterUtils::executeGet(ThreeDSToken::class, $context);
+        return RequesterUtils::executeGet(ThreeDSIssuerToken::class, $context);
     }
 
     protected function getCaptureContext()

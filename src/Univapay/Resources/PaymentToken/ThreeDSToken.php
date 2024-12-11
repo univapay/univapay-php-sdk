@@ -8,7 +8,7 @@ use Univapay\Resources\Jsonable;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\Json\JsonSchema;
 
-class ThreeDSToken
+class ThreeDSIssuerToken
 {
     use Jsonable;
 
