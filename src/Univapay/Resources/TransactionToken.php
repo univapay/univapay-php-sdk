@@ -159,12 +159,6 @@ class TransactionToken extends Resource
             : []
         );
 
-        if ($this->paymentType === PaymentType::CARD()) {
-            $payload += isset($threeDS)
-                ? ['three_ds' => $threeDS->jsonSerialize()]
-                : ['three_ds' => ['mode' => ThreeDSMode::SKIP()->getValue(), 'redirect_endpoint' => null]];
-        }
-
         $context = $this->context->withPath('charges');
         return RequesterUtils::executePost(Charge::class, $context, FunctionalUtils::stripNulls($payload));
     }
@@ -220,12 +214,6 @@ class TransactionToken extends Resource
             ? ['only_direct_currency' => $onlyDirectCurrency]
             : []
         );
-
-        if ($this->paymentType === PaymentType::CARD()) {
-            $payload += isset($threeDS)
-                ? ['three_ds' => $threeDS->jsonSerialize()]
-                : ['three_ds' => ['mode' => ThreeDSMode::SKIP()->getValue(), 'redirect_endpoint' => null]];
-        }
 
         $context = $this->context->withPath('subscriptions');
         return RequesterUtils::executePost(Subscription::class, $context, FunctionalUtils::stripNulls($payload));
