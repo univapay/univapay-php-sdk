@@ -5,7 +5,6 @@ namespace Univapay\Resources\PaymentToken;
 use Univapay\Enums\CallMethod;
 use Univapay\Enums\PaymentType;
 use Univapay\Resources\Jsonable;
-use Univapay\Resources\Payload;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\Json\JsonSchema;
 
@@ -37,7 +36,6 @@ class ThreeDSToken
     {
         return JsonSchema::fromClass(self::class)
             ->upsert('call_method', true, FormatterUtils::getTypedEnum(CallMethod::class))
-            ->upsert('payload', false, Payload::getSchema()->getParser())
             ->upsert('payment_type', true, FormatterUtils::getTypedEnum(PaymentType::class));
     }
 }
