@@ -11,17 +11,24 @@ class PaymentThreeDS
     use Jsonable;
 
     public $redirectEndpoint;
-    public $redirectId;
     public $mode;
+    public $redirectId;
 
+    /**
+     * PaymentThreeDS constructor.
+     *
+     * @param string $redirectEndpoint
+     * @param ThreeDSMode $mode Acceptable values: "FORCE", "IF_AVAILABLE", "NORMAL", "PROVIDED", "REQUIRE", "SKIP"
+     * @param null $redirectId
+     */
     public function __construct(
         $redirectEndpoint,
-        $redirectId,
-        $mode
+        $mode,
+        $redirectId = null
     ) {
         $this->redirectEndpoint = $redirectEndpoint;
-        $this->redirectId = $redirectId;
         $this->mode = $mode;
+        $this->redirectId = $redirectId;
     }
 
     protected static function initSchema()

@@ -12,7 +12,7 @@ use Univapay\Errors\UnivapayValidationError;
 use Univapay\Resources\PaymentData\Address;
 use Univapay\Resources\PaymentData\CvvAuthorize;
 use Univapay\Resources\PaymentData\PhoneNumber;
-use Univapay\Resources\PaymentData\ThreeDS;
+use Univapay\Resources\PaymentData\TokenThreeDS;
 use Univapay\Utility\FunctionalUtils;
 
 class CardPayment extends PaymentMethod implements JsonSerializable
@@ -41,7 +41,7 @@ class CardPayment extends PaymentMethod implements JsonSerializable
         array $metadata = null,
         CvvAuthorize $cvvAuthorize = null,
         $ipAddress = null,
-        ThreeDS $threeDS = null
+        TokenThreeDS $threeDS = null
     ) {
         parent::__construct(PaymentType::CARD(), $type, $email, $ipAddress, $usageLimit, $metadata);
         $this->cardholder = $cardholder;

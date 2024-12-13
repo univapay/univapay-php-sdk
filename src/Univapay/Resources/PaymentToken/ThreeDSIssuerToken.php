@@ -12,18 +12,18 @@ class ThreeDSIssuerToken
 {
     use Jsonable;
 
-    public CallMethod $callMethod;
+    public $callMethod;
     public $contentType;
     public $issuerToken;
     public $payload;
-    public PaymentType $paymentType;
+    public $paymentType;
 
     public function __construct(
-        CallMethod $callMethod = null,
+        $callMethod = null,
         $contentType = null,
         $issuerToken = null,
         $payload = null,
-        PaymentType $paymentType = null
+        $paymentType = null
     ) {
         $this->callMethod = $callMethod;
         $this->contentType = $contentType;

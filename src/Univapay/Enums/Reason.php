@@ -43,4 +43,12 @@ final class Reason extends TypedEnum
     public static function CANNOT_CHANGE_TOKEN() { return self::create(); }
     public static function NEED_AT_LEAST_TWO_CYCLES() { return self::create(); }
     public static function PERIOD_OR_CYCLICAL_PERIOD_MUST_BE_SET() { return self::create(); }
+
+    // ThreeDS MPI
+    public static function INVALID_THREE_DS_MPI_AUTHENTICATION_LENGTH() { return self::create('The authentication value must be a string with a length of 28 characters'); }
+    public static function INVALID_THREE_DS_MPI_ECI_LENGTH() { return self::create('The eci must be a string with a length of 2 characters'); }
+    public static function INVALID_THREE_DS_MPI_DS_TRANSACTION_ID() { return self::create(); }
+    public static function INVALID_THREE_DS_MPI_SERVER_TRANSACTION_ID() { return self::create(); }
+    public static function INVALID_THREE_DS_MPI_MESSAGE_VERSION() { return self::create(); }
+    public static function INVALID_THREE_DS_MPI_TRANSACTION_STATUS() { return self::create(); }
 }

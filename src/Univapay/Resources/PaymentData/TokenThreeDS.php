@@ -16,17 +16,20 @@ class TokenThreeDS
     public $status;
     public $redirectEndpoint;
     public $redirectId;
+    public $error;
 
     public function __construct(
         $enabled = null,
         $status = null,
         $redirectEndpoint = null,
-        $redirectId = null
+        $redirectId = null,
+        $error = null
     ) {
         $this->enabled = $enabled;
         $this->status = $status;
         $this->redirectEndpoint = $redirectEndpoint;
         $this->redirectId = $redirectId;
+        $this->error = $error;
     }
 
     public function jsonSerialize() : array

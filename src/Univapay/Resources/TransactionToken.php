@@ -21,6 +21,7 @@ use Univapay\Resources\PaymentData\PaidyData;
 use Univapay\Resources\PaymentData\QrMerchantData;
 use Univapay\Resources\PaymentData\QrScanData;
 use Univapay\Resources\PaymentMethod\PaymentMethodPatch;
+use Univapay\Resources\PaymentToken\ThreeDSIssuerToken;
 use Univapay\Resources\Subscription\InstallmentPlan;
 use Univapay\Resources\Subscription\ScheduleSettings;
 use Univapay\Resources\Subscription\SubscriptionPlan;
@@ -30,10 +31,12 @@ use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\RequesterUtils;
 use Univapay\Utility\Json\JsonSchema;
 use Money\Money;
+use Univapay\Enums\ThreeDSStatus;
 
 class TransactionToken extends Resource
 {
     use Jsonable;
+    use Pollable;
 
     public $storeId;
     public $email;
@@ -115,6 +118,12 @@ class TransactionToken extends Resource
     protected function getIdContext()
     {
         return $this->context->withPath(['stores', $this->storeId, 'tokens', $this->id]);
+    }
+
+    protected function pollableStatuses()
+    {
+        return [(string) ThreeDSStatus::PENDING() =>
+            array_diff(ThreeDSStatus::findValues(), [ThreeDSStatus::PENDING()])];
     }
 
     public function patch(PaymentMethodPatch $paymentPatch)
@@ -233,5 +242,32 @@ class TransactionToken extends Resource
                 throw new UnivapayLogicError(Reason::CAPTURE_ONLY_FOR_CARD_PAYMENT());
             }
         }
+    }
+
+    public function threeDSIssuerToken()
+    {
+        $context = $this->getIssuerToken3DSContext();
+        return RequesterUtils::executeGet(threeDSIssuerToken::class, $context);
+    }
+
+    protected function getIssuerToken3DSContext()
+    {
+        return $this->context->withPath(['stores', $this->storeId, 'tokens', $this->id, 'three_ds', 'issuer_token']);
+    }
+
+    public function awaitResult($retry = 0)
+    {
+        $idContext = $this->getIdContext();
+        $pollableStatuses = $this->pollableStatuses();
+        $response = RequesterUtils::executeGet(self::class, $idContext, ['polling' => 'true']);
+        $retryCount = 0;
+        while ($retryCount < $retry &&
+            array_key_exists($this->data->threeDS->status->__toString(), $pollableStatuses) &&
+            !in_array($response->data->threeDS->status, $pollableStatuses[$this->data->threeDS->status->__toString()])
+        ) {
+            $retryCount++;
+            $response = RequesterUtils::executeGet(self::class, $idContext, ['polling' => 'true']);
+        }
+        return $response;
     }
 }
