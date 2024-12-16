@@ -184,7 +184,8 @@ class TransactionToken extends Resource
         $onlyDirectCurrency = null,
         $firstChargeAuthorizationOnly = null,
         DateInterval $firstChargeCaptureAfter = null,
-        DateInterval $cyclicalPeriod = null
+        DateInterval $cyclicalPeriod = null,
+        PaymentThreeDS $threeDS = null
     ) {
         if ($this->type == TokenType::ONE_TIME()) {
             throw new UnivapayLogicError(Reason::NOT_SUBSCRIPTION_PAYMENT());
@@ -213,7 +214,7 @@ class TransactionToken extends Resource
             'schedule_settings' => isset($scheduleSettings) ? $scheduleSettings->jsonSerialize() : null,
             'subscription_plan' => isset($subscriptionPlan) ? $subscriptionPlan->jsonSerialize() : null,
             'installment_plan' => isset($installmentPlan) ? $installmentPlan->jsonSerialize() : null,
-            'metadata' => $metadata
+            'metadata' => $metadata,
         ] + (isset($firstChargeAuthorizationOnly)
             ? ['first_charge_authorization_only' => $firstChargeAuthorizationOnly]
             : []
@@ -222,6 +223,9 @@ class TransactionToken extends Resource
             : []
         ) + (isset($onlyDirectCurrency)
             ? ['only_direct_currency' => $onlyDirectCurrency]
+            : []
+        ) + (isset($threeDS)
+            ? ['three_ds' => $threeDS->jsonSerialize()]
             : []
         );
 

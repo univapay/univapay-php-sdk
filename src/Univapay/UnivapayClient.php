@@ -188,7 +188,8 @@ class UnivapayClient
         ScheduleSettings $scheduleSettings = null,
         SubscriptionPlan $subscriptionPlan = null,
         InstallmentPlan $installmentPlan = null,
-        array $metadata = null
+        array $metadata = null,
+        PaymentThreeDS $paymentThreeDS = null
     ) {
         return $this
             ->getTransactionToken($transactionTokenId)
@@ -199,7 +200,8 @@ class UnivapayClient
                 $scheduleSettings,
                 $subscriptionPlan,
                 $installmentPlan,
-                $metadata
+                $metadata,
+                $paymentThreeDS
             );
     }
 
