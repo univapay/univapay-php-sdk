@@ -9,11 +9,11 @@ use Univapay\Enums\Field;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
 use Univapay\Enums\Reason;
+use Univapay\Enums\ThreeDSStatus;
 use Univapay\Enums\TokenType;
 use Univapay\Enums\UsageLimit;
 use Univapay\Errors\UnivapayLogicError;
 use Univapay\Errors\UnivapayValidationError;
-use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\PaymentData\CardData;
 use Univapay\Resources\PaymentData\ConvenienceStoreData;
 use Univapay\Resources\PaymentData\OnlineData;
@@ -31,7 +31,6 @@ use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\RequesterUtils;
 use Univapay\Utility\Json\JsonSchema;
 use Money\Money;
-use Univapay\Enums\ThreeDSStatus;
 
 class TransactionToken extends Resource
 {
@@ -164,6 +163,9 @@ class TransactionToken extends Resource
             : []
         ) + (isset($redirect)
             ? ['redirect' => $redirect->jsonSerialize()]
+            : []
+        ) + (isset($threeDS)
+            ? ['three_ds' => $threeDS->jsonSerialize()]
             : []
         );
 

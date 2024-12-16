@@ -14,8 +14,12 @@ class CardData
     public $cvvAuthorize;
     public $threeDS;
 
-    public function __construct($card, $billing, $cvvAuthorize, $threeDS)
-    {
+    public function __construct(
+        Card $card,
+        BillingData $billing,
+        CvvAuthorize $cvvAuthorize,
+        TokenThreeDS $threeDS
+    ) {
         $this->card = $card;
         $this->billing = $billing;
         $this->cvvAuthorize = $cvvAuthorize;

@@ -288,7 +288,7 @@ class UnivapayClient
                     break;
             }
             return new WebhookPayload($event, $parser($data['data']));
-        } catch (OutOfRangeException $exception) {
+        } catch (\OutOfRangeException $exception) {
             throw new UnivapayUnknownWebhookEvent($data['event']);
         } catch (Exception $exception) {
             throw new UnivapayInvalidWebhookData($data);

@@ -20,14 +20,14 @@ class TokenThreeDS
 
     public function __construct(
         $enabled = null,
-        $status = null,
         $redirectEndpoint = null,
+        $status = null,
         $redirectId = null,
         $error = null
     ) {
         $this->enabled = $enabled;
-        $this->status = $status;
         $this->redirectEndpoint = $redirectEndpoint;
+        $this->status = $status;
         $this->redirectId = $redirectId;
         $this->error = $error;
     }
