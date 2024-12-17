@@ -51,4 +51,9 @@ class Cancel extends Resource
     {
         return [(string) CancelStatus::PENDING() => array_diff(CancelStatus::findValues(), [CancelStatus::PENDING()])];
     }
+
+    protected function statusPropertyPath()
+    {
+        return 'status';
+    }
 }

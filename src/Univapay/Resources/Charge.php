@@ -130,6 +130,11 @@ class Charge extends Resource
         ];
     }
 
+    protected function statusPropertyPath()
+    {
+        return 'status';
+    }
+
     public function patch(array $metadata)
     {
         return RequesterUtils::executePatch(self::class, $this->getIdContext(), ['metadata' => $metadata]);
