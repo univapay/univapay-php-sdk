@@ -17,11 +17,12 @@ use Univapay\Enums\OsType;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\QrBrand;
 use Univapay\Enums\QrBrandMerchant;
+use Univapay\Enums\ThreeDSStatus;
 use Univapay\Enums\TokenType;
 use Univapay\Errors\UnivapayRequestError;
 use Univapay\Resources\PaymentData\CvvAuthorize;
 use Univapay\Resources\PaymentData\PhoneNumber;
-use Univapay\Resources\PaymentMethod\CardPayment;
+use Univapay\Resources\PaymentData\TokenThreeDS;
 use Univapay\Resources\PaymentMethod\CardPaymentPatch;
 use Univapay\Resources\PaymentMethod\PaymentMethodPatch;
 use PHPUnit\Framework\TestCase;
@@ -53,6 +54,56 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('101-1111', $transactionToken->data->billing->zip);
         $this->assertEquals(PhoneNumber::JP, $transactionToken->data->billing->phoneNumber->countryCode);
         $this->assertEquals('12910298309128', $transactionToken->data->billing->phoneNumber->localNumber);
+    }
+
+    public function testCreateRecurringTokenWithThreeDS()
+    {
+        $transactionToken = $this->createValidToken(
+            PaymentType::CARD(),
+            TokenType::RECURRING(),
+            null,
+            null,
+            null,
+            new TokenThreeDS(
+                true,
+                null,
+                "https://google.com"
+            )
+        )->awaitResult(5);
+        
+        $this->assertEquals('test@test.com', $transactionToken->email);
+        $this->assertEquals(TokenType::RECURRING(), $transactionToken->type);
+        $this->assertNull($transactionToken->confirmed);
+        $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
+        $this->assertEquals(PaymentType::CARD(), $transactionToken->paymentType);
+        $this->assertEquals('PHP TEST', $transactionToken->data->card->cardholder);
+        $this->assertEquals('02', $transactionToken->data->card->expMonth);
+        $this->assertEquals('2030', $transactionToken->data->card->expYear);
+        $this->assertEquals(CardType::CREDIT(), $transactionToken->data->card->cardType);
+        $this->assertEquals(CardCategory::SIGNATURE(), $transactionToken->data->card->category);
+        $this->assertEquals(CardSubBrand::None(), $transactionToken->data->card->subBrand);
+        $this->assertEquals('BANCO SANTANDER S.A.', $transactionToken->data->card->issuer);
+        $this->assertEquals('test line 1', $transactionToken->data->billing->line1);
+        $this->assertEquals('test line 2', $transactionToken->data->billing->line2);
+        $this->assertEquals('tokyo', $transactionToken->data->billing->state);
+        $this->assertEquals('test city', $transactionToken->data->billing->city);
+        $this->assertEquals('JP', $transactionToken->data->billing->country);
+        $this->assertEquals('101-1111', $transactionToken->data->billing->zip);
+        $this->assertEquals(PhoneNumber::JP, $transactionToken->data->billing->phoneNumber->countryCode);
+        $this->assertEquals('12910298309128', $transactionToken->data->billing->phoneNumber->localNumber);
+        $this->assertTrue($transactionToken->data->threeDS->enabled);
+        $this->assertEquals("https://google.com", $transactionToken->data->threeDS->redirectEndpoint);
+        $this->assertNotNull($transactionToken->data->threeDS->redirectId);
+        $this->assertEquals(ThreeDSStatus::PENDING(), $transactionToken->data->threeDS->status);
+        $this->assertNull($transactionToken->data->threeDS->error);
+
+        // Test 3DS Issuer Token
+        $threeDSIssuerToken = $transactionToken->threeDSIssuerToken();
+        $this->assertEquals(CallMethod::HTTP_POST(), $threeDSIssuerToken->callMethod);
+        $this->assertNotNull($threeDSIssuerToken->contentType);
+        $this->assertIsString($threeDSIssuerToken->issuerToken);
+        $this->assertNotNull($threeDSIssuerToken->payload);
+        $this->assertEquals(PaymentType::CARD(), $threeDSIssuerToken->paymentType);
     }
 
     public function testCreateTokenWithCvvAuth()
