@@ -180,6 +180,17 @@ class UnivapayClient
         return RequesterUtils::executeGet(Charge::class, $context);
     }
 
+    public function getLatestChargeForSubscription($storeId, $subscriptionId)
+    {
+        $context = $this->getContext()->withPath(
+            [
+                'stores', $storeId, 'subscriptions',
+                $subscriptionId, 'charges', 'latest'
+            ]
+        );
+        return RequesterUtils::executeGet(Charge::class, $context);
+    }
+
     public function createSubscription(
         $transactionTokenId,
         Money $money,

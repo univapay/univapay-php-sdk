@@ -5,14 +5,18 @@ use DateInterval;
 use DateTime;
 use DateTimeZone;
 use Univapay\Enums\AppTokenMode;
+use Univapay\Enums\CallMethod;
+use Univapay\Enums\ChargeStatus;
 use Univapay\Enums\InstallmentPlanType;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
 use Univapay\Enums\SubscriptionPlanType;
 use Univapay\Enums\SubscriptionStatus;
+use Univapay\Enums\ThreeDSMode;
 use Univapay\Enums\TokenType;
 use Univapay\Errors\UnivapayValidationError;
 use Univapay\Resources\Paginated;
+use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\SimpleList;
 use Univapay\Resources\Subscription;
 use Univapay\Resources\Subscription\InstallmentPlan;
@@ -195,6 +199,33 @@ EOD;
         $this->assertEquals(Period::BIWEEKLY(), $subscription->period);
         $this->assertEquals(Money::JPY(1000), $subscription->initialAmount);
         $this->assertInstanceOf(DateTime::class, $subscription->createdOn);
+    }
+
+    public function testCreateSubcriptionWithThreeDS()
+    {
+        $subscription = $this->createValidSubscription(
+            null,
+            null,
+            TokenType::SUBSCRIPTION(),
+            new PaymentThreeDS(
+                'https://example.com/success',
+                ThreeDSMode::REQUIRE()
+            )
+        );
+        $this->assertEquals(SubscriptionStatus::UNVERIFIED(), $subscription->status);
+
+        $charge = $this->client->getLatestChargeForSubscription(
+            $subscription->storeId,
+            $subscription->id
+        )->awaitResult(5);
+
+        // Confirm 3DS Issuer Token
+        $threeDSIssuerToken = $charge->threeDSIssuerToken();
+        $this->assertEquals(CallMethod::HTTP_POST(), $threeDSIssuerToken->callMethod);
+        $this->assertNotNull($threeDSIssuerToken->contentType);
+        $this->assertIsString($threeDSIssuerToken->issuerToken);
+        $this->assertNotNull($threeDSIssuerToken->payload);
+        $this->assertEquals(PaymentType::CARD(), $threeDSIssuerToken->paymentType);
     }
 
     public function testCreateAuthorizedSubscription()

@@ -44,13 +44,13 @@ class PaymentThreeDS extends ThreeDSMPI
     {
         return [
             'redirect_endpoint' => $this->redirectEndpoint,
-            'mode' => $this->mode,
-            'authentication_value' => $this->threeDSMPI->authenticationValue,
-            'eci' => $this->threeDSMPI->eci,
-            'ds_transaction_id' => $this->threeDSMPI->dsTransactionId,
-            'server_transaction_id' => $this->threeDSMPI->serverTransactionId,
-            'message_version' => $this->threeDSMPI->messageVersion,
-            'transaction_status' => $this->threeDSMPI->transactionStatus
+            'mode' =>  $this->mode ? $this->mode->getValue() : null,
+            'authentication_value' => $this->threeDSMPI ? ($this->threeDSMPI->authenticationValue ?? null) : null,
+            'eci' => $this->threeDSMPI ? ($this->threeDSMPI->eci ?? null) : null,
+            'ds_transaction_id' => $this->threeDSMPI ? ($this->threeDSMPI->dsTransactionId ?? null) : null,
+            'server_transaction_id' => $this->threeDSMPI ? ($this->threeDSMPI->serverTransactionId ?? null) : null,
+            'message_version' => $this->threeDSMPI ? ($this->threeDSMPI->messageVersion ?? null) : null,
+            'transaction_status' => $this->threeDSMPI ? ($this->threeDSMPI->transactionStatus ?? null) : null
         ];
     }
 }

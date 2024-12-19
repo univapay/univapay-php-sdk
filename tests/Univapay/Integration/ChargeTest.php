@@ -4,13 +4,16 @@ namespace UnivapayTest\Integration;
 use DateTime;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\CancelStatus;
+use Univapay\Enums\CallMethod;
 use Univapay\Enums\ChargeStatus;
 use Univapay\Enums\PaymentType;
+use Univapay\Enums\ThreeDSMode;
 use Univapay\Enums\TokenType;
-use Univapay\Errors\UnivapayLogicError;
 use Univapay\Errors\UnivapayRequestError;
 use Univapay\Resources\Charge;
+use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\Redirect;
+use Univapay\Resources\ThreeDSMPI;
 use Money\Currency;
 use Money\Money;
 use PHPUnit\Framework\TestCase;
@@ -102,6 +105,57 @@ EOD;
         $this->assertEquals(new Currency('JPY'), $charge->requestedCurrency);
         $this->assertEquals('https://test.int/endpoint?foo=bar', $charge->redirect->endpoint);
         $this->assertNotNull($charge->redirect->redirectId);
+    }
+
+    public function testCreateChargeWithThreeDS()
+    {
+        $charge = $this->createValidToken()->createCharge(
+            Money::JPY(100),
+            true,
+            null,
+            null,
+            null,
+            null,
+            new PaymentThreeDS(
+                "https://test.int/endpoint?foo=bar",
+                ThreeDSMode::REQUIRE()
+            )
+        )->awaitResult(5);
+        $this->assertEquals(Money::JPY(100), $charge->requestedAmount);
+
+        // Confirm 3DS Issuer Token
+        $threeDSIssuerToken = $charge->threeDSIssuerToken();
+        $this->assertEquals(CallMethod::HTTP_POST(), $threeDSIssuerToken->callMethod);
+        $this->assertNotNull($threeDSIssuerToken->contentType);
+        $this->assertIsString($threeDSIssuerToken->issuerToken);
+        $this->assertNotNull($threeDSIssuerToken->payload);
+        $this->assertEquals(PaymentType::CARD(), $threeDSIssuerToken->paymentType);
+    }
+
+    public function testCreateChargeWithThreeDSMPI()
+    {
+        $charge = $this->createValidToken()->createCharge(
+            Money::JPY(100),
+            true,
+            null,
+            null,
+            null,
+            null,
+            new PaymentThreeDS(
+                null,
+                null,
+                new ThreeDSMPI(
+                    '1234567890123456789012345678',
+                    '12',
+                    '058e4f09-37c7-47e5-9d24-47e8ffa77442',
+                    '7307b449-375a-4297-94d9-81314d4371c2',
+                    '2.1.0',
+                    'Y'
+                )
+            )
+        )->awaitResult(5);
+        $this->assertEquals(Money::JPY(100), $charge->requestedAmount);
+        $this->assertEquals(ChargeStatus::SUCCESSFUL(), $charge->status);
     }
 
     public function testAuthCaptureCharge()

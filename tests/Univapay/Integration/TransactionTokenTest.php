@@ -62,15 +62,17 @@ class TransactionTokenTest extends TestCase
             PaymentType::CARD(),
             TokenType::RECURRING(),
             null,
-            null,
+            new CvvAuthorize(true),
             null,
             new TokenThreeDS(
                 true,
                 null,
-                "https://google.com"
+                "https://test.int/endpoint?foo=bar"
             )
         )->awaitResult(5);
+        sleep(5); // Wait for CVV Auth to complete
         
+        // Confirm transaction token
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals(TokenType::RECURRING(), $transactionToken->type);
         $this->assertNull($transactionToken->confirmed);
@@ -92,12 +94,12 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals(PhoneNumber::JP, $transactionToken->data->billing->phoneNumber->countryCode);
         $this->assertEquals('12910298309128', $transactionToken->data->billing->phoneNumber->localNumber);
         $this->assertTrue($transactionToken->data->threeDS->enabled);
-        $this->assertEquals("https://google.com", $transactionToken->data->threeDS->redirectEndpoint);
+        $this->assertEquals("https://test.int/endpoint?foo=bar", $transactionToken->data->threeDS->redirectEndpoint);
         $this->assertNotNull($transactionToken->data->threeDS->redirectId);
         $this->assertEquals(ThreeDSStatus::PENDING(), $transactionToken->data->threeDS->status);
         $this->assertNull($transactionToken->data->threeDS->error);
 
-        // Test 3DS Issuer Token
+        // Confirm 3DS Issuer Token
         $threeDSIssuerToken = $transactionToken->threeDSIssuerToken();
         $this->assertEquals(CallMethod::HTTP_POST(), $threeDSIssuerToken->callMethod);
         $this->assertNotNull($threeDSIssuerToken->contentType);

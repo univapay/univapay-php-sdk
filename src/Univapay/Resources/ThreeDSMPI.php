@@ -3,7 +3,7 @@
 namespace Univapay\Resources;
 
 use Univapay\Enums\Reason;
-use Univapay\Errors\UnivapaySDKError;
+use Univapay\Errors\UnivapayLogicError;
 
 class ThreeDSMPI
 {
@@ -62,7 +62,7 @@ class ThreeDSMPI
             is_null($this->serverTransactionId) || $this->serverTransactionId === '' ||
             is_null($this->messageVersion) || $this->messageVersion === '' ||
             is_null($this->transactionStatus) || $this->transactionStatus === '') {
-            throw new UnivapaySDKError(Reason::INVALID_THREE_DS_MPI_FIELDS());
+            throw new UnivapayLogicError(Reason::INVALID_THREE_DS_MPI_FIELDS());
         }
     }
 }
