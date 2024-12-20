@@ -71,7 +71,7 @@ class Charge extends Resource
         $error = null,
         $metadata = null,
         Redirect $redirect = null,
-        $threeDS = null,
+        PaymentThreeDS $threeDS = null,
         $context = null
     ) {
         parent::__construct($id, $context);

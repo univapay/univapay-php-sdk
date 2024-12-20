@@ -56,6 +56,7 @@ class Subscription extends Resource
     public $installmentPlan;
     public $firstChargeAuthorizationOnly;
     public $firstChargeCaptureAfter;
+    public $threeDS;
 
     public function __construct(
         $id,
@@ -81,6 +82,7 @@ class Subscription extends Resource
         InstallmentPlan $installmentPlan = null,
         $firstChargeAuthorizationOnly = null,
         DateInterval $firstChargeCaptureAfter = null,
+        $threeDS = null,
         $context = null
     ) {
         parent::__construct($id, $context);
@@ -106,6 +108,7 @@ class Subscription extends Resource
         $this->installmentPlan = $installmentPlan;
         $this->firstChargeAuthorizationOnly = $firstChargeAuthorizationOnly;
         $this->firstChargeCaptureAfter = $firstChargeCaptureAfter;
+        $this->threeDS = $threeDS;
     }
 
     public function patch(
@@ -284,6 +287,7 @@ class Subscription extends Resource
             ->upsert('next_payment', false, ScheduledPayment::getSchema()->getParser())
             ->upsert('subscription_plan', false, SubscriptionPlan::getSchema()->getParser())
             ->upsert('installment_plan', false, InstallmentPlan::getSchema()->getParser())
-            ->upsert('first_charge_capture_after', false, FormatterUtils::of('getDateInterval'));
+            ->upsert('first_charge_capture_after', false, FormatterUtils::of('getDateInterval'))
+            ->upsert('three_ds', false, PaymentThreeDS::getSchema()->getParser());
     }
 }

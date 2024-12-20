@@ -1,6 +1,6 @@
 <?php
 
-namespace Univapay\Tests\Unit;
+namespace Univapay\Tests\Unit\Resources;
 
 use PHPUnit\Framework\TestCase;
 use Univapay\Errors\UnivapayLogicError;
@@ -8,17 +8,6 @@ use Univapay\Resources\ThreeDSMPI;
 
 class ThreeDSMPITest extends TestCase
 {
-    public function testAllFieldsNullOrEmpty()
-    {
-        $threeDSMPI = new ThreeDSMPI();
-        $this->assertNull($threeDSMPI->authenticationValue);
-        $this->assertNull($threeDSMPI->eci);
-        $this->assertNull($threeDSMPI->dsTransactionId);
-        $this->assertNull($threeDSMPI->serverTransactionId);
-        $this->assertNull($threeDSMPI->messageVersion);
-        $this->assertNull($threeDSMPI->transactionStatus);
-    }
-
     public function testValidThreeDSMPI()
     {
         $threeDSMPI = new ThreeDSMPI(

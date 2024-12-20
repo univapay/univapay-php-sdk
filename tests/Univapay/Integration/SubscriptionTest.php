@@ -6,7 +6,6 @@ use DateTime;
 use DateTimeZone;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\CallMethod;
-use Univapay\Enums\ChargeStatus;
 use Univapay\Enums\InstallmentPlanType;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
@@ -19,6 +18,7 @@ use Univapay\Resources\Paginated;
 use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\SimpleList;
 use Univapay\Resources\Subscription;
+use Univapay\Resources\ThreeDSMPI;
 use Univapay\Resources\Subscription\InstallmentPlan;
 use Univapay\Resources\Subscription\ScheduledPayment;
 use Univapay\Resources\Subscription\ScheduleSettings;
@@ -209,10 +209,14 @@ EOD;
             TokenType::SUBSCRIPTION(),
             new PaymentThreeDS(
                 'https://example.com/success',
+                null,
                 ThreeDSMode::REQUIRE()
             )
         );
         $this->assertEquals(SubscriptionStatus::UNVERIFIED(), $subscription->status);
+        $this->assertEquals(ThreeDSMode::REQUIRE(), $subscription->threeDS->mode);
+        $this->assertEquals('https://example.com/success', $subscription->threeDS->redirectEndpoint);
+        $this->assertNotNull($subscription->threeDS->redirectId);
 
         $charge = $this->client->getLatestChargeForSubscription(
             $subscription->storeId,
@@ -226,6 +230,31 @@ EOD;
         $this->assertIsString($threeDSIssuerToken->issuerToken);
         $this->assertNotNull($threeDSIssuerToken->payload);
         $this->assertEquals(PaymentType::CARD(), $threeDSIssuerToken->paymentType);
+    }
+
+    public function testCreateSubcriptionWithThreeDSMPI()
+    {
+        $subscription = $this->createValidSubscription(
+            null,
+            null,
+            TokenType::SUBSCRIPTION(),
+            new PaymentThreeDS(
+                null,
+                null,
+                null,
+                new ThreeDSMPI(
+                    '1234567890123456789012345678',
+                    '12',
+                    '058e4f09-37c7-47e5-9d24-47e8ffa77442',
+                    '7307b449-375a-4297-94d9-81314d4371c2',
+                    '2.1.0',
+                    'Y'
+                )
+            )
+        )->awaitResult(5);
+        $this->assertEquals(ThreeDSMode::PROVIDED(), $subscription->threeDS->mode);
+        $this->assertNull($subscription->threeDS->redirectEndpoint);
+        $this->assertNull($subscription->threeDS->redirectId);
     }
 
     public function testCreateAuthorizedSubscription()

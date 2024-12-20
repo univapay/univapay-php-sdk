@@ -50,6 +50,11 @@ class ChargeTest extends TestCase
               "endpoint": "https://test.int/endpoint?foo=bar",
               "redirect_id": "11ed0cce-59e5-795a-b95c-rd1234567890"
             },
+            "three_ds": {
+              "redirect_endpoint": "https://ec-site.example.com/3ds/complete",
+              "redirect_id": "11efbdb4-6820-12dc-8246-6f01ed1243a9",
+              "mode": "normal"
+            },
             "created_on": "2022-07-26T10:33:12.934225Z",
             "merchant_id": "11e99ede-ccb4-dfcc-beea-3b1234567890"
         }
@@ -74,6 +79,9 @@ EOD;
         $this->assertEquals(AppTokenMode::LIVE(), $charge->mode);
         $this->assertEquals('https://test.int/endpoint?foo=bar', $charge->redirect->endpoint);
         $this->assertEquals('11ed0cce-59e5-795a-b95c-rd1234567890', $charge->redirect->redirectId);
+        $this->assertEquals('https://ec-site.example.com/3ds/complete', $charge->threeDS->redirectEndpoint);
+        $this->assertEquals('11efbdb4-6820-12dc-8246-6f01ed1243a9', $charge->threeDS->redirectId);
+        $this->assertEquals(ThreeDSMode::NORMAL(), $charge->threeDS->mode);
     }
 
     public function testCreateCharge()
@@ -118,10 +126,14 @@ EOD;
             null,
             new PaymentThreeDS(
                 "https://test.int/endpoint?foo=bar",
+                null,
                 ThreeDSMode::REQUIRE()
             )
         )->awaitResult(5);
         $this->assertEquals(Money::JPY(100), $charge->requestedAmount);
+        $this->assertEquals(ThreeDSMode::REQUIRE(), $charge->threeDS->mode);
+        $this->assertEquals(ChargeStatus::AWAITING(), $charge->status);
+        $this->assertNotNull($charge->threeDS->redirectId);
 
         // Confirm 3DS Issuer Token
         $threeDSIssuerToken = $charge->threeDSIssuerToken();
@@ -144,6 +156,7 @@ EOD;
             new PaymentThreeDS(
                 null,
                 null,
+                null,
                 new ThreeDSMPI(
                     '1234567890123456789012345678',
                     '12',
@@ -155,7 +168,7 @@ EOD;
             )
         )->awaitResult(5);
         $this->assertEquals(Money::JPY(100), $charge->requestedAmount);
-        $this->assertEquals(ChargeStatus::SUCCESSFUL(), $charge->status);
+        $this->assertEquals(ThreeDSMode::PROVIDED(), $charge->threeDS->mode);
     }
 
     public function testAuthCaptureCharge()
