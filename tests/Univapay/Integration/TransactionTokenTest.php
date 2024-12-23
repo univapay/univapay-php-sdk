@@ -66,7 +66,6 @@ class TransactionTokenTest extends TestCase
             null,
             new TokenThreeDS(
                 true,
-                null,
                 "https://test.int/endpoint?foo=bar"
             )
         )->awaitResult(5);

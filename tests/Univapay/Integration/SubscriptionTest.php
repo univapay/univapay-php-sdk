@@ -18,7 +18,6 @@ use Univapay\Resources\Paginated;
 use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\SimpleList;
 use Univapay\Resources\Subscription;
-use Univapay\Resources\ThreeDSMPI;
 use Univapay\Resources\Subscription\InstallmentPlan;
 use Univapay\Resources\Subscription\ScheduledPayment;
 use Univapay\Resources\Subscription\ScheduleSettings;
@@ -207,9 +206,8 @@ EOD;
             null,
             null,
             TokenType::SUBSCRIPTION(),
-            new PaymentThreeDS(
+            PaymentThreeDS::withThreeDS(
                 'https://example.com/success',
-                null,
                 ThreeDSMode::REQUIRE()
             )
         );
@@ -238,18 +236,13 @@ EOD;
             null,
             null,
             TokenType::SUBSCRIPTION(),
-            new PaymentThreeDS(
-                null,
-                null,
-                null,
-                new ThreeDSMPI(
-                    '1234567890123456789012345678',
-                    '12',
-                    '058e4f09-37c7-47e5-9d24-47e8ffa77442',
-                    '7307b449-375a-4297-94d9-81314d4371c2',
-                    '2.1.0',
-                    'Y'
-                )
+            paymentThreeDS::withThreeDSMPI(
+                '1234567890123456789012345678',
+                '12',
+                '058e4f09-37c7-47e5-9d24-47e8ffa77442',
+                '7307b449-375a-4297-94d9-81314d4371c2',
+                '2.1.0',
+                'Y'
             )
         )->awaitResult(5);
         $this->assertEquals(ThreeDSMode::PROVIDED(), $subscription->threeDS->mode);
