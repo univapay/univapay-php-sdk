@@ -5,6 +5,7 @@ namespace Univapay\Resources;
 use DateInterval;
 use DateTime;
 use Univapay\Enums\AppTokenMode;
+use Univapay\Enums\CvvAuthorizationStatus;
 use Univapay\Enums\Field;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
@@ -36,6 +37,9 @@ class TransactionToken extends Resource
 {
     use Jsonable;
     use Pollable;
+
+    const POLLABLE_STATUS_THREE_DS = 'threeDS';
+    const POLLABLE_STATUS_CVV_AUTHORIZE = 'cvvAuthorize';
 
     public $storeId;
     public $email;
@@ -122,10 +126,22 @@ class TransactionToken extends Resource
     protected function pollableStatuses()
     {
         return [
-            (string) ThreeDSStatus::AWAITING() =>
-                array_diff(ThreeDSStatus::findValues(), [ThreeDSStatus::AWAITING()]),
-            (string) ThreeDSStatus::PENDING() =>
-                array_diff(ThreeDSStatus::findValues(), [ThreeDSStatus::PENDING()])
+            self::POLLABLE_STATUS_THREE_DS => [
+                (string) ThreeDSStatus::AWAITING() => array_diff(
+                    ThreeDSStatus::findValues(),
+                    [ThreeDSStatus::AWAITING()]
+                ),
+                (string) ThreeDSStatus::PENDING() => array_diff(
+                    ThreeDSStatus::findValues(),
+                    [ThreeDSStatus::PENDING()]
+                )
+            ],
+            self::POLLABLE_STATUS_CVV_AUTHORIZE => [
+                (string) CvvAuthorizationStatus::PENDING() => array_diff(
+                    CvvAuthorizationStatus::findValues(),
+                    [CvvAuthorizationStatus::PENDING()]
+                )
+            ]
         ];
     }
 
@@ -265,15 +281,37 @@ class TransactionToken extends Resource
         return $this->context->withPath(['stores', $this->storeId, 'tokens', $this->id, 'three_ds', 'issuer_token']);
     }
 
+    // @phpcs:disable
     public function awaitResult($retry = 0)
     {
         $idContext = $this->getIdContext();
         $pollableStatuses = $this->pollableStatuses();
         $response = RequesterUtils::executeGet(self::class, $idContext, ['polling' => 'true']);
         $retryCount = 0;
+
         while ($retryCount < $retry &&
-            array_key_exists($this->data->threeDS->status->__toString(), $pollableStatuses) &&
-            !in_array($response->data->threeDS->status, $pollableStatuses[$this->data->threeDS->status->__toString()])
+            (
+                (isset($this->data->threeDS->status) &&
+                    array_key_exists(
+                        $this->data->threeDS->status->__toString(),
+                        $pollableStatuses[self::POLLABLE_STATUS_THREE_DS]
+                    ) &&
+                    !in_array(
+                        $response->data->threeDS->status,
+                        $pollableStatuses[self::POLLABLE_STATUS_THREE_DS][$this->data->threeDS->status->__toString()]
+                    )
+                ) ||
+                (isset($this->data->cvvAuthorize->status) &&
+                    array_key_exists(
+                        $this->data->cvvAuthorize->status,
+                        $pollableStatuses[self::POLLABLE_STATUS_CVV_AUTHORIZE]
+                    ) &&
+                    !in_array(
+                        $response->data->cvvAuthorize->status,
+                        $pollableStatuses[self::POLLABLE_STATUS_CVV_AUTHORIZE][$this->data->cvvAuthorize->status->__toString()]
+                    )
+                )
+            )
         ) {
             $retryCount++;
             $response = RequesterUtils::executeGet(self::class, $idContext, ['polling' => 'true']);
