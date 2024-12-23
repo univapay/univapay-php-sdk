@@ -129,11 +129,6 @@ class TransactionToken extends Resource
         ];
     }
 
-    protected function statusPropertyPath()
-    {
-        return 'data->threeDS->status';
-    }
-
     public function patch(PaymentMethodPatch $paymentPatch)
     {
         return $this->update($paymentPatch)->fetch();
@@ -268,5 +263,21 @@ class TransactionToken extends Resource
     protected function getIssuerToken3DSContext()
     {
         return $this->context->withPath(['stores', $this->storeId, 'tokens', $this->id, 'three_ds', 'issuer_token']);
+    }
+
+    public function awaitResult($retry = 0)
+    {
+        $idContext = $this->getIdContext();
+        $pollableStatuses = $this->pollableStatuses();
+        $response = RequesterUtils::executeGet(self::class, $idContext, ['polling' => 'true']);
+        $retryCount = 0;
+        while ($retryCount < $retry &&
+            array_key_exists($this->data->threeDS->status->__toString(), $pollableStatuses) &&
+            !in_array($response->data->threeDS->status, $pollableStatuses[$this->data->threeDS->status->__toString()])
+        ) {
+            $retryCount++;
+            $response = RequesterUtils::executeGet(self::class, $idContext, ['polling' => 'true']);
+        }
+        return $response;
     }
 }

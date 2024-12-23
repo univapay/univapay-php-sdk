@@ -256,11 +256,6 @@ class Subscription extends Resource
         ];
     }
 
-    protected function statusPropertyPath()
-    {
-        return 'status';
-    }
-
     protected function getChargeContext()
     {
         return $this->context->withPath(['stores', $this->storeId, 'subscriptions', $this->id, 'charges']);

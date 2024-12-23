@@ -7,6 +7,8 @@ use Univapay\Enums\RefundReason;
 use Univapay\Enums\RefundStatus;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\Json\JsonSchema;
+use Money\Currency;
+use Money\Money;
 
 class Refund extends Resource
 {
@@ -72,10 +74,5 @@ class Refund extends Resource
     protected function pollableStatuses()
     {
         return [(string) RefundStatus::PENDING() => array_diff(RefundStatus::findValues(), [RefundStatus::PENDING()])];
-    }
-
-    protected function statusPropertyPath()
-    {
-        return 'status';
     }
 }
