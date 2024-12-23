@@ -13,21 +13,21 @@ class TokenThreeDS
     use Jsonable;
 
     public $enabled;
-    public $status;
     public $redirectEndpoint;
+    public $status;
     public $redirectId;
     public $error;
 
     public function __construct(
-        $enabled = null,
+        $enabled,
+        $redirectEndpoint,
         $status = null,
-        $redirectEndpoint = null,
         $redirectId = null,
         $error = null
     ) {
         $this->enabled = $enabled;
-        $this->status = $status;
         $this->redirectEndpoint = $redirectEndpoint;
+        $this->status = $status;
         $this->redirectId = $redirectId;
         $this->error = $error;
     }

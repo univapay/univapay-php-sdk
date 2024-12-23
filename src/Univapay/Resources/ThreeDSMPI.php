@@ -3,10 +3,13 @@
 namespace Univapay\Resources;
 
 use Univapay\Enums\Reason;
+use Univapay\Utility\FunctionalUtils;
 use Univapay\Errors\UnivapayLogicError;
 
 class ThreeDSMPI
 {
+    use Jsonable;
+
     public $authenticationValue;
     public $eci;
     public $dsTransactionId;
@@ -15,12 +18,12 @@ class ThreeDSMPI
     public $transactionStatus;
 
     public function __construct(
-        $authenticationValue = null,
-        $eci = null,
-        $dsTransactionId = null,
-        $serverTransactionId = null,
-        $messageVersion = null,
-        $transactionStatus = null
+        $authenticationValue,
+        $eci,
+        $dsTransactionId,
+        $serverTransactionId,
+        $messageVersion,
+        $transactionStatus
     ) {
         $this->authenticationValue = $authenticationValue;
         $this->eci = $eci;
@@ -62,7 +65,19 @@ class ThreeDSMPI
             is_null($this->serverTransactionId) || $this->serverTransactionId === '' ||
             is_null($this->messageVersion) || $this->messageVersion === '' ||
             is_null($this->transactionStatus) || $this->transactionStatus === '') {
-            throw new UnivapayLogicError(Reason::INVALID_THREE_DS_MPI_FIELDS());
+            throw new UnivapayLogicError(Reason::INCOMPLETE_THREE_DS_MPI_FIELDS());
         }
+    }
+
+    public function jsonSerialize()
+    {
+        return FunctionalUtils::stripNulls([
+            'authentication_value' => $this->authenticationValue,
+            'eci' => $this->eci,
+            'ds_transaction_id' => $this->dsTransactionId,
+            'server_transaction_id' => $this->serverTransactionId,
+            'message_version' => $this->messageVersion,
+            'transaction_status' => $this->transactionStatus
+        ]);
     }
 }

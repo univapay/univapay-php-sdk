@@ -5,7 +5,6 @@ use Money\Money;
 use Univapay\UnivapayClient;
 use Univapay\Enums\ThreeDSMode;
 use Univapay\Enums\TokenType;
-use Univapay\Resources\ThreeDSMPI;
 use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\PaymentData\Address;
 use Univapay\Resources\PaymentData\PhoneNumber;
@@ -47,17 +46,14 @@ $charge = $client->createCharge(
     null,
     null,
     null,
-    new PaymentThreeDS(
+    PaymentThreeDS::withThreeDS(
         "https://ec-site.example.com/3ds/complete", // redirect endpoint when 3DS is completed
-        null,
-        ThreeDSMode::NORMAL(), // check documentation for more about 3DS modes
-        null
+        ThreeDSMode::NORMAL() // check documentation for more about 3DS modes
     )
 )->awaitResult(5);
-$charge->threeDSIssuerToken(); // information for issuer token for 3DS authentication
-// redirect user to issuer's 3DS page
-// after 3DS authentication, user will be redirected to the endpoint specified in PaymentThreeDS
-
+// Fetch information for issuer token for 3DS authentication and redirect user to 3DS authentication page
+// after 3DS authentication is completed, user will be redirected to the endpoint specified in PaymentThreeDS
+$charge->threeDSIssuerToken();
 
 /**
  * Example 2. Create charge with authorized 3DS MPI
@@ -72,17 +68,12 @@ $charge = $client->createCharge(
     null,
     null,
     null,
-    new PaymentThreeDS(
-        null,
-        null,
-        null,
-        new ThreeDSMPI(
-            '1234567890123456789012345678',
-            '12',
-            '11efbb62-7838-0492-acd7-aaabfef2ee8d',
-            '11efbb62-7838-0492-acd7-aaabfef2ee8a',
-            '2.2.0',
-            'A'
-        )
+    PaymentThreeDS::withThreeDSMPI(
+        '1234567890123456789012345678',
+        '12',
+        '11efbb62-7838-0492-acd7-aaabfef2ee8d',
+        '11efbb62-7838-0492-acd7-aaabfef2ee8a',
+        '2.2.0',
+        'A'
     )
 )->awaitResult(5);

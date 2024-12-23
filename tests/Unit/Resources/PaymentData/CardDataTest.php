@@ -31,15 +31,15 @@ class CardDataTest extends TestCase
                 "sub_brand": "visa_electron"
             },
             "billing": {
-                "line1": "3-16-35 Roppongi Minato-ku",
-                "line2": "Roppongi East Building 2F",
+                "line1": "Line 1 lorem ipsum",
+                "line2": "Line 2 lorem ipsum",
                 "state": "Tokyo",
                 "city": "Tokyo",
                 "country": "JP",
-                "zip": "1060032",
+                "zip": "xxxxxx",
                 "phone_number": {
                     "country_code": 81,
-                    "local_number": "364413400"
+                    "local_number": "0312345678"
                 }
             },
             "cvv_authorize": {
@@ -56,8 +56,8 @@ class CardDataTest extends TestCase
             },
             "three_ds": {
                 "enabled": true,
-                "status": "pending",
                 "redirect_endpoint": "https://ec-site.example.com/3ds/complete",
+                "status": "pending",
                 "redirect_id": "11efbdb4-6820-12dc-8246-6f01ed1243a9",
                 "error": null
             }
@@ -77,14 +77,14 @@ EOD;
         $this->assertEquals('xxxxxxxxxxxxxxxx', $cardData->card->issuer);
         $this->assertEquals(CardSubBrand::VISA_ELECTRON(), $cardData->card->subBrand);
 
-        $this->assertEquals('3-16-35 Roppongi Minato-ku', $cardData->billing->line1);
-        $this->assertEquals('Roppongi East Building 2F', $cardData->billing->line2);
+        $this->assertEquals('Line 1 lorem ipsum', $cardData->billing->line1);
+        $this->assertEquals('Line 2 lorem ipsum', $cardData->billing->line2);
         $this->assertEquals('Tokyo', $cardData->billing->state);
         $this->assertEquals('Tokyo', $cardData->billing->city);
         $this->assertEquals('JP', $cardData->billing->country);
-        $this->assertEquals('1060032', $cardData->billing->zip);
+        $this->assertEquals('xxxxxx', $cardData->billing->zip);
         $this->assertEquals(81, $cardData->billing->phoneNumber->countryCode);
-        $this->assertEquals('364413400', $cardData->billing->phoneNumber->localNumber);
+        $this->assertEquals('0312345678', $cardData->billing->phoneNumber->localNumber);
 
         $this->assertEquals(false, $cardData->cvvAuthorize->enabled);
         $this->assertEquals(null, $cardData->cvvAuthorize->status);
@@ -93,8 +93,8 @@ EOD;
         $this->assertEquals(null, $cardData->cvvAuthorize->currency);
 
         $this->assertEquals(true, $cardData->threeDS->enabled);
-        $this->assertEquals(ThreeDSStatus::PENDING(), $cardData->threeDS->status);
         $this->assertEquals("https://ec-site.example.com/3ds/complete", $cardData->threeDS->redirectEndpoint);
+        $this->assertEquals(ThreeDSStatus::PENDING(), $cardData->threeDS->status);
         $this->assertEquals("11efbdb4-6820-12dc-8246-6f01ed1243a9", $cardData->threeDS->redirectId);
         $this->assertEquals(null, $cardData->threeDS->error);
     }

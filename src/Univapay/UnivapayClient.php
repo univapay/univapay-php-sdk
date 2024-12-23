@@ -184,8 +184,12 @@ class UnivapayClient
     {
         $context = $this->getContext()->withPath(
             [
-                'stores', $storeId, 'subscriptions',
-                $subscriptionId, 'charges', 'latest'
+                'stores',
+                $storeId,
+                'subscriptions',
+                $subscriptionId,
+                'charges',
+                'latest'
             ]
         );
         return RequesterUtils::executeGet(Charge::class, $context);
@@ -301,7 +305,7 @@ class UnivapayClient
                     break;
             }
             return new WebhookPayload($event, $parser($data['data']));
-        } catch (\OutOfRangeException $exception) {
+        } catch (OutOfRangeException $exception) {
             throw new UnivapayUnknownWebhookEvent($data['event']);
         } catch (Exception $exception) {
             throw new UnivapayInvalidWebhookData($data);

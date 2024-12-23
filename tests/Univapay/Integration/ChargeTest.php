@@ -124,13 +124,13 @@ EOD;
             null,
             null,
             null,
-            new PaymentThreeDS(
+            PaymentThreeDS::withThreeDS(
                 "https://test.int/endpoint?foo=bar",
-                null,
                 ThreeDSMode::REQUIRE()
             )
         )->awaitResult(5);
         $this->assertEquals(Money::JPY(100), $charge->requestedAmount);
+        $this->assertEquals("https://test.int/endpoint?foo=bar", $charge->threeDS->redirectEndpoint);
         $this->assertEquals(ThreeDSMode::REQUIRE(), $charge->threeDS->mode);
         $this->assertEquals(ChargeStatus::AWAITING(), $charge->status);
         $this->assertNotNull($charge->threeDS->redirectId);
@@ -153,18 +153,13 @@ EOD;
             null,
             null,
             null,
-            new PaymentThreeDS(
-                null,
-                null,
-                null,
-                new ThreeDSMPI(
-                    '1234567890123456789012345678',
-                    '12',
-                    '058e4f09-37c7-47e5-9d24-47e8ffa77442',
-                    '7307b449-375a-4297-94d9-81314d4371c2',
-                    '2.1.0',
-                    'Y'
-                )
+            PaymentThreeDS::withThreeDSMPI(
+                '1234567890123456789012345678',
+                '12',
+                '058e4f09-37c7-47e5-9d24-47e8ffa77442',
+                '7307b449-375a-4297-94d9-81314d4371c2',
+                '2.1.0',
+                'Y'
             )
         )->awaitResult(5);
         $this->assertEquals(Money::JPY(100), $charge->requestedAmount);

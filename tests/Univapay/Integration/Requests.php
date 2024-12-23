@@ -16,6 +16,7 @@ use Univapay\Enums\QrBrandMerchant;
 use Univapay\Enums\RefundReason;
 use Univapay\Enums\SubscriptionPlanType;
 use Univapay\Enums\TokenType;
+use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\PaymentData\Address;
 use Univapay\Resources\PaymentData\ConvenienceStoreData;
 use Univapay\Resources\PaymentData\CvvAuthorize;
@@ -33,8 +34,6 @@ use Univapay\Resources\Subscription\InstallmentPlan;
 use Univapay\Resources\Subscription\ScheduleSettings;
 use Univapay\Resources\Subscription\SubscriptionPlan;
 use Money\Money;
-use Univapay\Resources\PaymentThreeDS;
-use WpOrg\Requests\Requests as wpRequests;
 
 trait Requests
 {
@@ -383,22 +382,5 @@ trait Requests
         foreach ($tokenList->items as $token) {
             $token->deactivate();
         }
-    }
-
-    // use this method to mock 3DS issuer token authorization
-    public function authorizeTest3DSIssuerToken($issuerToken)
-    {
-        return wpRequests::post(
-            $issuerToken->issuerToken,
-            [
-                "Authorization" =>
-                    "Bearer " . getenv('UNIVAPAY_PHP_TEST_SECRET') . "." . getenv('UNIVAPAY_PHP_TEST_TOKEN'),
-                "Content-Type" => "application/x-www-form-urlencoded",
-            ],
-            [
-                "resource_id" => $issuerToken->payload['resource_id'],
-                "resource_type" => $issuerToken->payload['resource_type'],
-            ]
-        );
     }
 }

@@ -121,8 +121,12 @@ class TransactionToken extends Resource
 
     protected function pollableStatuses()
     {
-        return [(string) ThreeDSStatus::PENDING() =>
-            array_diff(ThreeDSStatus::findValues(), [ThreeDSStatus::PENDING()])];
+        return [
+            (string) ThreeDSStatus::AWAITING() =>
+                array_diff(ThreeDSStatus::findValues(), [ThreeDSStatus::AWAITING()]),
+            (string) ThreeDSStatus::PENDING() =>
+                array_diff(ThreeDSStatus::findValues(), [ThreeDSStatus::PENDING()])
+        ];
     }
 
     protected function statusPropertyPath()

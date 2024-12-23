@@ -45,5 +45,5 @@ final class Reason extends TypedEnum
     public static function PERIOD_OR_CYCLICAL_PERIOD_MUST_BE_SET() { return self::create(); }
 
     // ThreeDS MPI
-    public static function INVALID_THREE_DS_MPI_FIELDS() { return self::create('All fields must be set when using 3DS MPI'); }
+    public static function INCOMPLETE_THREE_DS_MPI_FIELDS() { return self::create('All fields must be set when using 3DS MPI'); }
 }

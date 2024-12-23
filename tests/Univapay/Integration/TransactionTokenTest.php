@@ -70,7 +70,6 @@ class TransactionTokenTest extends TestCase
                 "https://test.int/endpoint?foo=bar"
             )
         )->awaitResult(5);
-        sleep(5); // Wait for CVV Auth to complete
         
         // Confirm transaction token
         $this->assertEquals('test@test.com', $transactionToken->email);
