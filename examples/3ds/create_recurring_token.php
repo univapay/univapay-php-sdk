@@ -41,22 +41,19 @@ $paymentMethod = new CardPayment(
 
 $token = $client->createToken($paymentMethod);
 
-while (1) {
-    $token = $token->awaitResult(5); // wait for the charge status to be updated, retrying up to 5 times
-    switch ($token->data->threeDS->status) {
-        case ThreeDSStatus::PENDING():
-            // still on progress ...
-            break;
-        case ThreeDSStatus::AWAITING():
-            // Fetch information for issuer token for 3DS authentication and redirect user to 3DS authentication page
-            // after 3DS authentication is completed, user will be redirected to the endpoint specified in PaymentThreeDS
-            $token->threeDSIssuerToken();
-            break;
-        case ThreeDSStatus::SUCCESSFUL():
-        case ThreeDSStatus::FAILED():
-        case ThreeDSStatus::ERROR():
-        default:
-            goto end;
-    }
+$token = $token->awaitResult(5); // wait for the charge status to be updated, retrying up to 5 times
+switch ($token->data->threeDS->status) {
+    case ThreeDSStatus::PENDING():
+        // still on progress ...
+        break;
+    case ThreeDSStatus::AWAITING():
+        // Fetch information for issuer token for 3DS authentication and redirect user to 3DS authentication page
+        // after 3DS authentication is completed, user will be redirected to the endpoint specified in PaymentThreeDS
+        $token->threeDSIssuerToken();
+        break;
+    case ThreeDSStatus::SUCCESSFUL():
+        // continue with payment flow
+    case ThreeDSStatus::FAILED():
+    case ThreeDSStatus::ERROR():
+        // implement error handling
 }
-end:
