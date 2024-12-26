@@ -162,17 +162,6 @@ class TransactionToken extends Resource
         if ($this->type === TokenType::SUBSCRIPTION()) {
             throw new UnivapayLogicError(Reason::NON_SUBSCRIPTION_PAYMENT());
         }
-        if ($this->paymentType === PaymentType::CARD()) {
-            if ($this->data->cvvAuthorize->enabled &&
-                $this->data->cvvAuthorize->status !== CvvAuthorizationStatus::CURRENT()) {
-                throw new UnivapayLogicError(Reason::CVV_AUTHORIZATION_REQUIRED());
-            }
-            
-            if ($this->data->threeDS->enabled &&
-                $this->data->threeDS->status !== ThreeDSStatus::SUCCESSFUL()) {
-                throw new UnivapayLogicError(Reason::THREE_DS_AUTHORIZATION_REQUIRED());
-            }
-        }
     }
 
     public function createCharge(
@@ -234,17 +223,6 @@ class TransactionToken extends Resource
         $scheduleSettings->preserveEndOfMonth === true &&
         Period::MONTHLY() !== $period) {
             throw new UnivapayValidationError(Field::PRESERVE_END_OF_MONTH(), Reason::MUST_BE_MONTH_BASE_TO_SET());
-        }
-        if ($this->paymentType === PaymentType::CARD()) {
-            if ($this->data->cvvAuthorize->enabled &&
-                $this->data->cvvAuthorize->status !== CvvAuthorizationStatus::CURRENT()) {
-                throw new UnivapayLogicError(Reason::CVV_AUTHORIZATION_REQUIRED());
-            }
-            
-            if ($this->data->threeDS->enabled &&
-                $this->data->threeDS->status !== ThreeDSStatus::SUCCESSFUL()) {
-                throw new UnivapayLogicError(Reason::THREE_DS_AUTHORIZATION_REQUIRED());
-            }
         }
     }
 
