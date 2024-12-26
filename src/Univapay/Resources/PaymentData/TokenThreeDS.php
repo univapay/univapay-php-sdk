@@ -18,10 +18,16 @@ class TokenThreeDS
     public $redirectId;
     public $error;
 
+    /**
+     * Three DS for Transaction Token
+     *
+     * @param bool $enabled enable 3DS for this transaction
+     * @param int $redirectEndpoint redirect endpoint, where the user will be redirected after 3DS authentication
+     */
     public function __construct(
         $enabled,
         $redirectEndpoint,
-        $status = null,
+        ThreeDSStatus $status = null,
         $redirectId = null,
         $error = null
     ) {

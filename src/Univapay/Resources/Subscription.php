@@ -82,7 +82,7 @@ class Subscription extends Resource
         InstallmentPlan $installmentPlan = null,
         $firstChargeAuthorizationOnly = null,
         DateInterval $firstChargeCaptureAfter = null,
-        $threeDS = null,
+        PaymentThreeDS $threeDS = null,
         $context = null
     ) {
         parent::__construct($id, $context);

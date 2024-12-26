@@ -37,24 +37,7 @@ class ThreeDSMPI
 
     private function validate()
     {
-        $allNullOrEmpty = $this->isAllNullOrEmpty();
-
-        // not using 3DS MPI
-        if ($allNullOrEmpty) {
-            return;
-        }
-
         $this->validateAllFieldsExist();
-    }
-
-    private function isAllNullOrEmpty()
-    {
-        return (is_null($this->authenticationValue) || $this->authenticationValue === '') &&
-            (is_null($this->eci) || $this->eci === '') &&
-            (is_null($this->dsTransactionId) || $this->dsTransactionId === '') &&
-            (is_null($this->serverTransactionId) || $this->serverTransactionId === '') &&
-            (is_null($this->messageVersion) || $this->messageVersion === '') &&
-            (is_null($this->transactionStatus) || $this->transactionStatus === '');
     }
 
     private function validateAllFieldsExist()

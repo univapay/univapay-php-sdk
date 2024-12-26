@@ -127,14 +127,16 @@ class TransactionToken extends Resource
     {
         return [
             self::POLLABLE_STATUS_THREE_DS => [
-                (string) ThreeDSStatus::AWAITING() => array_diff(
-                    ThreeDSStatus::findValues(),
-                    [ThreeDSStatus::AWAITING()]
-                ),
                 (string) ThreeDSStatus::PENDING() => array_diff(
                     ThreeDSStatus::findValues(),
                     [ThreeDSStatus::PENDING()]
-                )
+                ),
+                (string) ThreeDSStatus::AWAITING() =>
+                    [
+                        ThreeDSStatus::SUCCESSFUL(),
+                        ThreeDSStatus::FAILED(),
+                        ThreeDSStatus::ERROR()
+                    ]
             ],
             self::POLLABLE_STATUS_CVV_AUTHORIZE => [
                 (string) CvvAuthorizationStatus::PENDING() => array_diff(
@@ -291,7 +293,7 @@ class TransactionToken extends Resource
 
         while ($retryCount < $retry &&
             (
-                (isset($this->data->threeDS->status) &&
+                (
                     array_key_exists(
                         $this->data->threeDS->status->__toString(),
                         $pollableStatuses[self::POLLABLE_STATUS_THREE_DS]
@@ -301,7 +303,7 @@ class TransactionToken extends Resource
                         $pollableStatuses[self::POLLABLE_STATUS_THREE_DS][$this->data->threeDS->status->__toString()]
                     )
                 ) ||
-                (isset($this->data->cvvAuthorize->status) &&
+                (
                     array_key_exists(
                         $this->data->cvvAuthorize->status,
                         $pollableStatuses[self::POLLABLE_STATUS_CVV_AUTHORIZE]
