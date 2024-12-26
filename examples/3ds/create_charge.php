@@ -38,7 +38,6 @@ $token = $client->createToken($paymentMethod);
 /**
  * Example 1. Create charge with requiring 3DS 
  */
-
 $charge = $client->createCharge(
     $token->id,
     Money::JPY(100),
@@ -53,11 +52,8 @@ $charge = $client->createCharge(
     )
 );
 
-$charge = $charge->awaitResult(5); // wait for the charge status to be updated, retrying up to 5 times
+$charge = $charge->awaitResult(5);
 switch ($charge->status) {
-    case ChargeStatus::PENDING():
-        // still on progress ...
-        break;
     case ChargeStatus::AWAITING():
         // Fetch information for issuer token for 3DS authentication and redirect user to 3DS authentication page
         // after 3DS authentication is completed, user will be redirected to the endpoint specified in PaymentThreeDS
@@ -65,6 +61,7 @@ switch ($charge->status) {
         break;
     case ChargeStatus::SUCCESSFUL():
         // continue with payment flow
+    case ChargeStatus::PENDING():
     case ChargeStatus::FAILED():
     case ChargeStatus::ERROR():
         // implement error handling
@@ -73,8 +70,6 @@ switch ($charge->status) {
 /**
  * Example 2. Create charge with authorized 3DS MPI
  */
-
-// creare charge with authorized 3ds transaction token
 $charge = $client->createCharge(
     $token->id,
     Money::JPY(100),
