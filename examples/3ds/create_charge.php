@@ -48,7 +48,7 @@ $charge = $client->createCharge(
     null,
     PaymentThreeDS::withThreeDS(
         "https://ec-site.example.com/3ds/complete", // redirect endpoint when 3DS is completed
-        ThreeDSMode::NORMAL() // for more details, refer to the Univapay documentation on 3DS modes.
+        ThreeDSMode::REQUIRE() // for more details, refer to the Univapay documentation on 3DS modes.
     )
 );
 
