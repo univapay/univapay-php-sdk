@@ -305,7 +305,7 @@ class TransactionToken extends Resource
                 ) ||
                 (
                     array_key_exists(
-                        $this->data->cvvAuthorize->status,
+                        $this->data->cvvAuthorize->status->__toString(),
                         $pollableStatuses[self::POLLABLE_STATUS_CVV_AUTHORIZE]
                     ) &&
                     !in_array(

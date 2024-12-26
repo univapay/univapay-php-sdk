@@ -68,9 +68,8 @@ class TransactionTokenTest extends TestCase
                 true,
                 "https://test.int/endpoint?foo=bar"
             )
-        )->awaitResult(5);
-        
-        // Confirm transaction token
+        );
+
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals(TokenType::RECURRING(), $transactionToken->type);
         $this->assertNull($transactionToken->confirmed);
@@ -96,6 +95,9 @@ class TransactionTokenTest extends TestCase
         $this->assertNotNull($transactionToken->data->threeDS->redirectId);
         $this->assertEquals(ThreeDSStatus::PENDING(), $transactionToken->data->threeDS->status);
         $this->assertNull($transactionToken->data->threeDS->error);
+
+        $transactionToken = $transactionToken->awaitResult(5);
+        $this->assertEquals(ThreeDSStatus::AWAITING(), $transactionToken->data->threeDS->status);
 
         // Confirm 3DS Issuer Token
         $threeDSIssuerToken = $transactionToken->threeDSIssuerToken();
