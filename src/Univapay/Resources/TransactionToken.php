@@ -162,6 +162,7 @@ class TransactionToken extends Resource
         if ($this->type === TokenType::SUBSCRIPTION()) {
             throw new UnivapayLogicError(Reason::NON_SUBSCRIPTION_PAYMENT());
         }
+        $this->validateCVV();
     }
 
     public function createCharge(
@@ -224,6 +225,7 @@ class TransactionToken extends Resource
         Period::MONTHLY() !== $period) {
             throw new UnivapayValidationError(Field::PRESERVE_END_OF_MONTH(), Reason::MUST_BE_MONTH_BASE_TO_SET());
         }
+        $this->validateCVV();
     }
 
     public function createSubscription(
@@ -268,6 +270,15 @@ class TransactionToken extends Resource
 
         $context = $this->context->withPath('subscriptions');
         return RequesterUtils::executePost(Subscription::class, $context, FunctionalUtils::stripNulls($payload));
+    }
+
+    private function validateCVV()
+    {
+        if ($this->paymentType === PaymentType::CARD() &&
+            $this->data->cvvAuthorize->enabled &&
+            $this->data->cvvAuthorize->status !== CvvAuthorizationStatus::CURRENT()) {
+            throw new UnivapayLogicError(Reason::CVV_AUTHORIZATION_REQUIRED());
+        }
     }
 
     private function validateCapture(
