@@ -67,26 +67,22 @@ $charge = $client->getLatestChargeForSubscription(
     $subscription->id
 );
 
-// This is just an example of how to process with the charge status
-while (1) {
-    $charge = $charge->awaitResult(5); // wait for the charge status to be updated, retrying up to 5 times
-    switch ($charge->status) {
-        case ChargeStatus::PENDING():
-            // still on progress ...
-            break;
-        case ChargeStatus::AWAITING():
-            // Fetch information for issuer token for 3DS authentication and redirect user to 3DS authentication page
-            // after 3DS authentication is completed, user will be redirected to the endpoint specified in PaymentThreeDS
-            $charge->threeDSIssuerToken();
-            break;
-        case ChargeStatus::SUCCESSFUL():
-        case ChargeStatus::FAILED():
-        case ChargeStatus::ERROR():
-        default:
-            goto end;
-    }
+$charge = $charge->awaitResult(5); // wait for the charge status to be updated, retrying up to 5 times
+switch ($charge->status) {
+    case ChargeStatus::PENDING():
+        // still on progress ...
+        break;
+    case ChargeStatus::AWAITING():
+        // Fetch information for issuer token for 3DS authentication and redirect user to 3DS authentication page
+        // after 3DS authentication is completed, user will be redirected to the endpoint specified in PaymentThreeDS
+        $charge->threeDSIssuerToken();
+        break;
+    case ChargeStatus::SUCCESSFUL():
+        // continue with payment flow
+    case ChargeStatus::FAILED():
+    case ChargeStatus::ERROR():
+        // implement error handling
 }
-end:
 
 /**
  * Example 2. Create subscription with authorized 3DS MPI
