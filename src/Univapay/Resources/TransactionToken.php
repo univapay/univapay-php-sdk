@@ -157,6 +157,22 @@ class TransactionToken extends Resource
         return RequesterUtils::executeDelete($this->getIdContext());
     }
 
+    private function validateCreateCharge()
+    {
+        if ($this->type === TokenType::SUBSCRIPTION()) {
+            throw new UnivapayLogicError(Reason::NON_SUBSCRIPTION_PAYMENT());
+        }
+        if ($this->paymentType === PaymentType::CARD()) {
+            if ($this->data->cvvAuthorize->enabled &&
+                $this->data->cvvAuthorize->status !== CvvAuthorizationStatus::CURRENT())
+                throw new UnivapayLogicError(Reason::CVV_AUTHORIZATION_REQUIRED());
+            
+            if ($this->data->threeDS->enabled &&
+                $this->data->threeDS->status !== ThreeDSStatus::SUCCESSFUL())
+                throw new UnivapayLogicError(Reason::THREE_DS_AUTHORIZATION_REQUIRED());
+        }
+    }
+
     public function createCharge(
         Money $money,
         $capture = null,
@@ -166,9 +182,7 @@ class TransactionToken extends Resource
         Redirect $redirect = null,
         PaymentThreeDS $threeDS = null
     ) {
-        if ($this->type === TokenType::SUBSCRIPTION()) {
-            throw new UnivapayLogicError(Reason::NON_SUBSCRIPTION_PAYMENT());
-        }
+        $this->validateCreateCharge();
         $this->validateCapture($capture, $captureAt);
 
         $payload = $money->jsonSerialize() + [
@@ -195,21 +209,15 @@ class TransactionToken extends Resource
         return RequesterUtils::executePost(Charge::class, $context, FunctionalUtils::stripNulls($payload));
     }
 
-    public function createSubscription(
+    private function validateCreateSubscription(
         Money $money,
         Period $period = null,
-        Money $initialAmount = null,
-        ScheduleSettings $scheduleSettings = null,
-        SubscriptionPlan $subscriptionPlan = null,
-        InstallmentPlan $installmentPlan = null,
-        array $metadata = null,
-        $onlyDirectCurrency = null,
-        $firstChargeAuthorizationOnly = null,
-        DateInterval $firstChargeCaptureAfter = null,
         DateInterval $cyclicalPeriod = null,
-        PaymentThreeDS $threeDS = null
-    ) {
-        if ($this->type == TokenType::ONE_TIME()) {
+        Money $initialAmount = null,
+        ScheduleSettings $scheduleSettings = null
+    )
+    {
+        if ($this->type === TokenType::ONE_TIME()) {
             throw new UnivapayLogicError(Reason::NOT_SUBSCRIPTION_PAYMENT());
         }
         if (!isset($period) && !isset($cyclicalPeriod)) {
@@ -226,6 +234,32 @@ class TransactionToken extends Resource
         Period::MONTHLY() !== $period) {
             throw new UnivapayValidationError(Field::PRESERVE_END_OF_MONTH(), Reason::MUST_BE_MONTH_BASE_TO_SET());
         }
+        if ($this->paymentType === PaymentType::CARD()) {
+            if ($this->data->cvvAuthorize->enabled &&
+                $this->data->cvvAuthorize->status !== CvvAuthorizationStatus::CURRENT())
+                throw new UnivapayLogicError(Reason::CVV_AUTHORIZATION_REQUIRED());
+            
+            if ($this->data->threeDS->enabled &&
+                $this->data->threeDS->status !== ThreeDSStatus::SUCCESSFUL())
+                throw new UnivapayLogicError(Reason::THREE_DS_AUTHORIZATION_REQUIRED());
+        }
+    }
+
+    public function createSubscription(
+        Money $money,
+        Period $period = null,
+        Money $initialAmount = null,
+        ScheduleSettings $scheduleSettings = null,
+        SubscriptionPlan $subscriptionPlan = null,
+        InstallmentPlan $installmentPlan = null,
+        array $metadata = null,
+        $onlyDirectCurrency = null,
+        $firstChargeAuthorizationOnly = null,
+        DateInterval $firstChargeCaptureAfter = null,
+        DateInterval $cyclicalPeriod = null,
+        PaymentThreeDS $threeDS = null
+    ) {
+        $this->validateCreateSubscription($money, $period, $cyclicalPeriod, $initialAmount, $scheduleSettings);
         $this->validateCapture($firstChargeAuthorizationOnly, null, $firstChargeCaptureAfter);
         
         $payload = $money->jsonSerialize() + [
@@ -293,7 +327,7 @@ class TransactionToken extends Resource
 
         while ($retryCount < $retry &&
             (
-                (
+                (isset($response->data->threeDS->status) &&
                     array_key_exists(
                         $this->data->threeDS->status->__toString(),
                         $pollableStatuses[self::POLLABLE_STATUS_THREE_DS]
@@ -303,7 +337,7 @@ class TransactionToken extends Resource
                         $pollableStatuses[self::POLLABLE_STATUS_THREE_DS][$this->data->threeDS->status->__toString()]
                     )
                 ) ||
-                (
+                (isset($response->data->cvvAuthorize->status) &&
                     array_key_exists(
                         $this->data->cvvAuthorize->status->__toString(),
                         $pollableStatuses[self::POLLABLE_STATUS_CVV_AUTHORIZE]
