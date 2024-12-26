@@ -164,12 +164,14 @@ class TransactionToken extends Resource
         }
         if ($this->paymentType === PaymentType::CARD()) {
             if ($this->data->cvvAuthorize->enabled &&
-                $this->data->cvvAuthorize->status !== CvvAuthorizationStatus::CURRENT())
+                $this->data->cvvAuthorize->status !== CvvAuthorizationStatus::CURRENT()) {
                 throw new UnivapayLogicError(Reason::CVV_AUTHORIZATION_REQUIRED());
+            }
             
             if ($this->data->threeDS->enabled &&
-                $this->data->threeDS->status !== ThreeDSStatus::SUCCESSFUL())
+                $this->data->threeDS->status !== ThreeDSStatus::SUCCESSFUL()) {
                 throw new UnivapayLogicError(Reason::THREE_DS_AUTHORIZATION_REQUIRED());
+            }
         }
     }
 
@@ -215,8 +217,7 @@ class TransactionToken extends Resource
         DateInterval $cyclicalPeriod = null,
         Money $initialAmount = null,
         ScheduleSettings $scheduleSettings = null
-    )
-    {
+    ) {
         if ($this->type === TokenType::ONE_TIME()) {
             throw new UnivapayLogicError(Reason::NOT_SUBSCRIPTION_PAYMENT());
         }
@@ -236,12 +237,14 @@ class TransactionToken extends Resource
         }
         if ($this->paymentType === PaymentType::CARD()) {
             if ($this->data->cvvAuthorize->enabled &&
-                $this->data->cvvAuthorize->status !== CvvAuthorizationStatus::CURRENT())
+                $this->data->cvvAuthorize->status !== CvvAuthorizationStatus::CURRENT()) {
                 throw new UnivapayLogicError(Reason::CVV_AUTHORIZATION_REQUIRED());
+            }
             
             if ($this->data->threeDS->enabled &&
-                $this->data->threeDS->status !== ThreeDSStatus::SUCCESSFUL())
+                $this->data->threeDS->status !== ThreeDSStatus::SUCCESSFUL()) {
                 throw new UnivapayLogicError(Reason::THREE_DS_AUTHORIZATION_REQUIRED());
+            }
         }
     }
 
