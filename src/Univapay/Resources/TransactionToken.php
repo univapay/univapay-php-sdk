@@ -157,6 +157,28 @@ class TransactionToken extends Resource
         return RequesterUtils::executeDelete($this->getIdContext());
     }
 
+    /**
+     * enable / disable 3DS for recurring token
+     *
+     * @param bool $enabled
+     * @param string $redirectEndpoint optional redirect endpoint when enabling 3DS
+     */
+    public function enableThreeDS(
+        $enabled,
+        $redirectEndpoint = null
+    ) {
+        if ($this->type !== TokenType::RECURRING()) {
+            throw new UnivapayLogicError(Reason::TRANSACTION_TOKEN_IS_NOT_RECURRING());
+        }
+
+        $payload = FunctionalUtils::stripNulls(['redirect_endpoint' => $redirectEndpoint]);
+
+        $context = $this->context->withPath(['stores', $this->storeId, 'tokens', $this->id, 'three_ds']);
+        return $enabled ?
+            RequesterUtils::executePost(self::class, $context, $payload) :
+            RequesterUtils::executeDelete($context);
+    }
+
     private function validateCreateCharge()
     {
         if ($this->type === TokenType::SUBSCRIPTION()) {

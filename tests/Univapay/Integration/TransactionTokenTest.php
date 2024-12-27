@@ -108,6 +108,34 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals(PaymentType::CARD(), $threeDSIssuerToken->paymentType);
     }
 
+    public function testEnableDisableThreeDS()
+    {
+        $mockRedirectUrl = "https://test.int/endpoint?foo=bar";
+        $transactionToken = $this->createValidToken(
+            PaymentType::CARD(),
+            TokenType::RECURRING()
+        );
+
+        $transactionToken = $transactionToken->enableThreeDS(true, $mockRedirectUrl)->awaitResult(5);
+        $this->assertTrue($transactionToken->data->threeDS->enabled);
+        $this->assertEquals($mockRedirectUrl, $transactionToken->data->threeDS->redirectEndpoint);
+        $this->assertNotNull($transactionToken->data->threeDS->redirectId);
+        $this->assertEquals(ThreeDSStatus::AWAITING(), $transactionToken->data->threeDS->status);
+        $this->assertNull($transactionToken->data->threeDS->error);
+
+        // Confirm 3DS Issuer Token
+        $threeDSIssuerToken = $transactionToken->threeDSIssuerToken();
+        $this->assertEquals(CallMethod::HTTP_POST(), $threeDSIssuerToken->callMethod);
+        $this->assertNotNull($threeDSIssuerToken->contentType);
+        $this->assertIsString($threeDSIssuerToken->issuerToken);
+        $this->assertNotNull($threeDSIssuerToken->payload);
+        $this->assertEquals(PaymentType::CARD(), $threeDSIssuerToken->paymentType);
+
+        $transactionToken = $transactionToken->enableThreeDS(false);
+        $this->assertFalse($transactionToken['data']['three_ds']['enabled']);
+        $this->assertNull($transactionToken['data']['three_ds']['redirect_endpoint']);
+    }
+
     public function testCreateTokenWithCvvAuth()
     {
         $cvvAuth = new CvvAuthorize(true);
