@@ -5,14 +5,17 @@ use DateInterval;
 use DateTime;
 use DateTimeZone;
 use Univapay\Enums\AppTokenMode;
+use Univapay\Enums\CallMethod;
 use Univapay\Enums\InstallmentPlanType;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
 use Univapay\Enums\SubscriptionPlanType;
 use Univapay\Enums\SubscriptionStatus;
+use Univapay\Enums\ThreeDSMode;
 use Univapay\Enums\TokenType;
 use Univapay\Errors\UnivapayValidationError;
 use Univapay\Resources\Paginated;
+use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\SimpleList;
 use Univapay\Resources\Subscription;
 use Univapay\Resources\Subscription\InstallmentPlan;
@@ -195,6 +198,56 @@ EOD;
         $this->assertEquals(Period::BIWEEKLY(), $subscription->period);
         $this->assertEquals(Money::JPY(1000), $subscription->initialAmount);
         $this->assertInstanceOf(DateTime::class, $subscription->createdOn);
+    }
+
+    public function testCreateSubcriptionWithThreeDS()
+    {
+        $subscription = $this->createValidSubscription(
+            null,
+            null,
+            TokenType::SUBSCRIPTION(),
+            PaymentThreeDS::withThreeDS(
+                'https://example.com/success',
+                ThreeDSMode::REQUIRE()
+            )
+        );
+        $this->assertEquals(SubscriptionStatus::UNVERIFIED(), $subscription->status);
+        $this->assertEquals(ThreeDSMode::REQUIRE(), $subscription->threeDS->mode);
+        $this->assertEquals('https://example.com/success', $subscription->threeDS->redirectEndpoint);
+        $this->assertNotNull($subscription->threeDS->redirectId);
+
+        $charge = $this->client->getLatestChargeForSubscription(
+            $subscription->storeId,
+            $subscription->id
+        )->awaitResult(5);
+
+        // Confirm 3DS Issuer Token
+        $threeDSIssuerToken = $charge->threeDSIssuerToken();
+        $this->assertEquals(CallMethod::HTTP_POST(), $threeDSIssuerToken->callMethod);
+        $this->assertNotNull($threeDSIssuerToken->contentType);
+        $this->assertIsString($threeDSIssuerToken->issuerToken);
+        $this->assertNotNull($threeDSIssuerToken->payload);
+        $this->assertEquals(PaymentType::CARD(), $threeDSIssuerToken->paymentType);
+    }
+
+    public function testCreateSubcriptionWithThreeDSMPI()
+    {
+        $subscription = $this->createValidSubscription(
+            null,
+            null,
+            TokenType::SUBSCRIPTION(),
+            paymentThreeDS::withThreeDSMPI(
+                '1234567890123456789012345678',
+                '12',
+                '058e4f09-37c7-47e5-9d24-47e8ffa77442',
+                '7307b449-375a-4297-94d9-81314d4371c2',
+                '2.1.0',
+                'Y'
+            )
+        )->awaitResult(5);
+        $this->assertEquals(ThreeDSMode::PROVIDED(), $subscription->threeDS->mode);
+        $this->assertNull($subscription->threeDS->redirectEndpoint);
+        $this->assertNull($subscription->threeDS->redirectId);
     }
 
     public function testCreateAuthorizedSubscription()

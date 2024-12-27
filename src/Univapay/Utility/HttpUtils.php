@@ -60,6 +60,7 @@ abstract class HttpUtils
             default:
                 if ($response->status_code >= 200 && $response->status_code < 300) {
                     if ($response->body) {
+                        // NOTE: json_decode would return null for boolean false
                         return json_decode($response->body, true);
                     } else {
                         return true;

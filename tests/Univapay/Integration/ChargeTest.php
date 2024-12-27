@@ -4,13 +4,16 @@ namespace UnivapayTest\Integration;
 use DateTime;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\CancelStatus;
+use Univapay\Enums\CallMethod;
 use Univapay\Enums\ChargeStatus;
 use Univapay\Enums\PaymentType;
+use Univapay\Enums\ThreeDSMode;
 use Univapay\Enums\TokenType;
-use Univapay\Errors\UnivapayLogicError;
 use Univapay\Errors\UnivapayRequestError;
 use Univapay\Resources\Charge;
+use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\Redirect;
+use Univapay\Resources\ThreeDSMPI;
 use Money\Currency;
 use Money\Money;
 use PHPUnit\Framework\TestCase;
@@ -47,6 +50,11 @@ class ChargeTest extends TestCase
               "endpoint": "https://test.int/endpoint?foo=bar",
               "redirect_id": "11ed0cce-59e5-795a-b95c-rd1234567890"
             },
+            "three_ds": {
+              "redirect_endpoint": "https://ec-site.example.com/3ds/complete",
+              "redirect_id": "11efbdb4-6820-12dc-8246-6f01ed1243a9",
+              "mode": "normal"
+            },
             "created_on": "2022-07-26T10:33:12.934225Z",
             "merchant_id": "11e99ede-ccb4-dfcc-beea-3b1234567890"
         }
@@ -71,6 +79,9 @@ EOD;
         $this->assertEquals(AppTokenMode::LIVE(), $charge->mode);
         $this->assertEquals('https://test.int/endpoint?foo=bar', $charge->redirect->endpoint);
         $this->assertEquals('11ed0cce-59e5-795a-b95c-rd1234567890', $charge->redirect->redirectId);
+        $this->assertEquals('https://ec-site.example.com/3ds/complete', $charge->threeDS->redirectEndpoint);
+        $this->assertEquals('11efbdb4-6820-12dc-8246-6f01ed1243a9', $charge->threeDS->redirectId);
+        $this->assertEquals(ThreeDSMode::NORMAL(), $charge->threeDS->mode);
     }
 
     public function testCreateCharge()
@@ -102,6 +113,57 @@ EOD;
         $this->assertEquals(new Currency('JPY'), $charge->requestedCurrency);
         $this->assertEquals('https://test.int/endpoint?foo=bar', $charge->redirect->endpoint);
         $this->assertNotNull($charge->redirect->redirectId);
+    }
+
+    public function testCreateChargeWithThreeDS()
+    {
+        $charge = $this->createValidToken()->createCharge(
+            Money::JPY(100),
+            true,
+            null,
+            null,
+            null,
+            null,
+            PaymentThreeDS::withThreeDS(
+                "https://test.int/endpoint?foo=bar",
+                ThreeDSMode::REQUIRE()
+            )
+        )->awaitResult(5);
+        $this->assertEquals(Money::JPY(100), $charge->requestedAmount);
+        $this->assertEquals("https://test.int/endpoint?foo=bar", $charge->threeDS->redirectEndpoint);
+        $this->assertEquals(ThreeDSMode::REQUIRE(), $charge->threeDS->mode);
+        $this->assertEquals(ChargeStatus::AWAITING(), $charge->status);
+        $this->assertNotNull($charge->threeDS->redirectId);
+
+        // Confirm 3DS Issuer Token
+        $threeDSIssuerToken = $charge->threeDSIssuerToken();
+        $this->assertEquals(CallMethod::HTTP_POST(), $threeDSIssuerToken->callMethod);
+        $this->assertNotNull($threeDSIssuerToken->contentType);
+        $this->assertIsString($threeDSIssuerToken->issuerToken);
+        $this->assertNotNull($threeDSIssuerToken->payload);
+        $this->assertEquals(PaymentType::CARD(), $threeDSIssuerToken->paymentType);
+    }
+
+    public function testCreateChargeWithThreeDSMPI()
+    {
+        $charge = $this->createValidToken()->createCharge(
+            Money::JPY(100),
+            true,
+            null,
+            null,
+            null,
+            null,
+            PaymentThreeDS::withThreeDSMPI(
+                '1234567890123456789012345678',
+                '12',
+                '058e4f09-37c7-47e5-9d24-47e8ffa77442',
+                '7307b449-375a-4297-94d9-81314d4371c2',
+                '2.1.0',
+                'Y'
+            )
+        )->awaitResult(5);
+        $this->assertEquals(Money::JPY(100), $charge->requestedAmount);
+        $this->assertEquals(ThreeDSMode::PROVIDED(), $charge->threeDS->mode);
     }
 
     public function testAuthCaptureCharge()
