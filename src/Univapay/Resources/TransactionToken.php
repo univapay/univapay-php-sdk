@@ -176,7 +176,7 @@ class TransactionToken extends Resource
         $context = $this->context->withPath(['stores', $this->storeId, 'tokens', $this->id, 'three_ds']);
         return $enabled ?
             RequesterUtils::executePost(self::class, $context, $payload) :
-            RequesterUtils::executeDelete($context);
+            $this->getSchema()->parse(RequesterUtils::executeDelete($context), [$this->context]);
     }
 
     private function validateCreateCharge()

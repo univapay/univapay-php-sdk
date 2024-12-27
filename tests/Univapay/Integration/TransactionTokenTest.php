@@ -132,8 +132,8 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals(PaymentType::CARD(), $threeDSIssuerToken->paymentType);
 
         $transactionToken = $transactionToken->enableThreeDS(false);
-        $this->assertFalse($transactionToken['data']['three_ds']['enabled']);
-        $this->assertNull($transactionToken['data']['three_ds']['redirect_endpoint']);
+        $this->assertFalse($transactionToken->data->threeDS->enabled);
+        $this->assertNull($transactionToken->data->threeDS->redirectEndpoint);
     }
 
     public function testCreateTokenWithCvvAuth()
