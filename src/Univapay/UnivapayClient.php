@@ -2,11 +2,8 @@
 
 namespace Univapay;
 
-use Composer\DependencyResolver\Request;
 use DateTime;
-use DateTimeZone;
 use Exception;
-use Univapay\Enums\CursorDirection;
 use Univapay\Enums\Field;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
@@ -19,12 +16,9 @@ use Univapay\Errors\UnivapayUnknownWebhookEvent;
 use Univapay\Errors\UnivapayValidationError;
 use Univapay\Requests\HttpRequester;
 use Univapay\Requests\RequestContext;
-use Univapay\Requests\Requester;
-use Univapay\Requests\Handlers\RateLimitHandler;
 use Univapay\Requests\Handlers\RequestHandler;
 use Univapay\Resources\BankAccount;
 use Univapay\Resources\Cancel;
-use Univapay\Resources\CardConfiguration;
 use Univapay\Resources\Charge;
 use Univapay\Resources\CheckoutInfo;
 use Univapay\Resources\Merchant;
@@ -32,12 +26,11 @@ use Univapay\Resources\Redirect;
 use Univapay\Resources\Refund;
 use Univapay\Resources\Store;
 use Univapay\Resources\Subscription;
-use Univapay\Resources\Transaction;
+use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\TransactionToken;
 use Univapay\Resources\Transfer;
 use Univapay\Resources\WebhookPayload;
 use Univapay\Resources\Authentication\AppJWT;
-use Univapay\Resources\Authentication\MerchantAppJWT;
 use Univapay\Resources\Authentication\StoreAppJWT;
 use Univapay\Resources\Mixins\GetBankAccounts;
 use Univapay\Resources\Mixins\GetCharges;
@@ -52,7 +45,6 @@ use Univapay\Resources\Subscription\ScheduledPayment;
 use Univapay\Resources\Subscription\ScheduleSettings;
 use Univapay\Resources\Subscription\SubscriptionPlan;
 use Univapay\Utility\FunctionalUtils;
-use Univapay\Utility\HttpUtils;
 use Univapay\Utility\RequesterUtils;
 use Money\Money;
 
@@ -166,7 +158,8 @@ class UnivapayClient
         DateTime $captureAt = null,
         array $metadata = null,
         $onlyDirectCurrency = null,
-        Redirect $redirect = null
+        Redirect $redirect = null,
+        PaymentThreeDS $paymentThreeDS = null
     ) {
         return $this
             ->getTransactionToken($transactionTokenId)
@@ -176,13 +169,29 @@ class UnivapayClient
                 $captureAt,
                 $metadata,
                 $onlyDirectCurrency,
-                $redirect
+                $redirect,
+                $paymentThreeDS
             );
     }
 
     public function getCharge($storeId, $chargeId)
     {
         $context = $this->getContext()->withPath(['stores', $storeId, 'charges', $chargeId]);
+        return RequesterUtils::executeGet(Charge::class, $context);
+    }
+
+    public function getLatestChargeForSubscription($storeId, $subscriptionId)
+    {
+        $context = $this->getContext()->withPath(
+            [
+                'stores',
+                $storeId,
+                'subscriptions',
+                $subscriptionId,
+                'charges',
+                'latest'
+            ]
+        );
         return RequesterUtils::executeGet(Charge::class, $context);
     }
 
@@ -194,7 +203,8 @@ class UnivapayClient
         ScheduleSettings $scheduleSettings = null,
         SubscriptionPlan $subscriptionPlan = null,
         InstallmentPlan $installmentPlan = null,
-        array $metadata = null
+        array $metadata = null,
+        PaymentThreeDS $paymentThreeDS = null
     ) {
         return $this
             ->getTransactionToken($transactionTokenId)
@@ -205,7 +215,8 @@ class UnivapayClient
                 $scheduleSettings,
                 $subscriptionPlan,
                 $installmentPlan,
-                $metadata
+                $metadata,
+                $paymentThreeDS
             );
     }
 

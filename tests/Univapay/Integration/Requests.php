@@ -7,7 +7,6 @@ use Univapay\Enums\ActiveFilter;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\CallMethod;
 use Univapay\Enums\ConvenienceStore;
-use Univapay\Enums\Gateway;
 use Univapay\Enums\InstallmentPlanType;
 use Univapay\Enums\OnlineBrand;
 use Univapay\Enums\OsType;
@@ -17,11 +16,13 @@ use Univapay\Enums\QrBrandMerchant;
 use Univapay\Enums\RefundReason;
 use Univapay\Enums\SubscriptionPlanType;
 use Univapay\Enums\TokenType;
+use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\PaymentData\Address;
 use Univapay\Resources\PaymentData\ConvenienceStoreData;
 use Univapay\Resources\PaymentData\CvvAuthorize;
 use Univapay\Resources\PaymentData\PhoneNumber;
 use Univapay\Resources\PaymentData\PaidyData;
+use Univapay\Resources\PaymentData\TokenThreeDS;
 use Univapay\Resources\PaymentMethod\ApplePayPayment;
 use Univapay\Resources\PaymentMethod\CardPayment;
 use Univapay\Resources\PaymentMethod\ConvenienceStorePayment;
@@ -32,7 +33,6 @@ use Univapay\Resources\PaymentMethod\QrScanPayment;
 use Univapay\Resources\Subscription\InstallmentPlan;
 use Univapay\Resources\Subscription\ScheduleSettings;
 use Univapay\Resources\Subscription\SubscriptionPlan;
-use UnivapayTest\Integration\CardNumber;
 use Money\Money;
 
 trait Requests
@@ -48,7 +48,8 @@ trait Requests
         TokenType $type = null,
         $cardNumber = null,
         CvvAuthorize $cvvAuth = null,
-        $ipAddress = null
+        $ipAddress = null,
+        TokenThreeDS $threeDS = null
     ) {
         $paymentType = isset($paymentType) ? $paymentType : PaymentType::CARD();
         $type = isset($type) ? $type : TokenType::ONE_TIME();
@@ -57,7 +58,7 @@ trait Requests
 
         switch ($paymentType) {
             case PaymentType::CARD():
-                $paymentMethod = $this->createCardPayment($type, $cardNumber, $cvvAuth, $ipAddress);
+                $paymentMethod = $this->createCardPayment($type, $cardNumber, $cvvAuth, $ipAddress, $threeDS);
                 break;
             case PaymentType::APPLE_PAY():
                 $paymentMethod = $this->createApplePayPayment($type, $cardNumber);
@@ -84,7 +85,8 @@ trait Requests
         TokenType $type,
         $cardNumber = null,
         CvvAuthorize $cvvAuth = null,
-        $ipAddress = null
+        $ipAddress = null,
+        TokenThreeDS $threeDS = null
     ) {
         $cardNumber = isset($cardNumber) ? $cardNumber : static::$SUCCESSFUL;
         return new CardPayment(
@@ -107,7 +109,8 @@ trait Requests
             new PhoneNumber(PhoneNumber::JP, '12910298309128'),
             ['customer_id' => 'PHP TEST'],
             $cvvAuth,
-            $ipAddress
+            $ipAddress,
+            $threeDS
         );
     }
 
@@ -245,7 +248,8 @@ trait Requests
     public function createValidSubscription(
         $authorized = null,
         DateInterval $captureAfter = null,
-        TokenType $type = null
+        TokenType $type = null,
+        PaymentThreeDS $paymentThreeDS = null
     ) {
         $this->deactivateExistingSubscriptionToken();
         return $this
@@ -260,7 +264,9 @@ trait Requests
                 null,
                 null,
                 $authorized,
-                $captureAfter
+                $captureAfter,
+                null,
+                $paymentThreeDS
             )
             ->awaitResult(5);
     }

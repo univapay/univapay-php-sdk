@@ -27,6 +27,7 @@ final class Reason extends TypedEnum
     public static function TRANSACTION_TOKEN_IS_NOT_RECURRING() { return self::create(); }
     public static function INVALID_PHONE_NUMBER() { return self::create(); }
     public static function ONLY_JAPANESE_PHONE_NUMBER_ALLOWED() { return self::create(); }
+    public static function CVV_AUTHORIZATION_REQUIRED() { return self::create(); }
 
     // Charges
     public static function CAPTURE_ONLY_FOR_CARD_PAYMENT() { return self::create(); }
@@ -43,4 +44,7 @@ final class Reason extends TypedEnum
     public static function CANNOT_CHANGE_TOKEN() { return self::create(); }
     public static function NEED_AT_LEAST_TWO_CYCLES() { return self::create(); }
     public static function PERIOD_OR_CYCLICAL_PERIOD_MUST_BE_SET() { return self::create(); }
+
+    // ThreeDS MPI
+    public static function INCOMPLETE_THREE_DS_MPI_FIELDS() { return self::create('All fields must be set when using 3DS MPI'); }
 }

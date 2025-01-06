@@ -4,18 +4,17 @@ namespace Univapay\Resources;
 
 use DateInterval;
 use DateTime;
-use DateTimeZone;
 use Univapay\Enums\AppTokenMode;
+use Univapay\Enums\CvvAuthorizationStatus;
 use Univapay\Enums\Field;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
 use Univapay\Enums\Reason;
+use Univapay\Enums\ThreeDSStatus;
 use Univapay\Enums\TokenType;
 use Univapay\Enums\UsageLimit;
 use Univapay\Errors\UnivapayLogicError;
-use Univapay\Errors\UnivapaySDKError;
 use Univapay\Errors\UnivapayValidationError;
-use Univapay\Resources\Mixins\GetTransactionTokens;
 use Univapay\Resources\PaymentData\CardData;
 use Univapay\Resources\PaymentData\ConvenienceStoreData;
 use Univapay\Resources\PaymentData\OnlineData;
@@ -23,6 +22,7 @@ use Univapay\Resources\PaymentData\PaidyData;
 use Univapay\Resources\PaymentData\QrMerchantData;
 use Univapay\Resources\PaymentData\QrScanData;
 use Univapay\Resources\PaymentMethod\PaymentMethodPatch;
+use Univapay\Resources\PaymentToken\ThreeDSIssuerToken;
 use Univapay\Resources\Subscription\InstallmentPlan;
 use Univapay\Resources\Subscription\ScheduleSettings;
 use Univapay\Resources\Subscription\SubscriptionPlan;
@@ -36,6 +36,10 @@ use Money\Money;
 class TransactionToken extends Resource
 {
     use Jsonable;
+    use Pollable;
+
+    const POLLABLE_STATUS_THREE_DS = 'threeDS';
+    const POLLABLE_STATUS_CVV_AUTHORIZE = 'cvvAuthorize';
 
     public $storeId;
     public $email;
@@ -119,6 +123,30 @@ class TransactionToken extends Resource
         return $this->context->withPath(['stores', $this->storeId, 'tokens', $this->id]);
     }
 
+    protected function pollableStatuses()
+    {
+        return [
+            self::POLLABLE_STATUS_THREE_DS => [
+                (string) ThreeDSStatus::PENDING() => array_diff(
+                    ThreeDSStatus::findValues(),
+                    [ThreeDSStatus::PENDING()]
+                ),
+                (string) ThreeDSStatus::AWAITING() =>
+                    [
+                        ThreeDSStatus::SUCCESSFUL(),
+                        ThreeDSStatus::FAILED(),
+                        ThreeDSStatus::ERROR()
+                    ]
+            ],
+            self::POLLABLE_STATUS_CVV_AUTHORIZE => [
+                (string) CvvAuthorizationStatus::PENDING() => array_diff(
+                    CvvAuthorizationStatus::findValues(),
+                    [CvvAuthorizationStatus::PENDING()]
+                )
+            ]
+        ];
+    }
+
     public function patch(PaymentMethodPatch $paymentPatch)
     {
         return $this->update($paymentPatch)->fetch();
@@ -129,17 +157,46 @@ class TransactionToken extends Resource
         return RequesterUtils::executeDelete($this->getIdContext());
     }
 
+    /**
+     * enable / disable 3DS for recurring token
+     *
+     * @param bool $enabled
+     * @param string $redirectEndpoint optional redirect endpoint when enabling 3DS
+     */
+    public function enableThreeDS(
+        $enabled,
+        $redirectEndpoint = null
+    ) {
+        if ($this->type !== TokenType::RECURRING()) {
+            throw new UnivapayLogicError(Reason::TRANSACTION_TOKEN_IS_NOT_RECURRING());
+        }
+
+        $payload = FunctionalUtils::stripNulls(['redirect_endpoint' => $redirectEndpoint]);
+
+        $context = $this->context->withPath(['stores', $this->storeId, 'tokens', $this->id, 'three_ds']);
+        return $enabled ?
+            RequesterUtils::executePost(self::class, $context, $payload) :
+            $this->getSchema()->parse(RequesterUtils::executeDelete($context), [$this->context]);
+    }
+
+    private function validateCreateCharge()
+    {
+        if ($this->type === TokenType::SUBSCRIPTION()) {
+            throw new UnivapayLogicError(Reason::NON_SUBSCRIPTION_PAYMENT());
+        }
+        $this->validateCVV();
+    }
+
     public function createCharge(
         Money $money,
         $capture = null,
         DateTime $captureAt = null,
         array $metadata = null,
         $onlyDirectCurrency = null,
-        Redirect $redirect = null
+        Redirect $redirect = null,
+        PaymentThreeDS $threeDS = null
     ) {
-        if ($this->type === TokenType::SUBSCRIPTION()) {
-            throw new UnivapayLogicError(Reason::NON_SUBSCRIPTION_PAYMENT());
-        }
+        $this->validateCreateCharge();
         $this->validateCapture($capture, $captureAt);
 
         $payload = $money->jsonSerialize() + [
@@ -157,26 +214,23 @@ class TransactionToken extends Resource
         ) + (isset($redirect)
             ? ['redirect' => $redirect->jsonSerialize()]
             : []
+        ) + (isset($threeDS)
+            ? ['three_ds' => $threeDS->jsonSerialize()]
+            : []
         );
 
         $context = $this->context->withPath('charges');
         return RequesterUtils::executePost(Charge::class, $context, FunctionalUtils::stripNulls($payload));
     }
 
-    public function createSubscription(
+    private function validateCreateSubscription(
         Money $money,
         Period $period = null,
+        DateInterval $cyclicalPeriod = null,
         Money $initialAmount = null,
-        ScheduleSettings $scheduleSettings = null,
-        SubscriptionPlan $subscriptionPlan = null,
-        InstallmentPlan $installmentPlan = null,
-        array $metadata = null,
-        $onlyDirectCurrency = null,
-        $firstChargeAuthorizationOnly = null,
-        DateInterval $firstChargeCaptureAfter = null,
-        DateInterval $cyclicalPeriod = null
+        ScheduleSettings $scheduleSettings = null
     ) {
-        if ($this->type == TokenType::ONE_TIME()) {
+        if ($this->type === TokenType::ONE_TIME()) {
             throw new UnivapayLogicError(Reason::NOT_SUBSCRIPTION_PAYMENT());
         }
         if (!isset($period) && !isset($cyclicalPeriod)) {
@@ -193,6 +247,24 @@ class TransactionToken extends Resource
         Period::MONTHLY() !== $period) {
             throw new UnivapayValidationError(Field::PRESERVE_END_OF_MONTH(), Reason::MUST_BE_MONTH_BASE_TO_SET());
         }
+        $this->validateCVV();
+    }
+
+    public function createSubscription(
+        Money $money,
+        Period $period = null,
+        Money $initialAmount = null,
+        ScheduleSettings $scheduleSettings = null,
+        SubscriptionPlan $subscriptionPlan = null,
+        InstallmentPlan $installmentPlan = null,
+        array $metadata = null,
+        $onlyDirectCurrency = null,
+        $firstChargeAuthorizationOnly = null,
+        DateInterval $firstChargeCaptureAfter = null,
+        DateInterval $cyclicalPeriod = null,
+        PaymentThreeDS $threeDS = null
+    ) {
+        $this->validateCreateSubscription($money, $period, $cyclicalPeriod, $initialAmount, $scheduleSettings);
         $this->validateCapture($firstChargeAuthorizationOnly, null, $firstChargeCaptureAfter);
         
         $payload = $money->jsonSerialize() + [
@@ -203,7 +275,7 @@ class TransactionToken extends Resource
             'schedule_settings' => isset($scheduleSettings) ? $scheduleSettings->jsonSerialize() : null,
             'subscription_plan' => isset($subscriptionPlan) ? $subscriptionPlan->jsonSerialize() : null,
             'installment_plan' => isset($installmentPlan) ? $installmentPlan->jsonSerialize() : null,
-            'metadata' => $metadata
+            'metadata' => $metadata,
         ] + (isset($firstChargeAuthorizationOnly)
             ? ['first_charge_authorization_only' => $firstChargeAuthorizationOnly]
             : []
@@ -213,10 +285,22 @@ class TransactionToken extends Resource
         ) + (isset($onlyDirectCurrency)
             ? ['only_direct_currency' => $onlyDirectCurrency]
             : []
+        ) + (isset($threeDS)
+            ? ['three_ds' => $threeDS->jsonSerialize()]
+            : []
         );
 
         $context = $this->context->withPath('subscriptions');
         return RequesterUtils::executePost(Subscription::class, $context, FunctionalUtils::stripNulls($payload));
+    }
+
+    private function validateCVV()
+    {
+        if ($this->paymentType === PaymentType::CARD() &&
+            $this->data->cvvAuthorize->enabled &&
+            $this->data->cvvAuthorize->status !== CvvAuthorizationStatus::CURRENT()) {
+            throw new UnivapayLogicError(Reason::CVV_AUTHORIZATION_REQUIRED());
+        }
     }
 
     private function validateCapture(
@@ -234,5 +318,54 @@ class TransactionToken extends Resource
                 throw new UnivapayLogicError(Reason::CAPTURE_ONLY_FOR_CARD_PAYMENT());
             }
         }
+    }
+
+    public function threeDSIssuerToken()
+    {
+        $context = $this->getIssuerToken3DSContext();
+        return RequesterUtils::executeGet(threeDSIssuerToken::class, $context);
+    }
+
+    protected function getIssuerToken3DSContext()
+    {
+        return $this->context->withPath(['stores', $this->storeId, 'tokens', $this->id, 'three_ds', 'issuer_token']);
+    }
+
+    // @phpcs:disable
+    public function awaitResult($retry = 0)
+    {
+        $idContext = $this->getIdContext();
+        $pollableStatuses = $this->pollableStatuses();
+        $response = RequesterUtils::executeGet(self::class, $idContext, ['polling' => 'true']);
+        $retryCount = 0;
+
+        while ($retryCount < $retry &&
+            (
+                (isset($response->data->threeDS->status) &&
+                    array_key_exists(
+                        $this->data->threeDS->status->__toString(),
+                        $pollableStatuses[self::POLLABLE_STATUS_THREE_DS]
+                    ) &&
+                    !in_array(
+                        $response->data->threeDS->status,
+                        $pollableStatuses[self::POLLABLE_STATUS_THREE_DS][$this->data->threeDS->status->__toString()]
+                    )
+                ) ||
+                (isset($response->data->cvvAuthorize->status) &&
+                    array_key_exists(
+                        $this->data->cvvAuthorize->status->__toString(),
+                        $pollableStatuses[self::POLLABLE_STATUS_CVV_AUTHORIZE]
+                    ) &&
+                    !in_array(
+                        $response->data->cvvAuthorize->status,
+                        $pollableStatuses[self::POLLABLE_STATUS_CVV_AUTHORIZE][$this->data->cvvAuthorize->status->__toString()]
+                    )
+                )
+            )
+        ) {
+            $retryCount++;
+            $response = RequesterUtils::executeGet(self::class, $idContext, ['polling' => 'true']);
+        }
+        return $response;
     }
 }
