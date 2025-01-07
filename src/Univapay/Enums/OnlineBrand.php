@@ -22,7 +22,7 @@ final class OnlineBrand extends TypedEnum
     public static function GRAB_SG() { return self::create(); }
     public static function KAKAOPAY() { return self::create(); }
     public static function KASPI_KZ() { return self::create(); }
-    public static function KPLUS() { return self::create(); }
+    public static function K_PLUS() { return self::create(); }
     public static function KREDIVO_ID() { return self::create(); }
     public static function MAYA() { return self::create(); }
     public static function NAVER_PAY() { return self::create(); }
