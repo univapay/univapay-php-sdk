@@ -5,6 +5,7 @@ namespace Univapay\Enums;
 final class QrBrand extends TypedEnum
 {
     // phpcs:disable
+    public static function AEON_PAY() { return self::create(); }
     public static function BIGPAY_MY() { return self::create(); }
     public static function BIGPAY_SG() { return self::create(); }
     public static function BIGPAY_TH() { return self::create(); }
