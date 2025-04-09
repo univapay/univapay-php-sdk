@@ -216,6 +216,10 @@ class UnivapayClient
                 $subscriptionPlan,
                 $installmentPlan,
                 $metadata,
+                null, // only direct currency
+                null, // first charge authorization only
+                null, // first charge capture after
+                null, // cyclical period
                 $paymentThreeDS
             );
     }
