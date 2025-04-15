@@ -125,7 +125,11 @@ class Charge extends Resource
                 ChargeStatus::SUCCESSFUL(), ChargeStatus::FAILED(), ChargeStatus::ERROR(), ChargeStatus::CANCELED()
             ],
             (string) ChargeStatus::AWAITING() => [
-                ChargeStatus::SUCCESSFUL(), ChargeStatus::FAILED(), ChargeStatus::ERROR(), ChargeStatus::CANCELED()
+                ChargeStatus::AUTHORIZED(),
+                ChargeStatus::SUCCESSFUL(),
+                ChargeStatus::FAILED(),
+                ChargeStatus::ERROR(),
+                ChargeStatus::CANCELED()
             ]
         ];
     }
