@@ -7,6 +7,7 @@ final class QrBrandMerchant extends TypedEnum
     // phpcs:disable
     public static function ALIPAY_MERCHANT_QR() { return self::create(); }
     public static function ALIPAY_CONNECT_MPM() { return self::create(); }
+    public static function ALIPAY_PLUS_MPM() { return self::create(); }
     public static function D_BARAI_MERCHANT() { return self::create(); }
     public static function PAY_PAY_MERCHANT() { return self::create(); }
     public static function WE_CHAT_MPM() { return self::create(); }
