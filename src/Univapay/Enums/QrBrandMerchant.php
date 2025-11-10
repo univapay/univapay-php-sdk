@@ -34,4 +34,13 @@ final class QrBrandMerchant extends TypedEnum
     public static function HIPAY() { return self::create(); }
     public static function PUBLICBANK() { return self::create('pbengagemy'); }
     public static function MPAY() { return self::create(); }
+    public static function HELLOMONEY() { return self::create(); }
+    public static function TINABA() { return self::create(); }
+    public static function PBENGAGEMY() { return self::create(); }
+    public static function ZALOPAY() { return self::create(); }
+    public static function BLUECODE() { return self::create(); }
+    public static function NAYA_PAY() { return self::create(); }
+    public static function SCB_PLANET_PLUS() { return self::create(); }
+    public static function HUMO() { return self::create(); }
+    public static function MOMO() { return self::create(); }
 }
