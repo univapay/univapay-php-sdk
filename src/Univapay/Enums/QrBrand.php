@@ -15,6 +15,7 @@ final class QrBrand extends TypedEnum
     public static function ALIPAY_CHINA() { return self::create(); }
     public static function ALIPAY_HK() { return self::create(); }
     public static function ALIPAY_SINGAPORE() { return self::create(); }
+    public static function ALIPAY_PLUS() { return self::create(); }
     public static function KAKAOPAY() { return self::create(); }
     public static function KASPI_KZ() { return self::create(); }
     public static function KPLUS() { return self::create(); }
@@ -53,5 +54,11 @@ final class QrBrand extends TypedEnum
     public static function HOKUHOKU_PAY_HOKURIKU() { return self::create(); }
     public static function COI_PAY_HIROSHIMA() { return self::create(); }
     public static function SMBC() { return self::create(); }
+    public static function ZALOPAY() { return self::create(); }
+    public static function BLUECODE() { return self::create(); }
+    public static function NAYA_PAY() { return self::create(); }
+    public static function SCB_PLANET_PLUS() { return self::create(); }
+    public static function HUMO() { return self::create(); }
+    public static function MOMO() { return self::create(); }
     public static function UNKNOWN() { return self::create(); }
 }
