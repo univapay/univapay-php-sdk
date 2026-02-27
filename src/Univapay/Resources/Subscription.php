@@ -65,24 +65,24 @@ class Subscription extends Resource
         Currency $currency,
         Money $amount,
         $amountFormatted,
-        Period $period = null,
-        DateInterval $cyclicalPeriod = null,
+        ?Period $period = null,
+        ?DateInterval $cyclicalPeriod = null,
         ScheduleSettings $scheduleSettings,
         $paymentsLeft,
         SubscriptionStatus $status,
         $metadata,
         AppTokenMode $mode,
         DateTime $createdOn,
-        Money $amountLeft = null,
+        ?Money $amountLeft = null,
         $amountLeftFormatted,
-        Money $initialAmount = null,
+        ?Money $initialAmount = null,
         $initialAmountFormatted = null,
-        ScheduledPayment $nextPayment = null,
-        SubscriptionPlan $subscriptionPlan = null,
-        InstallmentPlan $installmentPlan = null,
+        ?ScheduledPayment $nextPayment = null,
+        ?SubscriptionPlan $subscriptionPlan = null,
+        ?InstallmentPlan $installmentPlan = null,
         $firstChargeAuthorizationOnly = null,
-        DateInterval $firstChargeCaptureAfter = null,
-        PaymentThreeDS $threeDS = null,
+        ?DateInterval $firstChargeCaptureAfter = null,
+        ?PaymentThreeDS $threeDS = null,
         $context = null
     ) {
         parent::__construct($id, $context);
@@ -113,14 +113,14 @@ class Subscription extends Resource
 
     public function patch(
         $transactionTokenId = null,
-        Money $initialAmount = null,
-        Period $period = null,
-        ScheduleSettings $scheduleSettings = null,
-        SubscriptionStatus $status = null,
-        array $metadata = null,
-        SubscriptionPlan $subscriptionPlan = null,
-        InstallmentPlan $installmentPlan = null,
-        DateInterval $cyclicalPeriod = null
+        ?Money $initialAmount = null,
+        ?Period $period = null,
+        ?ScheduleSettings $scheduleSettings = null,
+        ?SubscriptionStatus $status = null,
+        ?array $metadata = null,
+        ?SubscriptionPlan $subscriptionPlan = null,
+        ?InstallmentPlan $installmentPlan = null,
+        ?DateInterval $cyclicalPeriod = null
     ) {
         if (SubscriptionStatus::CANCELED() == $this->status) {
             throw new UnivapayLogicError(Reason::CANNOT_CHANGE_CANCELED_SUBSCRIPTION());
@@ -193,7 +193,7 @@ class Subscription extends Resource
                 return false;
         }
     }
-    
+
     public function isProcessing()
     {
         switch ($this->status) {

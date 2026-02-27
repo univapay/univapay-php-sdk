@@ -12,7 +12,7 @@ class BasicRetryHandler implements RequestHandler
     private $tries;
     private $interval;
 
-    public function __construct($exceptionClass, $tries = 3, $interval = 1, Closure $filter = null)
+    public function __construct($exceptionClass, $tries = 3, $interval = 1, ?Closure $filter = null)
     {
         $this->exceptionClass = $exceptionClass;
         $this->filter = $filter;

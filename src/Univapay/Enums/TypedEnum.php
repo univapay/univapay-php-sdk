@@ -1,4 +1,5 @@
 <?php
+
 // https://stackoverflow.com/a/25526473
 
 namespace Univapay\Enums;
@@ -82,11 +83,12 @@ abstract class TypedEnum
         $className = get_called_class();
         $reflectionClass = new ReflectionClass($className);
         $filter = ReflectionMethod::IS_STATIC | ReflectionMethod::IS_PUBLIC;
-        
+
         foreach ($reflectionClass->getMethods($filter) as $method) {
-            if (($method->getModifiers() & $filter) === $filter &&
-            $method->class === $className &&
-            strpos($method->name, 'of') !== 0
+            if (
+                ($method->getModifiers() & $filter) === $filter &&
+                $method->class === $className &&
+                strpos($method->name, 'of') !== 0
             ) {
                 $values[] = $method->invoke(null);
             }

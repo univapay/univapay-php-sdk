@@ -9,13 +9,13 @@ class PaymentMethodPatch implements JsonSerializable
     private $email;
     public $metadata;
 
-    public function __construct($email = null, array $metadata = null)
+    public function __construct($email = null, ?array $metadata = null)
     {
         $this->email = $email;
         $this->metadata = $metadata;
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         $values = [];
         if (isset($this->email)) {

@@ -6,7 +6,6 @@ use Exception;
 
 abstract class JsonException extends Exception
 {
-
     public $path;
 
     public function __construct($path)

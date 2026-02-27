@@ -1,4 +1,5 @@
 <?php
+
 namespace UnivapayTest\Integration;
 
 use DateTime;
@@ -50,7 +51,7 @@ EOD;
         $getSubscription = $this->getClient()->getSubscription($this->storeAppJWT->storeId, $subscription->id);
         $payments = $getSubscription->listScheduledPayments();
         $charges = end($payments->items)->listCharges();
-        
+
         $this->assertInstanceOf(Paginated::class, $charges);
         $this->assertGreaterThan(0, $charges->items);
         $this->assertInstanceOf(Charge::class, reset($charges->items));

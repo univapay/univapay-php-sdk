@@ -38,8 +38,8 @@ class TransactionToken extends Resource
     use Jsonable;
     use Pollable;
 
-    const POLLABLE_STATUS_THREE_DS = 'threeDS';
-    const POLLABLE_STATUS_CVV_AUTHORIZE = 'cvvAuthorize';
+    private const POLLABLE_STATUS_THREE_DS = 'threeDS';
+    private const POLLABLE_STATUS_CVV_AUTHORIZE = 'cvvAuthorize';
 
     public $storeId;
     public $email;
@@ -67,8 +67,8 @@ class TransactionToken extends Resource
         DateTime $createdOn,
         $data,
         $metadata = null,
-        UsageLimit $usageLimit = null,
-        DateTime $lastUsedOn = null,
+        ?UsageLimit $usageLimit = null,
+        ?DateTime $lastUsedOn = null,
         $ipAddress = null,
         $context = null
     ) {
@@ -190,11 +190,11 @@ class TransactionToken extends Resource
     public function createCharge(
         Money $money,
         $capture = null,
-        DateTime $captureAt = null,
-        array $metadata = null,
+        ?DateTime $captureAt = null,
+        ?array $metadata = null,
         $onlyDirectCurrency = null,
-        Redirect $redirect = null,
-        PaymentThreeDS $threeDS = null
+        ?Redirect $redirect = null,
+        ?PaymentThreeDS $threeDS = null
     ) {
         $this->validateCreateCharge();
         $this->validateCapture($capture, $captureAt);
@@ -225,10 +225,10 @@ class TransactionToken extends Resource
 
     private function validateCreateSubscription(
         Money $money,
-        Period $period = null,
-        DateInterval $cyclicalPeriod = null,
-        Money $initialAmount = null,
-        ScheduleSettings $scheduleSettings = null
+        ?Period $period = null,
+        ?DateInterval $cyclicalPeriod = null,
+        ?Money $initialAmount = null,
+        ?ScheduleSettings $scheduleSettings = null
     ) {
         if ($this->type === TokenType::ONE_TIME()) {
             throw new UnivapayLogicError(Reason::NOT_SUBSCRIPTION_PAYMENT());
@@ -242,9 +242,11 @@ class TransactionToken extends Resource
         if (isset($initialAmount) && ($initialAmount->isNegative() || !$initialAmount->isSameCurrency($money))) {
             throw new UnivapayValidationError(Field::INITIAL_AMOUNT(), Reason::INVALID_AMOUNT());
         }
-        if (isset($scheduleSettings) &&
-        $scheduleSettings->preserveEndOfMonth === true &&
-        Period::MONTHLY() !== $period) {
+        if (
+            isset($scheduleSettings) &&
+            $scheduleSettings->preserveEndOfMonth === true &&
+            Period::MONTHLY() !== $period
+        ) {
             throw new UnivapayValidationError(Field::PRESERVE_END_OF_MONTH(), Reason::MUST_BE_MONTH_BASE_TO_SET());
         }
         $this->validateCVV();
@@ -252,21 +254,21 @@ class TransactionToken extends Resource
 
     public function createSubscription(
         Money $money,
-        Period $period = null,
-        Money $initialAmount = null,
-        ScheduleSettings $scheduleSettings = null,
-        SubscriptionPlan $subscriptionPlan = null,
-        InstallmentPlan $installmentPlan = null,
-        array $metadata = null,
+        ?Period $period = null,
+        ?Money $initialAmount = null,
+        ?ScheduleSettings $scheduleSettings = null,
+        ?SubscriptionPlan $subscriptionPlan = null,
+        ?InstallmentPlan $installmentPlan = null,
+        ?array $metadata = null,
         $onlyDirectCurrency = null,
         $firstChargeAuthorizationOnly = null,
-        DateInterval $firstChargeCaptureAfter = null,
-        DateInterval $cyclicalPeriod = null,
-        PaymentThreeDS $threeDS = null
+        ?DateInterval $firstChargeCaptureAfter = null,
+        ?DateInterval $cyclicalPeriod = null,
+        ?PaymentThreeDS $threeDS = null
     ) {
         $this->validateCreateSubscription($money, $period, $cyclicalPeriod, $initialAmount, $scheduleSettings);
         $this->validateCapture($firstChargeAuthorizationOnly, null, $firstChargeCaptureAfter);
-        
+
         $payload = $money->jsonSerialize() + [
             'transaction_token_id' => $this->id,
             'period' => isset($period) ? $period->getValue() : null,
@@ -296,25 +298,29 @@ class TransactionToken extends Resource
 
     private function validateCVV()
     {
-        if ($this->paymentType === PaymentType::CARD() &&
+        if (
+            $this->paymentType === PaymentType::CARD() &&
             $this->data->cvvAuthorize->enabled &&
-            $this->data->cvvAuthorize->status !== CvvAuthorizationStatus::CURRENT()) {
+            $this->data->cvvAuthorize->status !== CvvAuthorizationStatus::CURRENT()
+        ) {
             throw new UnivapayLogicError(Reason::CVV_AUTHORIZATION_REQUIRED());
         }
     }
 
     private function validateCapture(
         $capture = null,
-        DateTime $captureAtAbsolute = null,
-        DateInterval $captureAtRelative = null
+        ?DateTime $captureAtAbsolute = null,
+        ?DateInterval $captureAtRelative = null
     ) {
         if (isset($captureAtRelative)) {
             $captureAtAbsolute = date_create()->add($captureAtRelative);
         }
         if (isset($capture)) {
-            if ($this->paymentType !== PaymentType::CARD() &&
+            if (
+                $this->paymentType !== PaymentType::CARD() &&
                 $this->paymentType !== PaymentType::APPLE_PAY() &&
-                $this->paymentType !== PaymentType::PAIDY()) {
+                $this->paymentType !== PaymentType::PAIDY()
+            ) {
                 throw new UnivapayLogicError(Reason::CAPTURE_ONLY_FOR_CARD_PAYMENT());
             }
         }
@@ -332,7 +338,7 @@ class TransactionToken extends Resource
     }
 
     // @phpcs:disable
-    public function awaitResult($retry = 0)
+    public function awaitResult(int $retry = 0)
     {
         $idContext = $this->getIdContext();
         $pollableStatuses = $this->pollableStatuses();

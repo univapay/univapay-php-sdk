@@ -20,7 +20,7 @@ jobs:
       fail-fast: true
       max-parallel: 1
       matrix:
-        php: ['7.2', '7.4', '8.1', '8.2', '8.3']
+        php: ['7.2', '7.4', '8.1', '8.2', '8.3', '8.4', '8.5']
 
     steps:
     - uses: actions/checkout@v4
@@ -42,23 +42,13 @@ jobs:
         restore-keys: ${{ runner.os }}-composer-${{ matrix.php }}-
     
     - name: Install dependencies
-      run: composer update --prefer-dist --no-progress -n
-
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v4
-      with:
-        node-version: 'lts/*'
-        cache: 'npm'
-        cache-dependency-path: package-lock.json
-
-    - name: Install node dependencies
-      run: npm ci
+      run: composer install --prefer-dist --no-progress -n
 
     - name: PHP Lint
-      run: node_modules/.bin/grunt phpcs
+      run: composer lint
       
     - name: PHP Unit Tests
-      run: node_modules/.bin/grunt phpunit
+      run: composer test
       env:
         UNIVAPAY_PHP_TEST_ENDPOINT: https://api.gyro-n.money
         UNIVAPAY_PHP_TEST_SECRET: ${{ secrets.UNIVAPAY_PHP_TEST_SECRET }}

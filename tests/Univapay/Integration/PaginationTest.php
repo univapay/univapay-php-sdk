@@ -1,4 +1,5 @@
 <?php
+
 namespace UnivapayTest\Integration;
 
 use Univapay\Enums\CursorDirection;
@@ -18,8 +19,10 @@ class PaginationTest extends TestCase
 
     protected function setUp(): void
     {
-        if (isset($GLOBALS['testPagination:setupComplete']) &&
-            !$GLOBALS['testPagination:setupComplete']) {
+        if (
+            isset($GLOBALS['testPagination:setupComplete']) &&
+            !$GLOBALS['testPagination:setupComplete']
+        ) {
             $this->markTestSkipped('The charge setup for pagination testing has not been indexed properly');
         }
     }
@@ -31,12 +34,12 @@ class PaginationTest extends TestCase
         $GLOBALS['testPagination:charges'] = [];
         $GLOBALS['testPagination:from'] = date_create();
         sleep(1); // Pause to to let time elapse to ensure timestamp is in the past
-        
+
         foreach (range(1, 6) as $i) {
             $charge = $this->createValidCharge();
             $GLOBALS['testPagination:charges'][] = $charge->id;
         }
-        
+
         // Give it some time for the charges to get indexed
         $maxRetries = 20;
         do {
@@ -46,7 +49,7 @@ class PaginationTest extends TestCase
             $maxRetries--;
             sleep(1);
         } while ($maxRetries > 0 && count($listCharge->items) !== 6);
-        
+
         $GLOBALS['testPagination:setupComplete'] = $maxRetries > 0;
         $this->assertTrue(
             $GLOBALS['testPagination:setupComplete'],

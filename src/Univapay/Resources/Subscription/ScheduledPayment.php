@@ -3,6 +3,7 @@
 namespace Univapay\Resources\Subscription;
 
 use DateTimeZone;
+use Univapay\Enums\CursorDirection;
 use Univapay\Resources\Jsonable;
 use Univapay\Resources\Resource;
 use Univapay\Resources\Mixins\GetCharges;
@@ -68,7 +69,7 @@ class ScheduledPayment extends Resource
     public function listCharges(
         $cursor = null,
         $limit = null,
-        CursorDirection $cursorDirection = null
+        ?CursorDirection $cursorDirection = null
     ) {
         return $this->fullListCharges(
             null,

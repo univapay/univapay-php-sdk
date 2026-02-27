@@ -6,7 +6,7 @@ use DateTime;
 use Univapay\Enums\AppTokenMode;
 use Univapay\Enums\CursorDirection;
 use Univapay\Enums\ChargeStatus;
-use Univapay\Resources\Paginated;
+use Univapay\Enums\TransactionType;
 use Univapay\Resources\Transaction;
 use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\OptionsValidator;
@@ -17,20 +17,20 @@ trait GetTransactions
     use OptionsValidator;
 
     abstract protected function getTransactionContext();
-    
+
     public function listTransactions(
-        DateTime $from = null,
-        DateTime $to = null,
-        ChargeStatus $status = null,
-        TransactionType $type = null,
+        ?DateTime $from = null,
+        ?DateTime $to = null,
+        ?ChargeStatus $status = null,
+        ?TransactionType $type = null,
         $search = null,
-        AppTokenMode $mode = null,
+        ?AppTokenMode $mode = null,
         $gatewayCredentialsId = null,
         $gatewayTransactionId = null,
         $metadata = null,
         $cursor = null,
         $limit = null,
-        CursorDirection $cursorDirection = null
+        ?CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls([
             'from' => $from->getTimestamp() * 1000,
@@ -42,9 +42,9 @@ trait GetTransactions
             'metadata' => $metadata,
             'cursor' => $cursor,
             'limit' => $limit,
-            'cursor_direction' => isset($cursorDirection) ? $cursorDirection.getValue() : null
+            'cursor_direction' => isset($cursorDirection) ? $cursorDirection->getValue() : null
         ]);
-        
+
         return RequesterUtils::executeGetPaginated(Transaction::class, $this->getTransactionContext(), $query);
     }
 

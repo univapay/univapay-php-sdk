@@ -1,4 +1,5 @@
 <?php
+
 namespace UnivapayTest\Integration;
 
 use DateInterval;
@@ -326,7 +327,7 @@ EOD;
 
         $updatedToken = $this->createValidToken(PaymentType::CARD(), TokenType::SUBSCRIPTION());
         $schedule = new ScheduleSettings(date_create('last day of next month'), new DateTimeZone('UTC'), true);
-        
+
         $patchedSubscription = $subscription->patch(
             $updatedToken->id,
             Money::JPY(2000),
@@ -357,7 +358,7 @@ EOD;
     {
         $subscription = $this->createValidSubscription();
         $this->assertEquals(SubscriptionStatus::CURRENT(), $subscription->status);
-        
+
         $suspendedSubscription = $subscription->patch(
             null,
             null,
@@ -385,7 +386,7 @@ EOD;
             SubscriptionStatus::CURRENT()
         );
     }
-    
+
     public function testCancelSubscription()
     {
         $subscription = $this->createValidSubscription();

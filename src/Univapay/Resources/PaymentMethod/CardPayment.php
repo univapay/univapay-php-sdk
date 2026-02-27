@@ -34,14 +34,14 @@ class CardPayment extends PaymentMethod implements JsonSerializable
         $expMonth,
         $expYear,
         $cvv,
-        TokenType $type = null,
-        UsageLimit $usageLimit = null,
-        Address $address = null,
-        PhoneNumber $phoneNumber = null,
-        array $metadata = null,
-        CvvAuthorize $cvvAuthorize = null,
+        ?TokenType $type = null,
+        ?UsageLimit $usageLimit = null,
+        ?Address $address = null,
+        ?PhoneNumber $phoneNumber = null,
+        ?array $metadata = null,
+        ?CvvAuthorize $cvvAuthorize = null,
         $ipAddress = null,
-        TokenThreeDS $threeDS = null
+        ?TokenThreeDS $threeDS = null
     ) {
         parent::__construct(PaymentType::CARD(), $type, $email, $ipAddress, $usageLimit, $metadata);
         $this->cardholder = $cardholder;
@@ -59,14 +59,14 @@ class CardPayment extends PaymentMethod implements JsonSerializable
     }
 
     // Accepts all types
-    protected function acceptsTokenType(TokenType $tokenType = null)
+    protected function acceptsTokenType(?TokenType $tokenType = null)
     {
         if (isset($this->cvvAuthorize) && TokenType::RECURRING() !== $tokenType) {
             throw new UnivapayValidationError(Field::TYPE(), Reason::TRANSACTION_TOKEN_IS_NOT_RECURRING());
         }
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         $parentData = parent::jsonSerialize();
         $parentData['data'] = [

@@ -1,4 +1,5 @@
 <?php
+
 namespace UnivapayTest\Integration;
 
 use Money\Currency;
@@ -11,7 +12,7 @@ use Univapay\Resources\Paginated;
 class BankAccountTest extends TestCase
 {
     use IntegrationSuite;
-    
+
     public function testGetBankAccount()
     {
         $str = <<<EOD

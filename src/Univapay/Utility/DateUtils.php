@@ -6,7 +6,6 @@ use DateInterval;
 
 abstract class DateUtils
 {
-
     public static function asPeriodString(DateInterval $date)
     {
         $interval = 'P' .

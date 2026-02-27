@@ -28,7 +28,7 @@ abstract class AppJWT
         if ($appTokenBody == null) {
             throw new InvalidJWTFormat('JWT body is not JSON');
         }
-        
+
         if (array_key_exists('store_id', $appTokenBody)) {
             $class = StoreAppJWT::class;
         } else {

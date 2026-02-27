@@ -39,14 +39,14 @@ class Cancel extends Resource
         ->upsert('mode', true, FormatterUtils::getTypedEnum(AppTokenMode::class))
         ->upsert('created_on', true, FormatterUtils::of('getDateTime'));
     }
-    
+
     protected function getIdContext()
     {
         return $this->context->withPath(
             ['stores', $this->storeId, 'charges', $this->chargeId, 'cancels', $this->id]
         );
     }
-    
+
     protected function pollableStatuses()
     {
         return [(string) CancelStatus::PENDING() => array_diff(CancelStatus::findValues(), [CancelStatus::PENDING()])];

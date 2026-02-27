@@ -8,7 +8,6 @@ use Univapay\Enums\CursorDirection;
 use Univapay\Enums\Field;
 use Univapay\Enums\Reason;
 use Univapay\Enums\TokenType;
-use Univapay\Enums\TransactionType;
 use Univapay\Errors\UnivapayValidationError;
 use Univapay\Resources\TransactionToken;
 use Univapay\Utility\FunctionalUtils;
@@ -24,12 +23,12 @@ trait GetTransactionTokens
     public function listTransactionTokens(
         $search = null,
         $univapayCustomerId = null,
-        TokenType $type = null,
-        AppTokenMode $mode = null,
-        ActiveFilter $active = null,
+        ?TokenType $type = null,
+        ?AppTokenMode $mode = null,
+        ?ActiveFilter $active = null,
         $cursor = null,
         $limit = null,
-        CursorDirection $cursorDirection = null
+        ?CursorDirection $cursorDirection = null
     ) {
         if (isset($type) && $type === TokenType::ONE_TIME()) {
             throw new UnivapayValidationError(Field::Type(), Reason::INVALID_TOKEN_TYPE());
@@ -61,7 +60,7 @@ trait GetTransactionTokens
             'mode' => 'ValidationHelper::getEnumValue',
             'cursor_direction' => 'ValidationHelper::getEnumValue',
         ];
-    
+
         $query = $this->validate(FunctionalUtils::stripNulls($opts), $rules);
         return RequesterUtils::executeGetPaginated(
             Subscription::class,

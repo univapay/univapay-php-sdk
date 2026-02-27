@@ -6,7 +6,6 @@ use Throwable;
 
 class UnivapayInvalidWebhookData extends UnivapayError
 {
-
     public function __construct($payload, $code = 0, Throwable $previous = null)
     {
         $payloadAsString = print_r($payload, true);
