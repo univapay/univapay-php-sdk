@@ -47,5 +47,7 @@ class RateLimitHandlerTest extends TestCase
         while (date_create() < $testLength) {
             $this->rateLimitHandledClient->getCheckoutInfo();
         }
+
+        $this->assertTrue(true); // reaching here means the rate limiter was successfully handled
     }
 }
