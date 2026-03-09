@@ -18,9 +18,34 @@ jobs:
 
     strategy:
       fail-fast: true
-      max-parallel: 1
+      max-parallel: 2
       matrix:
-        php: ['7.2', '7.4', '8.1', '8.2', '8.3', '8.4', '8.5']
+        include:
+          - php: '7.2'
+            token: UNIVAPAY_PHP_TEST_TOKEN_7_2
+            secret: UNIVAPAY_PHP_TEST_SECRET_7_2
+          - php: '7.4'
+            token: UNIVAPAY_PHP_TEST_TOKEN_7_4
+            secret: UNIVAPAY_PHP_TEST_SECRET_7_4
+          - php: '8.0'
+            token: UNIVAPAY_PHP_TEST_TOKEN_8_0
+            secret: UNIVAPAY_PHP_TEST_SECRET_8_0
+          - php: '8.1'
+            token: UNIVAPAY_PHP_TEST_TOKEN_8_1
+            secret: UNIVAPAY_PHP_TEST_SECRET_8_1
+          - php: '8.2'
+            token: UNIVAPAY_PHP_TEST_TOKEN_8_2
+            secret: UNIVAPAY_PHP_TEST_SECRET_8_2
+          - php: '8.3'
+            token: UNIVAPAY_PHP_TEST_TOKEN_8_3
+            secret: UNIVAPAY_PHP_TEST_SECRET_8_3
+          - php: '8.4'
+            token: UNIVAPAY_PHP_TEST_TOKEN_8_4
+            secret: UNIVAPAY_PHP_TEST_SECRET_8_4
+          - php: '8.5'
+            token: UNIVAPAY_PHP_TEST_TOKEN_8_5
+            secret: UNIVAPAY_PHP_TEST_SECRET_8_5
+          
 
     steps:
     - uses: actions/checkout@v4
@@ -46,10 +71,15 @@ jobs:
 
     - name: PHP Lint
       run: composer lint
+
+    - name: Set ENV
+      run: |
+        echo "UNIVAPAY_PHP_TEST_SECRET=${{ secrets[matrix.secret] }}" >> $GITHUB_ENV
+        echo "UNIVAPAY_PHP_TEST_TOKEN=${{ secrets[matrix.token] }}" >> $GITHUB_ENV
       
     - name: PHP Unit Tests
       run: composer test
       env:
         UNIVAPAY_PHP_TEST_ENDPOINT: https://api.gyro-n.money
-        UNIVAPAY_PHP_TEST_SECRET: ${{ secrets.UNIVAPAY_PHP_TEST_SECRET }}
-        UNIVAPAY_PHP_TEST_TOKEN: ${{ secrets.UNIVAPAY_PHP_TEST_TOKEN }}
+        UNIVAPAY_PHP_TEST_SECRET: ${{ env.UNIVAPAY_PHP_TEST_SECRET }}
+        UNIVAPAY_PHP_TEST_TOKEN: ${{ env.UNIVAPAY_PHP_TEST_TOKEN }}
