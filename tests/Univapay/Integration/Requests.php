@@ -45,12 +45,12 @@ trait Requests
     abstract public function getClient();
 
     public function createValidToken(
-        PaymentType $paymentType = null,
-        TokenType $type = null,
+        ?PaymentType $paymentType = null,
+        ?TokenType $type = null,
         $cardNumber = null,
-        CvvAuthorize $cvvAuth = null,
+        ?CvvAuthorize $cvvAuth = null,
         $ipAddress = null,
-        TokenThreeDS $threeDS = null
+        ?TokenThreeDS $threeDS = null
     ) {
         $paymentType = isset($paymentType) ? $paymentType : PaymentType::CARD();
         $type = isset($type) ? $type : TokenType::ONE_TIME();
