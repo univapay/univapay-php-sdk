@@ -63,15 +63,15 @@ class Charge extends Resource
         ChargeStatus $status,
         AppTokenMode $mode,
         DateTime $createdOn,
-        Currency $chargedCurrency = null,
-        Money $chargedAmount = null,
+        ?Currency $chargedCurrency = null,
+        ?Money $chargedAmount = null,
         $chargedAmountFormatted = null,
         $onlyDirectCurrency = null,
-        DateTime $captureAt = null,
+        ?DateTime $captureAt = null,
         $error = null,
         $metadata = null,
-        Redirect $redirect = null,
-        PaymentThreeDS $threeDS = null,
+        ?Redirect $redirect = null,
+        ?PaymentThreeDS $threeDS = null,
         $context = null
     ) {
         parent::__construct($id, $context);
@@ -141,9 +141,9 @@ class Charge extends Resource
 
     public function createRefund(
         Money $money,
-        RefundReason $reason = null,
+        ?RefundReason $reason = null,
         $message = null,
-        array $metadata = null
+        ?array $metadata = null
     ) {
         if (isset($reason) && RefundReason::CHARGEBACK() === $reason) {
             throw new UnivapayValidationError(Field::REASON(), Reason::INVALID_PERMISSIONS());
@@ -160,13 +160,13 @@ class Charge extends Resource
         return RequesterUtils::executePost(Refund::class, $context, $payload);
     }
 
-    public function capture(Money $money = null)
+    public function capture(?Money $money = null)
     {
         $context = $this->getCaptureContext();
         return RequesterUtils::executePost(null, $context, $money);
     }
 
-    public function cancel(array $metadata = null)
+    public function cancel(?array $metadata = null)
     {
         $payload = FunctionalUtils::stripNulls([
             'metadata' => $metadata

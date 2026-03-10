@@ -12,6 +12,7 @@ use Univapay\Utility\RequesterUtils;
 class TransferStatusChange extends Resource
 {
     use Jsonable;
+
     public $id;
     public $merchantId;
     public $transferId;

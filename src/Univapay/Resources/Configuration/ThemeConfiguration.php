@@ -3,12 +3,12 @@
 namespace Univapay\Resources\Configuration;
 
 use Univapay\Resources\Jsonable;
-use Univapay\Utility\FunctionalUtils as fp;
 use Univapay\Utility\Json\JsonSchema;
 
 class ThemeConfiguration
 {
     use Jsonable;
+
     public $colors;
 
     public function __construct($colors)

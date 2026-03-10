@@ -4,7 +4,6 @@ namespace Univapay\Utility;
 
 abstract class StringUtils
 {
-
     // https://stackoverflow.com/questions/1993721/how-to-convert-camelcase-to-camel-case
     public static function toSnakeCase($input)
     {

@@ -11,13 +11,13 @@ use Univapay\Utility\RequesterUtils;
 trait GetScheduledPayments
 {
     use OptionsValidator;
-    
+
     abstract protected function getScheduledPaymentContext();
 
     public function listScheduledPayments(
         $cursor = null,
         $limit = null,
-        CursorDirection $cursorDirection = null
+        ?CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls([
             'cursor' => $cursor,

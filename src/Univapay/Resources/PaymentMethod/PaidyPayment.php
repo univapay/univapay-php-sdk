@@ -11,7 +11,6 @@ use Univapay\Enums\UsageLimit;
 use Univapay\Errors\UnivapayValidationError;
 use Univapay\Resources\PaymentData\PaidyData;
 use Univapay\Resources\PaymentData\PhoneNumber;
-use Univapay\Utility\FunctionalUtils;
 
 class PaidyPayment extends PaymentMethod implements JsonSerializable
 {
@@ -20,9 +19,9 @@ class PaidyPayment extends PaymentMethod implements JsonSerializable
     public function __construct(
         PaidyData $paidyData,
         $email = null,
-        TokenType $type = null,
-        UsageLimit $usageLimit = null,
-        array $metadata = null,
+        ?TokenType $type = null,
+        ?UsageLimit $usageLimit = null,
+        ?array $metadata = null,
         $ipAddress = null
     ) {
         if (isset($paidyData->phoneNumber) && $paidyData->phoneNumber->countryCode != PhoneNumber::JP) {
@@ -44,11 +43,11 @@ class PaidyPayment extends PaymentMethod implements JsonSerializable
     }
 
     // Accepts all types
-    protected function acceptsTokenType(TokenType $tokenType = null)
+    protected function acceptsTokenType(?TokenType $tokenType = null)
     {
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         $parentData = parent::jsonSerialize();
         $parentData['data'] = $this->paidyData->jsonSerialize();

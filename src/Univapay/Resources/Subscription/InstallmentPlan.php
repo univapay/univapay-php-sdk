@@ -11,8 +11,6 @@ use Univapay\Errors\UnivapayValidationError;
 use Univapay\Resources\Jsonable;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\Json\JsonSchema;
-use Money\Currency;
-use Money\Money;
 
 class InstallmentPlan implements JsonSerializable
 {
@@ -48,7 +46,7 @@ class InstallmentPlan implements JsonSerializable
         $this->fixedCycles = $fixedCycles;
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         $data = ['plan_type' => $this->planType->getValue()];
         switch ($this->planType) {

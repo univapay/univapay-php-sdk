@@ -19,11 +19,11 @@ class ThreeDSIssuerToken
     public $paymentType;
 
     public function __construct(
-        CallMethod $callMethod = null,
+        ?CallMethod $callMethod = null,
         $contentType = null,
         $issuerToken = null,
         $payload = null,
-        PaymentType $paymentType = null
+        ?PaymentType $paymentType = null
     ) {
         $this->callMethod = $callMethod;
         $this->contentType = $contentType;

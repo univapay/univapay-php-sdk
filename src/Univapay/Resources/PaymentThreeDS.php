@@ -18,8 +18,8 @@ class PaymentThreeDS
 
     public function __construct(
         $redirectEndpoint = null,
-        ThreeDSMode $mode = null,
-        ThreeDSMPI $threeDSMPI = null,
+        ?ThreeDSMode $mode = null,
+        ?ThreeDSMPI $threeDSMPI = null,
         $redirectId = null
     ) {
         $this->redirectEndpoint = $redirectEndpoint;

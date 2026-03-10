@@ -11,13 +11,13 @@ use Univapay\Utility\RequesterUtils;
 trait GetBankAccounts
 {
     use OptionsValidator;
-    
+
     abstract protected function getBankAccountContext();
 
     public function listBankAccounts(
         $cursor = null,
         $limit = null,
-        CursorDirection $cursorDirection = null
+        ?CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls([
             'cursor' => $cursor,

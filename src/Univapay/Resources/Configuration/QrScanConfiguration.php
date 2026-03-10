@@ -3,12 +3,12 @@
 namespace Univapay\Resources\Configuration;
 
 use Univapay\Resources\Jsonable;
-use Univapay\Utility\FunctionalUtils as fp;
 use Univapay\Utility\Json\JsonSchema;
 
 class QrScanConfiguration
 {
     use Jsonable;
+
     public $enabled;
     public $forbiddenQrScanGateway;
 

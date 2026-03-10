@@ -4,6 +4,7 @@ namespace Univapay;
 
 use DateTime;
 use Exception;
+use OutOfRangeException;
 use Univapay\Enums\Field;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Period;
@@ -65,7 +66,7 @@ class UnivapayClient
 
     public function __construct(
         AppJWT $appToken,
-        UnivapayClientOptions $clientOptions = null
+        ?UnivapayClientOptions $clientOptions = null
     ) {
         if (is_null($clientOptions)) {
             $clientOptions = new UnivapayClientOptions();
@@ -155,11 +156,11 @@ class UnivapayClient
         $transactionTokenId,
         Money $money,
         $capture = null,
-        DateTime $captureAt = null,
-        array $metadata = null,
+        ?DateTime $captureAt = null,
+        ?array $metadata = null,
         $onlyDirectCurrency = null,
-        Redirect $redirect = null,
-        PaymentThreeDS $paymentThreeDS = null
+        ?Redirect $redirect = null,
+        ?PaymentThreeDS $paymentThreeDS = null
     ) {
         return $this
             ->getTransactionToken($transactionTokenId)
@@ -199,12 +200,12 @@ class UnivapayClient
         $transactionTokenId,
         Money $money,
         Period $period,
-        Money $initialAmount = null,
-        ScheduleSettings $scheduleSettings = null,
-        SubscriptionPlan $subscriptionPlan = null,
-        InstallmentPlan $installmentPlan = null,
-        array $metadata = null,
-        PaymentThreeDS $paymentThreeDS = null
+        ?Money $initialAmount = null,
+        ?ScheduleSettings $scheduleSettings = null,
+        ?SubscriptionPlan $subscriptionPlan = null,
+        ?InstallmentPlan $installmentPlan = null,
+        ?array $metadata = null,
+        ?PaymentThreeDS $paymentThreeDS = null
     ) {
         return $this
             ->getTransactionToken($transactionTokenId)
@@ -234,10 +235,10 @@ class UnivapayClient
         PaymentType $paymentType,
         Money $amount,
         Period $period,
-        Money $initialAmount = null,
-        ScheduleSettings $scheduleSettings = null,
-        SubscriptionPlan $subscriptionPlan = null,
-        InstallmentPlan $installmentPlan = null
+        ?Money $initialAmount = null,
+        ?ScheduleSettings $scheduleSettings = null,
+        ?SubscriptionPlan $subscriptionPlan = null,
+        ?InstallmentPlan $installmentPlan = null
     ) {
         $payload = $amount->jsonSerialize() + [
             'payment_type' => $paymentType->getValue(),
@@ -293,7 +294,7 @@ class UnivapayClient
                 case WebhookEvent::SUBSCRIPTION_SUSPENDED():
                     $parser = Subscription::getContextParser($this->getSubscriptionContext());
                     break;
-                
+
                 case WebhookEvent::REFUND_FINISHED():
                     $parser = Refund::getContextParser($this->getStoreBasedContext());
                     break;

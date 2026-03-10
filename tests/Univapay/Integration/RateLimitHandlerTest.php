@@ -1,4 +1,5 @@
 <?php
+
 namespace UnivapayTest\Integration;
 
 use Univapay\UnivapayClient;
@@ -10,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 class RateLimitHandlerTest extends TestCase
 {
     use IntegrationSuite;
-    
+
     private $rateLimitHandledClient;
     private $rateLimitUnhandledClient;
 
@@ -46,5 +47,7 @@ class RateLimitHandlerTest extends TestCase
         while (date_create() < $testLength) {
             $this->rateLimitHandledClient->getCheckoutInfo();
         }
+
+        $this->assertTrue(true); // reaching here means the rate limiter was successfully handled
     }
 }

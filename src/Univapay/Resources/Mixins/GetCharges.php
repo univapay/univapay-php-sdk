@@ -24,21 +24,21 @@ trait GetCharges
         $expMonth = null,
         $expYear = null,
         $cardNumber = null,
-        DateTime $from = null,
-        DateTime $to = null,
+        ?DateTime $from = null,
+        ?DateTime $to = null,
         $email = null,
         $phone = null,
         $amountFrom = null,
         $amountTo = null,
-        Currency $currency = null,
+        ?Currency $currency = null,
         $metadata = null,
-        AppTokenMode $mode = null,
+        ?AppTokenMode $mode = null,
         $transactionTokenId = null,
         $gatewayCredentialsId = null,
         $gatewayTransactionId = null,
         $cursor = null,
         $limit = null,
-        CursorDirection $cursorDirection = null
+        ?CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls([
             'last_four' => $lastFour,

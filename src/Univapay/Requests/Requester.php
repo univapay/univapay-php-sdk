@@ -4,7 +4,6 @@ namespace Univapay\Requests;
 
 interface Requester
 {
-
     public function get($url, $query = [], array $headers = []);
 
     public function post($url, $payload = [], array $headers = []);

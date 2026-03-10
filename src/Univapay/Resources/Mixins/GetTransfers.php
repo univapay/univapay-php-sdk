@@ -11,13 +11,13 @@ use Univapay\Utility\RequesterUtils;
 trait GetTransfers
 {
     use OptionsValidator;
-    
+
     abstract protected function getTransferContext();
 
     public function listTransfers(
         $cursor = null,
         $limit = null,
-        CursorDirection $cursorDirection = null
+        ?CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls([
             'cursor' => $cursor,

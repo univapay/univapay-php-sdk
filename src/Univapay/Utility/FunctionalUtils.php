@@ -4,7 +4,6 @@ namespace Univapay\Utility;
 
 abstract class FunctionalUtils
 {
-
     public static function getOrElse(array $array, $key, $orElse)
     {
         if (array_key_exists($key, $array)) {

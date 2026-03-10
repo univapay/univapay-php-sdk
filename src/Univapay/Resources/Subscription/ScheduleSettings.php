@@ -5,7 +5,6 @@ namespace Univapay\Resources\Subscription;
 use DateInterval;
 use DateTime;
 use DateTimeZone;
-use InvalidArgumentException;
 use JsonSerializable;
 use Univapay\Enums\Field;
 use Univapay\Enums\Reason;
@@ -19,17 +18,17 @@ use Univapay\Utility\FunctionalUtils;
 class ScheduleSettings implements JsonSerializable
 {
     use Jsonable;
-    
+
     public $startOn;
     public $zoneId;
     public $preserveEndOfMonth;
     public $retryInterval;
 
     public function __construct(
-        DateTime $startOn = null,
-        DateTimeZone $zoneId = null,
+        ?DateTime $startOn = null,
+        ?DateTimeZone $zoneId = null,
         $preserveEndOfMonth = false,
-        DateInterval $retryInterval = null
+        ?DateInterval $retryInterval = null
     ) {
         if (isset($startOn, $zoneId)) {
             $startOn->setTimezone($zoneId);
@@ -41,7 +40,7 @@ class ScheduleSettings implements JsonSerializable
         $this->retryInterval = $retryInterval;
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         if (isset($this->startOn) && $this->startOn < date_create()) {
             throw new UnivapayValidationError(Field::START_ON(), Reason::MUST_BE_FUTURE_TIME());

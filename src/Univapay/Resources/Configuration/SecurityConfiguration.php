@@ -7,7 +7,6 @@ use Univapay\Utility\Json\JsonSchema;
 
 class SecurityConfiguration
 {
-
     use Jsonable;
 
     public $inspectSuspiciousLoginAfter;

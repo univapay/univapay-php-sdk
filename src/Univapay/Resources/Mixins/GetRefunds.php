@@ -11,13 +11,13 @@ use Univapay\Utility\RequesterUtils;
 trait GetRefunds
 {
     use OptionsValidator;
-    
+
     abstract protected function getRefundContext();
 
     public function listRefunds(
         $cursor = null,
         $limit = null,
-        CursorDirection $cursorDirection = null
+        ?CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls([
             'cursor' => $cursor,

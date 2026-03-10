@@ -18,7 +18,7 @@ class PaidyData implements JsonSerializable
     public function __construct(
         $paidyToken,
         Address $shippingAddress,
-        PhoneNumber $phoneNumber = null
+        ?PhoneNumber $phoneNumber = null
     ) {
         $this->paidyToken = $paidyToken;
         $this->shippingAddress = $shippingAddress;
@@ -32,7 +32,7 @@ class PaidyData implements JsonSerializable
             ->upsert('shipping_address', true, Address::getSchema()->getParser());
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return FunctionalUtils::stripNulls([
             'paidy_token' => $this->paidyToken,

@@ -54,7 +54,7 @@ class FormatterUtils
     {
         return new Currency($currency);
     }
-    
+
     public static function getMoney($currencyKey, $currencyAtRoot = false)
     {
         return function ($value, $json, $parent) use ($currencyKey, $currencyAtRoot) {
@@ -62,7 +62,7 @@ class FormatterUtils
             return new Money($value, new Currency($currencyValue));
         };
     }
-    
+
     public static function getListOf($schemaParser = 'Univapay\Utility\FunctionalUtils::identity')
     {
         return function (array $values, $json = null, $parent = null) use ($schemaParser) {

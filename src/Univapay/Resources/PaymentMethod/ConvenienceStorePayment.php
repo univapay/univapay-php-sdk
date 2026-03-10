@@ -3,15 +3,14 @@
 namespace Univapay\Resources\PaymentMethod;
 
 use JsonSerializable;
-use Univapay\Enums\ConvenienceStore;
 use Univapay\Enums\Field;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\Reason;
 use Univapay\Enums\TokenType;
+use Univapay\Enums\UsageLimit;
 use Univapay\Errors\UnivapayValidationError;
 use Univapay\Resources\PaymentData\ConvenienceStoreData;
 use Univapay\Resources\PaymentData\PhoneNumber;
-use Univapay\Utility\FunctionalUtils;
 
 class ConvenienceStorePayment extends PaymentMethod implements JsonSerializable
 {
@@ -20,9 +19,9 @@ class ConvenienceStorePayment extends PaymentMethod implements JsonSerializable
     public function __construct(
         $email,
         ConvenienceStoreData $convenienceStoreData,
-        TokenType $type = null,
-        UsageLimit $usageLimit = null,
-        array $metadata = null,
+        ?TokenType $type = null,
+        ?UsageLimit $usageLimit = null,
+        ?array $metadata = null,
         $ipAddress = null
     ) {
         if ($convenienceStoreData->phoneNumber->countryCode != PhoneNumber::JP) {
@@ -31,8 +30,10 @@ class ConvenienceStorePayment extends PaymentMethod implements JsonSerializable
                 Reason::ONLY_JAPANESE_PHONE_NUMBER_ALLOWED()
             );
         }
-        if (isset($convenienceStoreData->expirationPeriod) &&
-        ($convenienceStoreData->expirationPeriod->d < 7 || $convenienceStoreData->expirationPeriod->d > 30)) {
+        if (
+            isset($convenienceStoreData->expirationPeriod) &&
+            ($convenienceStoreData->expirationPeriod->d < 7 || $convenienceStoreData->expirationPeriod->d > 30)
+        ) {
             throw new UnivapayValidationError(
                 Field::EXPIRATION_PERIOD(),
                 Reason::EXPIRATION_DATE_OUT_OF_BOUNDS()
@@ -44,11 +45,11 @@ class ConvenienceStorePayment extends PaymentMethod implements JsonSerializable
     }
 
     // Accepts all types
-    protected function acceptsTokenType(TokenType $tokenType = null)
+    protected function acceptsTokenType(?TokenType $tokenType = null)
     {
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         $parentData = parent::jsonSerialize();
         $parentData['data'] = $this->convenienceStoreData->jsonSerialize();

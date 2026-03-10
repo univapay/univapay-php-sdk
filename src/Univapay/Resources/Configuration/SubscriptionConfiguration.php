@@ -8,6 +8,7 @@ use Univapay\Utility\Json\JsonSchema;
 class SubscriptionConfiguration
 {
     use Jsonable;
+
     public $enabled;
 
     public function __construct($enabled)

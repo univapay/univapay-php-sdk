@@ -1,4 +1,5 @@
 <?php
+
 namespace Univapay\Resources\PaymentToken;
 
 use Univapay\Resources\Jsonable;

@@ -11,7 +11,6 @@ use Univapay\Errors\UnivapayValidationError;
 use Univapay\Resources\Jsonable;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\Json\JsonSchema;
-use Money\Currency;
 use Money\Money;
 
 class SubscriptionPlan implements JsonSerializable
@@ -22,7 +21,7 @@ class SubscriptionPlan implements JsonSerializable
     public $fixedCycles;
     public $fixedCycleAmount;
 
-    public function __construct(SubscriptionPlanType $planType, $fixedCycles = null, Money $fixedCycleAmount = null)
+    public function __construct(SubscriptionPlanType $planType, $fixedCycles = null, ?Money $fixedCycleAmount = null)
     {
         switch ($planType) {
             case SubscriptionPlanType::NONE():
@@ -58,7 +57,7 @@ class SubscriptionPlan implements JsonSerializable
         $this->fixedCycleAmount = $fixedCycleAmount;
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         $data = ['plan_type' => $this->planType->getValue()];
         switch ($this->planType) {

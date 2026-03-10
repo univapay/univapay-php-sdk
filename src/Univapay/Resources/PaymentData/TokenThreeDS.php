@@ -27,7 +27,7 @@ class TokenThreeDS
     public function __construct(
         $enabled,
         $redirectEndpoint,
-        ThreeDSStatus $status = null,
+        ?ThreeDSStatus $status = null,
         $redirectId = null,
         $error = null
     ) {
@@ -38,7 +38,7 @@ class TokenThreeDS
         $this->error = $error;
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return FunctionalUtils::stripNulls([
             'enabled' => $this->enabled,

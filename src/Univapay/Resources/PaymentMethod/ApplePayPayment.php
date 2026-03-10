@@ -5,7 +5,9 @@ namespace Univapay\Resources\PaymentMethod;
 use JsonSerializable;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\TokenType;
+use Univapay\Enums\UsageLimit;
 use Univapay\Resources\PaymentData\Address;
+use Univapay\Resources\PaymentData\PhoneNumber;
 use Univapay\Utility\FunctionalUtils;
 
 class ApplePayPayment extends PaymentMethod implements JsonSerializable
@@ -19,11 +21,11 @@ class ApplePayPayment extends PaymentMethod implements JsonSerializable
         $email,
         $cardholder,
         $applePayToken,
-        TokenType $type = null,
-        UsageLimit $usageLimit = null,
-        Address $address = null,
-        PhoneNumber $phoneNumber = null,
-        array $metadata = null,
+        ?TokenType $type = null,
+        ?UsageLimit $usageLimit = null,
+        ?Address $address = null,
+        ?PhoneNumber $phoneNumber = null,
+        ?array $metadata = null,
         $ipAddress = null
     ) {
         parent::__construct(PaymentType::APPLE_PAY(), $type, $email, $ipAddress, $usageLimit, $metadata);
@@ -34,11 +36,11 @@ class ApplePayPayment extends PaymentMethod implements JsonSerializable
     }
 
     // Accepts all types
-    protected function acceptsTokenType(TokenType $tokenType = null)
+    protected function acceptsTokenType(?TokenType $tokenType = null)
     {
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         $parentData = parent::jsonSerialize();
         $parentData['data'] = [
