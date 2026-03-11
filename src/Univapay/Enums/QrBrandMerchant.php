@@ -18,11 +18,14 @@ final class QrBrandMerchant extends TypedEnum
     public static function CHANGIPAY() { return self::create(); }
     public static function DANA() { return self::create(); }
     public static function D_BARAI_MERCHANT() { return self::create(); }
+    public static function DE_CARD() { return self::create(); }
+    public static function DTCPAY() { return self::create(); }
     public static function EZLINK() { return self::create(); }
     public static function GCASH() { return self::create(); }
     public static function HELLOMONEY() { return self::create(); }
     public static function HIPAY() { return self::create(); }
     public static function HUMO() { return self::create(); }
+    public static function IDRAM() { return self::create(); }
     public static function KAKAOPAY() { return self::create(); }
     public static function KASPI_KZ() { return self::create(); }
     public static function KPLUS() { return self::create(); }
@@ -35,11 +38,15 @@ final class QrBrandMerchant extends TypedEnum
     public static function PBENGAGEMY() { return self::create(); }
     public static function PUBLICBANK() { return self::create('pbengagemy'); }
     public static function SCB_PLANET_PLUS() { return self::create(); }
+    public static function SHOPEE_PAY_MY() { return self::create(); }
+    public static function SHOPEE_PAY_SG() { return self::create(); }
+    public static function SHOPEE_PAY_TH() { return self::create(); }
     public static function TINABA() { return self::create(); }
     public static function TINBA() { return self::create(); }
     public static function TOSSPAY() { return self::create(); }
     public static function TOUCH_N_GO() { return self::create('tng'); }
     public static function TRUEMONEY() { return self::create(); }
+    public static function VCB() { return self::create(); }
     public static function WE_CHAT_MPM() { return self::create(); }
     public static function ZALOPAY() { return self::create(); }
 }
