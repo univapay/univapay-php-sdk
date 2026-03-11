@@ -21,6 +21,7 @@ final class QrBrand extends TypedEnum
     public static function DANA() { return self::create(); }
     public static function D_BARAI() { return self::create(); }
     public static function DASH() { return self::create(); }
+    public static function DTCPAY() { return self::create(); }
     public static function EZLINK() { return self::create(); }
     public static function GCASH() { return self::create(); }
     public static function GINKO_PAY() { return self::create(); }
@@ -30,6 +31,7 @@ final class QrBrand extends TypedEnum
     public static function HOKUHOKU_PAY_HOKKAIDO() { return self::create(); }
     public static function HOKUHOKU_PAY_HOKURIKU() { return self::create(); }
     public static function HUMO() { return self::create(); }
+    public static function IDRAM() { return self::create(); }
     public static function JKOPAY() { return self::create(); }
     public static function KAKAOPAY() { return self::create(); }
     public static function KASPI_KZ() { return self::create(); }
@@ -48,6 +50,9 @@ final class QrBrand extends TypedEnum
     public static function QQ() { return self::create(); }
     public static function RAKUTEN_PAY() { return self::create(); }
     public static function SCB_PLANET_PLUS() { return self::create(); }
+    public static function SHOPEE_PAY_MY() { return self::create(); }
+    public static function SHOPEE_PAY_SG() { return self::create(); }
+    public static function SHOPEE_PAY_TH() { return self::create(); }
     public static function SMBC() { return self::create(); }
     public static function TINBA() { return self::create(); }
     public static function TOSS() { return self::create(); }
@@ -55,6 +60,7 @@ final class QrBrand extends TypedEnum
     public static function TOUCH_N_GO() { return self::create('tng'); }
     public static function TRUEMONEY() { return self::create(); }
     public static function UNKNOWN() { return self::create(); }
+    public static function VCB() { return self::create(); }
     public static function WE_CHAT() { return self::create(); }
     public static function YOKA_PAY_FUKUOKA() { return self::create(); }
     public static function YOKA_PAY_KUMAMOTO() { return self::create(); }
