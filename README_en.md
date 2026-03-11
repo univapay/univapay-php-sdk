@@ -10,7 +10,6 @@ This PHP SDK provides a convenient way to integrate your services with the Univa
 
 - PHP >= 7.2.x
 - Composer
-- npm (dev only)
 - UnivaPay store application token _and/or_ merchant application token
 
 ## Installation
@@ -172,15 +171,12 @@ This is only required when doing development on the SDK. There is no need to exe
 Building:
 ```shell
 composer install
-npm install
-
-# Optionally
-npm install -g grunt
 ```
 
 Code formatting:
 ```shell
-grunt phpcs
+composer lint
+composer lint:fix
 ```
 
 Tests:
@@ -192,6 +188,6 @@ The following env vars are required when running the tests:
 - `UNIVAPAY_PHP_TEST_ENDPOINT` - This would point to a local API instance or a staging instance
 
 ```shell
-grunt phpunit
+composer test
 ```
 _Note: Github Actions only runs on branches that has an open PR_
