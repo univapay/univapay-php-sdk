@@ -6,59 +6,65 @@ final class QrBrand extends TypedEnum
 {
     // phpcs:disable
     public static function AEON_PAY() { return self::create(); }
+    public static function ALIPAY_CHINA() { return self::create(); }
+    public static function ALIPAY_CONNECT_CPM() { return self::create(); }
+    public static function ALIPAY_HK() { return self::create(); }
+    public static function ALIPAY_PLUS() { return self::create(); }
+    public static function ALIPAY_SINGAPORE() { return self::create(); }
+    public static function AU_PAY() { return self::create(); }
     public static function BIGPAY_MY() { return self::create(); }
     public static function BIGPAY_SG() { return self::create(); }
     public static function BIGPAY_TH() { return self::create(); }
-    public static function QQ() { return self::create(); }
-    public static function WE_CHAT() { return self::create(); }
-    public static function ALIPAY_CONNECT_CPM() { return self::create(); }
-    public static function ALIPAY_CHINA() { return self::create(); }
-    public static function ALIPAY_HK() { return self::create(); }
-    public static function ALIPAY_SINGAPORE() { return self::create(); }
-    public static function ALIPAY_PLUS() { return self::create(); }
+    public static function BLUECODE() { return self::create(); }
+    public static function CHANGIPAY() { return self::create(); }
+    public static function COI_PAY_HIROSHIMA() { return self::create(); }
+    public static function DANA() { return self::create(); }
+    public static function D_BARAI() { return self::create(); }
+    public static function DASH() { return self::create(); }
+    public static function DTCPAY() { return self::create(); }
+    public static function EZLINK() { return self::create(); }
+    public static function GCASH() { return self::create(); }
+    public static function GINKO_PAY() { return self::create(); }
+    public static function GLOBAL_PAY() { return self::create(); }
+    public static function HAMA_PAY() { return self::create(); }
+    public static function HIPAY() { return self::create(); }
+    public static function HOKUHOKU_PAY_HOKKAIDO() { return self::create(); }
+    public static function HOKUHOKU_PAY_HOKURIKU() { return self::create(); }
+    public static function HUMO() { return self::create(); }
+    public static function IDRAM() { return self::create(); }
+    public static function JKOPAY() { return self::create(); }
     public static function KAKAOPAY() { return self::create(); }
     public static function KASPI_KZ() { return self::create(); }
     public static function KPLUS() { return self::create(); }
-    public static function TOUCH_N_GO() { return self::create('tng'); }
-    public static function EZLINK() { return self::create(); }
-    public static function GCASH() { return self::create(); }
-    public static function DANA() { return self::create(); }
-    public static function TRUEMONEY() { return self::create(); }
-    public static function TINBA() { return self::create(); }
-    public static function NAVERPAY() { return self::create(); }
-    public static function TOSS() { return self::create(); }
-    public static function OCBC() { return self::create(); }
-    public static function CHANGIPAY() { return self::create(); }
-    public static function HIPAY() { return self::create(); }
-    public static function PUBLICBANK() { return self::create('pbengagemy'); }
-    public static function MPAY() { return self::create(); }
-    public static function TOSSPAY() { return self::create(); }
-    public static function JKOPAY() { return self::create(); }
-    public static function DASH() { return self::create(); }
-    public static function GLOBAL_PAY() { return self::create(); }
-    public static function ORIGAMI() { return self::create(); }
-    public static function D_BARAI() { return self::create(); }
-    public static function AU_PAY() { return self::create(); }
-    public static function PAY_PAY() { return self::create(); }
-    public static function MERPAY() { return self::create(); }
-    public static function RAKUTEN_PAY() { return self::create(); }
     public static function LINE_PAY() { return self::create(); }
-    public static function GINKO_PAY() { return self::create(); }
-    public static function YUCHO_PAY() { return self::create(); }
-    public static function HAMA_PAY() { return self::create(); }
+    public static function MERPAY() { return self::create(); }
+    public static function MOMO() { return self::create(); }
+    public static function MPAY() { return self::create(); }
+    public static function NAYA_PAY() { return self::create(); }
+    public static function NAVERPAY() { return self::create(); }
+    public static function OCBC() { return self::create(); }
     public static function OKI_PAY() { return self::create(); }
+    public static function ORIGAMI() { return self::create(); }
+    public static function PAY_PAY() { return self::create(); }
+    public static function PUBLICBANK() { return self::create('pbengagemy'); }
+    public static function QQ() { return self::create(); }
+    public static function RAKUTEN_PAY() { return self::create(); }
+    public static function SCB_PLANET_PLUS() { return self::create(); }
+    public static function SHOPEE_PAY_MY() { return self::create(); }
+    public static function SHOPEE_PAY_SG() { return self::create(); }
+    public static function SHOPEE_PAY_TH() { return self::create(); }
+    public static function SMBC() { return self::create(); }
+    public static function TINBA() { return self::create(); }
+    public static function TOSS() { return self::create(); }
+    public static function TOSSPAY() { return self::create(); }
+    public static function TOUCH_N_GO() { return self::create('tng'); }
+    public static function TRUEMONEY() { return self::create(); }
+    public static function UNKNOWN() { return self::create(); }
+    public static function VCB() { return self::create(); }
+    public static function WE_CHAT() { return self::create(); }
     public static function YOKA_PAY_FUKUOKA() { return self::create(); }
     public static function YOKA_PAY_KUMAMOTO() { return self::create(); }
     public static function YOKA_PAY_SHINWA() { return self::create(); }
-    public static function HOKUHOKU_PAY_HOKKAIDO() { return self::create(); }
-    public static function HOKUHOKU_PAY_HOKURIKU() { return self::create(); }
-    public static function COI_PAY_HIROSHIMA() { return self::create(); }
-    public static function SMBC() { return self::create(); }
+    public static function YUCHO_PAY() { return self::create(); }
     public static function ZALOPAY() { return self::create(); }
-    public static function BLUECODE() { return self::create(); }
-    public static function NAYA_PAY() { return self::create(); }
-    public static function SCB_PLANET_PLUS() { return self::create(); }
-    public static function HUMO() { return self::create(); }
-    public static function MOMO() { return self::create(); }
-    public static function UNKNOWN() { return self::create(); }
 }

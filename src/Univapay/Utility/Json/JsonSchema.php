@@ -18,7 +18,7 @@ class JsonSchema
         $this->targetClass = $targetClass;
         $this->prefix = $prefix;
     }
-    
+
     /**
      * @param Callable $formatter - Take in the following variables:
      *      $value - The value at the path
@@ -29,7 +29,7 @@ class JsonSchema
      */
     public function with($path, $required = false, $formatter = 'Univapay\Utility\FunctionalUtils::identity')
     {
-        array_push($this->components, new SchemaComponent($this->prefix . '/' .$path, $required, $formatter));
+        array_push($this->components, new SchemaComponent($this->prefix . '/' . $path, $required, $formatter));
         return $this;
     }
 
@@ -49,7 +49,7 @@ class JsonSchema
         if ($index !== null) {
             $this->components = array_replace(
                 $this->components,
-                [$index => new SchemaComponent($this->prefix . '/' .$path, $required, $formatter)]
+                [$index => new SchemaComponent($this->prefix . '/' . $path, $required, $formatter)]
             );
             return $this;
         } else {
@@ -57,7 +57,7 @@ class JsonSchema
         }
     }
 
-    private function getValues($json, array $parent = null, array $additionalArgs = [])
+    private function getValues($json, ?array $parent = null, array $additionalArgs = [])
     {
         return array_map(function ($component) use ($json, $parent, $additionalArgs) {
             $path_parts = explode('/', $component->path);
@@ -73,7 +73,7 @@ class JsonSchema
         }, $this->components);
     }
 
-    public function parse($json, array $additionalArgs = [], array $parent = null)
+    public function parse($json, array $additionalArgs = [], ?array $parent = null)
     {
         $targetClass = new ReflectionClass($this->targetClass);
         $arguments = array_merge($this->getValues($json, $parent, $additionalArgs), $additionalArgs);
@@ -82,7 +82,7 @@ class JsonSchema
 
     public function getParser(array $context = [])
     {
-        return function ($json, $contextRoot = null, array $root = null, array $additionalArgs = []) use ($context) {
+        return function ($json, $contextRoot = null, ?array $root = null, array $additionalArgs = []) use ($context) {
             $additionalArgs = empty($context) ? $additionalArgs : $context;
             return $this->parse($json, $additionalArgs, isset($root) ? $root : $contextRoot);
         };

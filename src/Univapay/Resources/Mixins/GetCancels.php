@@ -11,13 +11,13 @@ use Univapay\Utility\RequesterUtils;
 trait GetCancels
 {
     use OptionsValidator;
-    
+
     abstract protected function getCancelContext();
 
     public function listCancels(
         $cursor = null,
         $limit = null,
-        CursorDirection $cursorDirection = null
+        ?CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls([
             'cursor' => $cursor,

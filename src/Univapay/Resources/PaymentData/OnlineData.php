@@ -22,9 +22,9 @@ class OnlineData
 
     public function __construct(
         OnlineBrand $brand,
-        CallMethod $callMethod = null,
+        ?CallMethod $callMethod = null,
         $userIdentifier = null,
-        OsType $osType = null,
+        ?OsType $osType = null,
         $issuerToken = null
     ) {
         $this->brand = $brand;

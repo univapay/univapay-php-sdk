@@ -1,4 +1,5 @@
 <?php
+
 namespace Univapay\Resources\PaymentData;
 
 use JsonSerializable;
@@ -25,7 +26,7 @@ class BillingData implements JsonSerializable
         $city = null,
         $country = null,
         $zip = null,
-        PhoneNumber $phoneNumber = null
+        ?PhoneNumber $phoneNumber = null
     ) {
         $this->line1 = $line1;
         $this->line2 = $line2;
@@ -42,7 +43,7 @@ class BillingData implements JsonSerializable
             ->upsert('phone_number', false, PhoneNumber::getSchema()->getParser());
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         $data = [
             'line1' => $this->line1,

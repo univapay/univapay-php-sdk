@@ -20,7 +20,7 @@ class Transfer extends Resource
     use GetLedgers, GetStatusChanges {
         GetLedgers::validate insteadof GetStatusChanges;
     }
-    
+
     public $bankAccountId;
     public $currency;
     public $amount;

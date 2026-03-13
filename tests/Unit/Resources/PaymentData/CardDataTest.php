@@ -1,4 +1,5 @@
 <?php
+
 namespace UnivapayTest\Unit\Resources\PaymentData;
 
 use PHPUnit\Framework\TestCase;
@@ -13,7 +14,7 @@ use UnivapayTest\Integration\IntegrationSuite;
 class CardDataTest extends TestCase
 {
     use IntegrationSuite;
-    
+
     public function testCardData()
     {
         $str = <<<EOD

@@ -3,14 +3,9 @@
 namespace Univapay\Resources\PaymentMethod;
 
 use JsonSerializable;
-use Univapay\Enums\Field;
-use Univapay\Enums\Gateway;
 use Univapay\Enums\PaymentType;
 use Univapay\Enums\QrBrandMerchant;
-use Univapay\Enums\Reason;
 use Univapay\Enums\TokenType;
-use Univapay\Errors\UnivapayValidationError;
-use Univapay\Utility\FunctionalUtils;
 
 class QrMerchantPayment extends PaymentMethod implements JsonSerializable
 {
@@ -19,7 +14,7 @@ class QrMerchantPayment extends PaymentMethod implements JsonSerializable
     public function __construct(
         $email,
         QrBrandMerchant $brand,
-        array $metadata = null,
+        ?array $metadata = null,
         $ipAddress = null
     ) {
         parent::__construct(PaymentType::QR_MERCHANT(), null, $email, $ipAddress, null, $metadata);
@@ -27,11 +22,11 @@ class QrMerchantPayment extends PaymentMethod implements JsonSerializable
     }
 
     // Does not take in a token type
-    protected function acceptsTokenType(TokenType $tokenType = null)
+    protected function acceptsTokenType(?TokenType $tokenType = null)
     {
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         $parentData = parent::jsonSerialize();
         $parentData['data'] = ['brand' => $this->brand->getName()];

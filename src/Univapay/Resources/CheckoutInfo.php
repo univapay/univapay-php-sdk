@@ -18,6 +18,7 @@ use Univapay\Utility\Json\JsonSchema;
 class CheckoutInfo
 {
     use Jsonable;
+
     public $mode;
     public $recurringTokenPrivilege;
     public $name;

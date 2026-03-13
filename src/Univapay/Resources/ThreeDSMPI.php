@@ -42,12 +42,14 @@ class ThreeDSMPI
 
     private function validateAllFieldsExist()
     {
-        if (is_null($this->authenticationValue) || $this->authenticationValue === '' ||
+        if (
+            is_null($this->authenticationValue) || $this->authenticationValue === '' ||
             is_null($this->eci) || $this->eci === '' ||
             is_null($this->dsTransactionId) || $this->dsTransactionId === '' ||
             is_null($this->serverTransactionId) || $this->serverTransactionId === '' ||
             is_null($this->messageVersion) || $this->messageVersion === '' ||
-            is_null($this->transactionStatus) || $this->transactionStatus === '') {
+            is_null($this->transactionStatus) || $this->transactionStatus === ''
+        ) {
             throw new UnivapayLogicError(Reason::INCOMPLETE_THREE_DS_MPI_FIELDS());
         }
     }

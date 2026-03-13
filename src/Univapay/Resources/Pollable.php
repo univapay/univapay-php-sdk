@@ -17,7 +17,8 @@ trait Pollable
         $pollableStatuses = $this->pollableStatuses();
         $response = RequesterUtils::executeGet(self::class, $idContext, ['polling' => 'true']);
         $retryCount = 0;
-        while ($retryCount < $retry &&
+        while (
+            $retryCount < $retry &&
             array_key_exists($this->status->__toString(), $pollableStatuses) &&
             !in_array($response->status, $pollableStatuses[$this->status->__toString()])
         ) {

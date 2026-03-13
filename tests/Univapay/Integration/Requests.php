@@ -1,4 +1,5 @@
 <?php
+
 namespace UnivapayTest\Integration;
 
 use DateInterval;
@@ -44,12 +45,12 @@ trait Requests
     abstract public function getClient();
 
     public function createValidToken(
-        PaymentType $paymentType = null,
-        TokenType $type = null,
+        ?PaymentType $paymentType = null,
+        ?TokenType $type = null,
         $cardNumber = null,
-        CvvAuthorize $cvvAuth = null,
+        ?CvvAuthorize $cvvAuth = null,
         $ipAddress = null,
-        TokenThreeDS $threeDS = null
+        ?TokenThreeDS $threeDS = null
     ) {
         $paymentType = isset($paymentType) ? $paymentType : PaymentType::CARD();
         $type = isset($type) ? $type : TokenType::ONE_TIME();
@@ -84,9 +85,9 @@ trait Requests
     public function createCardPayment(
         TokenType $type,
         $cardNumber = null,
-        CvvAuthorize $cvvAuth = null,
+        ?CvvAuthorize $cvvAuth = null,
         $ipAddress = null,
-        TokenThreeDS $threeDS = null
+        ?TokenThreeDS $threeDS = null
     ) {
         $cardNumber = isset($cardNumber) ? $cardNumber : static::$SUCCESSFUL;
         return new CardPayment(
@@ -219,8 +220,8 @@ trait Requests
         $capture = null,
         $captureAt = null,
         $onlyDirectCurrency = null,
-        PaymentType $paymentType = null,
-        TokenType $tokenType = null
+        ?PaymentType $paymentType = null,
+        ?TokenType $tokenType = null
     ) {
         $transactionToken = $this->createValidToken($paymentType, $tokenType);
         $charge = $this->getClient()->createCharge(
@@ -247,9 +248,9 @@ trait Requests
 
     public function createValidSubscription(
         $authorized = null,
-        DateInterval $captureAfter = null,
-        TokenType $type = null,
-        PaymentThreeDS $paymentThreeDS = null
+        ?DateInterval $captureAfter = null,
+        ?TokenType $type = null,
+        ?PaymentThreeDS $paymentThreeDS = null
     ) {
         $this->deactivateExistingSubscriptionToken();
         return $this
@@ -274,8 +275,8 @@ trait Requests
     public function createValidCyclicalPeriodSubscription(
         $authorized = null,
         $cyclicalPeriod = null,
-        DateInterval $captureAfter = null,
-        ScheduleSettings $scheduleSettings = null
+        ?DateInterval $captureAfter = null,
+        ?ScheduleSettings $scheduleSettings = null
     ) {
         $this->deactivateExistingSubscriptionToken();
         return $this
@@ -334,7 +335,7 @@ trait Requests
             )
             ->awaitResult(5);
     }
-    
+
 
     public function createValidFixedAmountSubscriptionPlan()
     {
@@ -355,7 +356,7 @@ trait Requests
             )
             ->awaitResult(5);
     }
-    
+
     public function createUnconfirmedSubscription()
     {
         $this->deactivateExistingSubscriptionToken();
@@ -378,7 +379,7 @@ trait Requests
             AppTokenMode::TEST(),
             ActiveFilter::ACTIVE()
         );
-        
+
         foreach ($tokenList->items as $token) {
             $token->deactivate();
         }

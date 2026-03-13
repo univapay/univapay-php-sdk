@@ -7,8 +7,6 @@ use Univapay\Enums\RefundReason;
 use Univapay\Enums\RefundStatus;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\Json\JsonSchema;
-use Money\Currency;
-use Money\Money;
 
 class Refund extends Resource
 {

@@ -1,4 +1,5 @@
 <?php
+
 namespace UnivapayTest\Integration;
 
 use DateTime;
@@ -13,7 +14,6 @@ use Univapay\Errors\UnivapayRequestError;
 use Univapay\Resources\Charge;
 use Univapay\Resources\PaymentThreeDS;
 use Univapay\Resources\Redirect;
-use Univapay\Resources\ThreeDSMPI;
 use Money\Currency;
 use Money\Money;
 use PHPUnit\Framework\TestCase;
@@ -219,7 +219,7 @@ EOD;
     {
         $charge = $this->createValidCharge(true);
         $this->assertEquals(0, count($charge->metadata));
-        
+
         $charge = $charge->patch(['testId' => 12345]);
         $this->assertTrue($charge->metadata['testId'] === 12345);
     }
@@ -237,23 +237,23 @@ EOD;
         $charge = $this->createValidCharge(false);
         $charge->capture(Money::JPY(2000));
     }
-    
+
     public function testCancelAuthCharge()
     {
         $charge = $this->createValidCharge(false);
         $this->assertEquals(ChargeStatus::AUTHORIZED(), $charge->status);
-        $cancel = $charge->cancel(['something'=>'anything'])->awaitResult(5);
+        $cancel = $charge->cancel(['something' => 'anything'])->awaitResult(5);
         $this->assertEquals(CancelStatus::SUCCESSFUL(), $cancel->status);
         $this->assertEquals($cancel->metadata['something'], 'anything');
         $postCancelCharge = $charge->awaitResult(5);
         $this->assertEquals(ChargeStatus::CANCELED(), $postCancelCharge->status);
     }
-    
+
     public function testInvalidCancel()
     {
         $charge = $this->createValidCharge();
         $this->assertEquals(ChargeStatus::SUCCESSFUL(), $charge->status);
-        
+
         $this->expectException(UnivapayRequestError::class);
         $charge->cancel();
     }
@@ -262,7 +262,7 @@ EOD;
     {
         $charge = $this->createValidCharge(null, null, null, PaymentType::QR_MERCHANT());
         $this->assertEquals(ChargeStatus::AWAITING(), $charge->status);
-        
+
         $qrToken = $charge->qrMerchantToken();
         $this->assertTrue($qrToken->ready);
         $this->assertNotNull($qrToken->qrImageUrl);
@@ -272,7 +272,7 @@ EOD;
     {
         $charge = $this->createValidCharge(null, null, null, PaymentType::ONLINE());
         $this->assertEquals(ChargeStatus::AWAITING(), $charge->status);
-        
+
         $onlineToken = $charge->onlineToken();
         $this->assertNotNull($onlineToken->issuerToken);
         $this->assertNotNull($onlineToken->callMethod);

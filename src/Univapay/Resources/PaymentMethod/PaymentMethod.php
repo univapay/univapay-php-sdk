@@ -19,14 +19,14 @@ abstract class PaymentMethod implements JsonSerializable
 
     protected function __construct(
         PaymentType $paymentType,
-        TokenType $type = null,
+        ?TokenType $type = null,
         $email = null,
         $ipAddress = null,
-        UsageLimit $usageLimit = null,
-        array $metadata = null
+        ?UsageLimit $usageLimit = null,
+        ?array $metadata = null
     ) {
         $this->acceptsTokenType($type);
-        
+
         $this->email = $email;
         $this->ipAddress = $ipAddress;
         $this->paymentType = $paymentType;
@@ -37,9 +37,9 @@ abstract class PaymentMethod implements JsonSerializable
 
     // Returns void if this payment method accepts the token type
     // Throws UnivapayValidationError if not valid
-    abstract protected function acceptsTokenType(TokenType $type = null);
+    abstract protected function acceptsTokenType(?TokenType $type = null);
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return FunctionalUtils::stripNulls([
             'email' => $this->email,

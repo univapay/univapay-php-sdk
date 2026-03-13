@@ -13,16 +13,16 @@ use Univapay\Utility\RequesterUtils;
 trait GetSubscriptions
 {
     use OptionsValidator;
-    
+
     abstract protected function getSubscriptionContext();
 
     public function listSubscriptions(
         $search = null,
-        SubscriptionStatus $status = null,
-        AppTokenMode $mode = null,
+        ?SubscriptionStatus $status = null,
+        ?AppTokenMode $mode = null,
         $cursor = null,
         $limit = null,
-        CursorDirection $cursorDirection = null
+        ?CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls([
             'search' => $search,

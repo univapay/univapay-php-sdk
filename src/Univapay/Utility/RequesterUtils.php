@@ -17,7 +17,7 @@ abstract class RequesterUtils
         return array_merge(
             $requestContext->getAuthorizationHeaders(),
             HttpUtils::getJsonHeader(),
-            $enableIdempotency? HttpUtils::getIdempotencyHeader(): [],
+            $enableIdempotency ? HttpUtils::getIdempotencyHeader() : [],
             $headers
         );
     }

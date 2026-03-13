@@ -13,7 +13,7 @@ use Univapay\Utility\Json\JsonSchema;
 class CvvAuthorize implements JsonSerializable
 {
     use Jsonable;
-    
+
     public $enabled;
     public $currency;
     public $status;
@@ -22,8 +22,8 @@ class CvvAuthorize implements JsonSerializable
 
     public function __construct(
         $enabled,
-        Currency $currency = null,
-        CvvAuthorizationStatus $status = null,
+        ?Currency $currency = null,
+        ?CvvAuthorizationStatus $status = null,
         $chargeId = null,
         $credentialsId = null
     ) {
@@ -34,7 +34,7 @@ class CvvAuthorize implements JsonSerializable
         $this->credentialsId = $credentialsId;
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return FunctionalUtils::stripNulls([
             'enabled' => $this->enabled,

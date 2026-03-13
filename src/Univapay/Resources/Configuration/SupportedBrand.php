@@ -26,9 +26,9 @@ class SupportedBrand
         $requiresFullName,
         $requiresCvv,
         array $supportedCurrencies,
-        array $countriesAllowed = null,
-        CardBrand $cardBrand = null,
-        OnlineBrand $onlineBrand = null
+        ?array $countriesAllowed = null,
+        ?CardBrand $cardBrand = null,
+        ?OnlineBrand $onlineBrand = null
     ) {
         $this->supportAuthCapture = $supportAuthCapture;
         $this->requiresFullName = $requiresFullName;

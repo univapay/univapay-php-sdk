@@ -1,4 +1,5 @@
 <?php
+
 namespace UnivapayTest\Integration;
 
 use Univapay\UnivapayClient;
@@ -12,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 class BasicRetryHandlerTest extends TestCase
 {
     use IntegrationSuite;
-    
+
     private $rateLimitHandledClient;
     private $rateLimitUnhandledClient;
 

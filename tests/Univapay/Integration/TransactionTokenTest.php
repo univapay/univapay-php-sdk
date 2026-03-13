@@ -1,4 +1,5 @@
 <?php
+
 namespace UnivapayTest\Integration;
 
 use DateInterval;
@@ -11,7 +12,6 @@ use Univapay\Enums\CardSubBrand;
 use Univapay\Enums\CardType;
 use Univapay\Enums\ConvenienceStore;
 use Univapay\Enums\CvvAuthorizationStatus;
-use Univapay\Enums\Gateway;
 use Univapay\Enums\OnlineBrand;
 use Univapay\Enums\OsType;
 use Univapay\Enums\PaymentType;
@@ -144,7 +144,7 @@ class TransactionTokenTest extends TestCase
         $this->assertNull($transactionToken->data->cvvAuthorize->currency);
         $this->assertEquals(CvvAuthorizationStatus::PENDING(), $transactionToken->data->cvvAuthorize->status);
         sleep(10);
-        
+
         $transactionToken = $transactionToken->fetch();
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals(TokenType::RECURRING(), $transactionToken->type);
@@ -174,7 +174,7 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals(new Currency("USD"), $transactionToken->data->cvvAuthorize->currency);
         $this->assertEquals(CvvAuthorizationStatus::PENDING(), $transactionToken->data->cvvAuthorize->status);
         sleep(5);
-        
+
         $transactionToken = $transactionToken->fetch();
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals(TokenType::RECURRING(), $transactionToken->type);
@@ -237,7 +237,6 @@ class TransactionTokenTest extends TestCase
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals(PaymentType::QR_SCAN(), $transactionToken->paymentType);
         $this->assertNull($transactionToken->confirmed);
-        $this->assertEquals(Gateway::PAY_PAY(), $transactionToken->data->gateway);
         $this->assertEquals(QrBrand::PAY_PAY(), $transactionToken->data->brand);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
     }
@@ -301,7 +300,7 @@ class TransactionTokenTest extends TestCase
         );
 
         $this->assertTrue(isset($transactionToken->metadata['gopay-customer-id']));
-        
+
         $maxRetries = 3;
         $tokenList = null;
         do {
@@ -315,7 +314,7 @@ class TransactionTokenTest extends TestCase
                 ActiveFilter::ACTIVE()
             );
         } while (empty($tokenList->items) && $maxRetries > 0);
-        
+
         $this->assertTrue(count($tokenList->items) === 1);
         $this->assertTrue(array_key_exists('gopay-customer-id', $tokenList->items[0]->metadata));
     }
@@ -325,7 +324,7 @@ class TransactionTokenTest extends TestCase
         $transactionToken = $this->createValidToken();
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
-        
+
         $patchRequest = new PaymentMethodPatch(
             'test@changed.int',
             ['customer_id' => 'PHP TESTER']
@@ -341,7 +340,7 @@ class TransactionTokenTest extends TestCase
         $transactionToken = $this->createValidToken(PaymentType::CARD(), TokenType::RECURRING());
         $this->assertEquals('test@test.com', $transactionToken->email);
         $this->assertEquals('PHP TEST', $transactionToken->metadata['customer_id']);
-        
+
         $patchRequest = new CardPaymentPatch(
             "999",
             'test@changed.int',

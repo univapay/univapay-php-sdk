@@ -5,9 +5,6 @@ namespace Univapay\Resources\PaymentData;
 use DateInterval;
 use JsonSerializable;
 use Univapay\Enums\ConvenienceStore;
-use Univapay\Enums\Field;
-use Univapay\Enums\Reason;
-use Univapay\Errors\UnivapayValidationError;
 use Univapay\Resources\Jsonable;
 use Univapay\Utility\FormatterUtils;
 use Univapay\Utility\FunctionalUtils;
@@ -26,7 +23,7 @@ class ConvenienceStoreData implements JsonSerializable
         $customerName,
         PhoneNumber $phoneNumber,
         ConvenienceStore $convenienceStore,
-        DateInterval $expirationPeriod = null
+        ?DateInterval $expirationPeriod = null
     ) {
         $this->customerName = $customerName;
         $this->phoneNumber = $phoneNumber;
@@ -42,7 +39,7 @@ class ConvenienceStoreData implements JsonSerializable
             ->upsert('expiration_period', true, FormatterUtils::of('getDateInterval'));
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return FunctionalUtils::stripNulls([
             'customer_name' => $this->customerName,

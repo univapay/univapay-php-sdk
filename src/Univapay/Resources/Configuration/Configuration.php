@@ -3,7 +3,6 @@
 namespace Univapay\Resources\Configuration;
 
 use Univapay\Resources\Jsonable;
-use Univapay\Resources\PaymentData\Card;
 use Univapay\Utility\Json\JsonSchema;
 
 class Configuration

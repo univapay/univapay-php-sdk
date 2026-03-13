@@ -14,28 +14,28 @@ class PhoneNumber implements JsonSerializable
 {
     use Jsonable;
 
-    const AU = 61;
-    const BR = 55;
-    const CA = 1;
-    const CH = 41;
-    const CN = 86;
-    const DE = 49;
-    const FR = 33;
-    const GB = 44;
-    const IT = 39;
-    const JP = 81;
-    const KR = 82;
-    const MT = 356;
-    const PH = 63;
-    const PL = 48;
-    const RU = 7;
-    const SE = 46;
-    const SG = 65;
-    const SV = 503;
-    const TH = 66;
-    const TW = 886;
-    const US = 1;
-    const ZA = 27;
+    public const AU = 61;
+    public const BR = 55;
+    public const CA = 1;
+    public const CH = 41;
+    public const CN = 86;
+    public const DE = 49;
+    public const FR = 33;
+    public const GB = 44;
+    public const IT = 39;
+    public const JP = 81;
+    public const KR = 82;
+    public const MT = 356;
+    public const PH = 63;
+    public const PL = 48;
+    public const RU = 7;
+    public const SE = 46;
+    public const SG = 65;
+    public const SV = 503;
+    public const TH = 66;
+    public const TW = 886;
+    public const US = 1;
+    public const ZA = 27;
 
     public $countryCode;
     public $localNumber;
@@ -60,7 +60,7 @@ class PhoneNumber implements JsonSerializable
         return JsonSchema::fromClass(self::class);
     }
 
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         $data = [
             'country_code' => $this->countryCode,

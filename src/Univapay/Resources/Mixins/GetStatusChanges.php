@@ -11,13 +11,13 @@ use Univapay\Utility\RequesterUtils;
 trait GetStatusChanges
 {
     use OptionsValidator;
-    
+
     abstract protected function getStatusChangeContext();
 
     public function listStatusChanges(
         $cursor = null,
         $limit = null,
-        CursorDirection $cursorDirection = null
+        ?CursorDirection $cursorDirection = null
     ) {
         $query = FunctionalUtils::stripNulls([
             'cursor' => $cursor,

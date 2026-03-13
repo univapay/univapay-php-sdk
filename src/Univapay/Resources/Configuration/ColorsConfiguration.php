@@ -9,6 +9,7 @@ use Univapay\Utility\Json\JsonSchema;
 class ColorsConfiguration
 {
     use Jsonable;
+
     public $mainBackground;
     public $secondaryBackground;
     public $mainColor;

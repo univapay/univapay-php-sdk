@@ -8,6 +8,7 @@ use Univapay\Utility\Json\JsonSchema;
 class PaidyConfiguration
 {
     use Jsonable;
+
     public $enabled;
 
     public function __construct($enabled)

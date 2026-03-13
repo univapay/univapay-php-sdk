@@ -1,10 +1,10 @@
 <?php
+
 namespace Univapay\Resources\PaymentToken;
 
 use Univapay\Enums\CallMethod;
 use Univapay\Resources\Jsonable;
 use Univapay\Utility\FormatterUtils;
-use Univapay\Utility\FunctionalUtils;
 use Univapay\Utility\Json\JsonSchema;
 
 class OnlineToken
@@ -16,7 +16,7 @@ class OnlineToken
 
     public function __construct(
         $issuerToken = null,
-        CallMethod $callMethod = null
+        ?CallMethod $callMethod = null
     ) {
         $this->issuerToken = $issuerToken;
         $this->callMethod = $callMethod;

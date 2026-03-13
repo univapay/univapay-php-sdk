@@ -40,11 +40,6 @@ class Paginated
         $this->query = $query;
     }
 
-    private function parse($json)
-    {
-        return $this->formatFn($json, $this->context);
-    }
-
     public static function fromResponse(
         $response,
         $query,
